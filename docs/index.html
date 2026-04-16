@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTDemucsWithSpatial — Audio Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto+Mono:wght@400;500&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── HEADER ─── -->
+  <header>
+    <div class="header-inner">
+      <!--div class="venue-badge">ICASSP 2025 · Submission</div>-->
+      <h1>Preserving Spatial Cues in Music Source Separation</h1>
+      <p class="subtitle">
+        Here we show the results achieved by <b>SA-HTDemucs</b>. We extend Hybrid Transformer Demucs with lightweight per-source <b>SpatialCueModules</b>
+        that explicitly supervise Interaural Level Differences (ILD), preventing the phantom-centre collapse that standard mono-trained separators produce. 
+        Each separated stem retains a perceptually meaningful stereo position without sacrificing separation quality.
+      </p>
+      <!--<p class="subtitle">
+        We extend <a href="https://github.com/facebookresearch/demucs" target="_blank">Hybrid Transformer Demucs</a> 
+        with lightweight per-source <em>SpatialCueModules</em> that explicitly
+        supervise Interaural Level Differences (ILD), preventing the phantom-centre
+        collapse that standard mono-trained separators produce.
+        Each separated stem retains a perceptually meaningful stereo position
+        without sacrificing separation quality.
+      </p>-->
+      <!--div class="authors">
+        <span class="author">Anonymous Author</span>
+        <span class="sep">·</span>
+        <a class="code-link" href="https://github.com/Atzerbi/msslnet" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          Code &amp; Models
+        </a>
+      </div>-->
+    </div>
+  </header>
+
+  <!-- ─── ABSTRACT BOX ─── -->
+  <!--<section class="abstract-section">
+    <div class="container">
+      <div class="abstract-box">
+        <h2 class="section-label">Abstract</h2>
+        <p>
+          State-of-the-art music source separation models such as HTDemucs achieve
+          high SI-SNR scores but systematically collapse stereo sources to a
+          phantom centre, discarding the spatial cues that listeners use to localise
+          instruments. We propose <strong>HTDemucsWithSpatial</strong>, which
+          attaches one trainable <em>SpatialCueModule</em> — a small temporal CNN
+          operating on per-subband ILD trajectories — to each output stem of a
+          frozen HTDemucs backbone. Only ~181K parameters are trained, yet the
+          model recovers meaningful per-stem stereo imagery while matching
+          HTDemucs separation quality. We evaluate on MUSDB18-HQ and report SI-SDR,
+          ILD-RMSE, and informal listening tests. Audio samples are presented below.
+        </p>
+      </div>
+    </div>
+  </section>-->
+
+  <!-- ─── METHOD DIAGRAM ─── -->
+  <!--<section class="method-section">
+    <div class="container">
+      <h2 class="section-label">Method Overview</h2>
+      <div class="method-grid">
+        <div class="method-card">
+          <div class="method-icon">🎛️</div>
+          <h3>Frozen HTDemucs Backbone</h3>
+          <p>Pre-trained HTDemucs (~80M params) provides strong source separation, unchanged during our training.</p>
+        </div>
+        <div class="method-arrow">→</div>
+        <div class="method-card highlight">
+          <div class="method-icon">🧠</div>
+          <h3>SpatialCueModule ×4</h3>
+          <p>One lightweight temporal CNN per source. Computes per-subband ILD, predicts Δ_ILD, applies symmetric STFT gains.</p>
+        </div>
+        <div class="method-arrow">→</div>
+        <div class="method-card">
+          <div class="method-icon">🎵</div>
+          <h3>Spatially-Aware Stems</h3>
+          <p>Each stem retains its natural stereo position. Total loudness preserved: gain_l · gain_r = 1.</p>
+        </div>
+      </div>
+      <p class="method-note">
+        Training objective: ILD-MSE loss only (λ<sub>SI</sub>=0, λ<sub>ILD</sub>=1).
+        Only 181K parameters are updated; the backbone remains frozen.
+      </p>
+    </div>
+  </section>-->
+
+  <!-- ─── LEGEND ─── -->
+  <section class="demo-section">
+    <div class="container">
+      <h2 class="section-label">Audio Samples</h2>
+      <p class="demo-intro">
+      For each track we show the four separated stems. Each row has three players:
+      </p>
+      <ul class="demo-intro">
+        <li><em>Reference</em> — ground-truth stem from MUSDB18-HQ</li>
+        <li><em>HT-Demucs</em> — baseline separation output</li>
+        <li><em>SA-HTDemucs</em> — our spatially-corrected output</li>
+      </ul>
+      <p class="demo-intro">Use headphones for best evaluation of spatial differences.</p>
+
+      <!--<div class="legend">
+        <span class="legend-item ref">Reference</span>
+        <span class="legend-item htd">HTDemucs</span>
+        <span class="legend-item spa">HTDemucsWithSpatial</span>
+      </div>-->
+
+      <!-- ──── SONG 1 ──── -->
+      <div class="track-block" id="song1">
+        <div class="track-header">
+          <div class="track-meta">
+            <!--<span class="track-num">01</span>-->
+            <div>
+              <h3 class="track-title">The Easton Ellises — Falcon 69</h3>
+              <!--<span class="track-license">CC BY-NC-SA</span>-->
+            </div>
+          </div>
+          <div class="mixture-player">
+            <span class="mix-label">Mixture</span>
+            <audio controls preload="none">
+              <source src="audio/song1/mixture.wav" type="audio/wav" />
+            </audio>
+          </div>
+        </div>
+
+        <div class="stems-table">
+          <div class="stems-header">
+            <div class="stem-label-col"></div>
+            <div class="col-header ref-header">Reference</div>
+            <div class="col-header htd-header">HT-Demucs</div>
+            <div class="col-header spa-header">SA-HTDemucs</div>
+          </div>
+
+          <!-- drums -->
+          <div class="stem-row">
+            <div class="stem-name">
+              <!--<span class="stem-icon">🥁</span>--> Drums
+            </div>
+            <div class="audio-cell ref-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/ref_drums.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htd-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/htdemucs_drums.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell spa-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/spatial_drums.wav" type="audio/wav" />
+              </audio>
+            </div>
+          </div>
+
+          <!-- bass -->
+          <div class="stem-row">
+            <div class="stem-name">
+              <!--<span class="stem-icon">🎸</span>--> Bass
+            </div>
+            <div class="audio-cell ref-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/ref_bass.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htd-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/htdemucs_bass.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell spa-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/spatial_bass.wav" type="audio/wav" />
+              </audio>
+            </div>
+          </div>
+
+          <!-- vocals -->
+          <div class="stem-row">
+            <div class="stem-name">
+              <!--<span class="stem-icon">🎤</span>--> Vocals
+            </div>
+            <div class="audio-cell ref-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/ref_vocals.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htd-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/htdemucs_vocals.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell spa-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/spatial_vocals.wav" type="audio/wav" />
+              </audio>
+            </div>
+          </div>
+
+          <!-- other -->
+          <div class="stem-row">
+            <div class="stem-name">
+              <!--<span class="stem-icon">🎹</span>--> Other
+            </div>
+            <div class="audio-cell ref-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/ref_other.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htd-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/htdemucs_other.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell spa-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/spatial_other.wav" type="audio/wav" />
+              </audio>
+            </div>
+          </div>
+
+        </div><!-- /stems-table -->
+      </div><!-- /track-block -->
+
+      <!-- ──── SONG 2 ──── -->
+      <div class="track-block" id="song2">
+        <div class="track-header">
+          <div class="track-meta">
+            <!--<span class="track-num">02</span>-->
+            <div>
+              <h3 class="track-title">Al James — Schoolboy Facination</h3>
+              <!--<span class="track-license">CC BY-NC-SA</span>-->
+            </div>
+          </div>
+          <div class="mixture-player">
+            <span class="mix-label">Mixture</span>
+            <audio controls preload="none">
+              <source src="audio/song2/mixture.wav" type="audio/wav" />
+            </audio>
+          </div>
+        </div>
+
+        <div class="stems-table">
+          <div class="stems-header">
+            <div class="stem-label-col"></div>
+            <div class="col-header ref-header">Reference</div>
+            <div class="col-header htd-header">HT-Demucs</div>
+            <div class="col-header spa-header">SA-HTDemucs</div>
+          </div>
+
+          <div class="stem-row">
+            <div class="stem-name"><!--<span class="stem-icon">🥁</span>--> Drums</div>
+            <div class="audio-cell ref-cell"><audio controls preload="none"><source src="audio/song2/ref_drums.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell htd-cell"><audio controls preload="none"><source src="audio/song2/htdemucs_drums.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell spa-cell"><audio controls preload="none"><source src="audio/song2/spatial_drums.wav" type="audio/wav" /></audio></div>
+          </div>
+          <div class="stem-row">
+            <div class="stem-name"><!--<span class="stem-icon">🎸</span>--> Bass</div>
+            <div class="audio-cell ref-cell"><audio controls preload="none"><source src="audio/song2/ref_bass.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell htd-cell"><audio controls preload="none"><source src="audio/song2/htdemucs_bass.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell spa-cell"><audio controls preload="none"><source src="audio/song2/spatial_bass.wav" type="audio/wav" /></audio></div>
+          </div>
+          <div class="stem-row">
+            <div class="stem-name"><!--<span class="stem-icon">🎤</span>--> Vocals</div>
+            <div class="audio-cell ref-cell"><audio controls preload="none"><source src="audio/song2/ref_vocals.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell htd-cell"><audio controls preload="none"><source src="audio/song2/htdemucs_vocals.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell spa-cell"><audio controls preload="none"><source src="audio/song2/spatial_vocals.wav" type="audio/wav" /></audio></div>
+          </div>
+          <div class="stem-row">
+            <div class="stem-name"><!--<span class="stem-icon">🎹</span>--> Other</div>
+            <div class="audio-cell ref-cell"><audio controls preload="none"><source src="audio/song2/ref_other.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell htd-cell"><audio controls preload="none"><source src="audio/song2/htdemucs_other.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell spa-cell"><audio controls preload="none"><source src="audio/song2/spatial_other.wav" type="audio/wav" /></audio></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /container -->
+  </section>
+
+  <!-- ─── CITATION ─── -->
+  <!--<section class="citation-section">
+    <div class="container">
+      <h2 class="section-label">Citation</h2>
+      <div class="cite-block">
+        <button class="copy-btn" onclick="copyBibtex()" title="Copy BibTeX">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span id="copy-label">Copy</span>
+        </button>
+        <pre id="bibtex">@inproceedings{atzerbi2025spatial,
+  title     = {Preserving Spatial Cues in Music Source Separation
+               via Lightweight ILD Correction Heads},
+  author    = {Atzerbi, [Author Names]},
+  booktitle = {ICASSP},
+  year      = {2025},
+  url       = {https://github.com/Atzerbi/msslnet}
+}</pre>
+      </div>
+      <p class="cite-note">
+        Please also cite the original
+        <a href="https://arxiv.org/abs/2211.00074" target="_blank">HTDemucs paper</a>
+        (Rouard et al., ICASSP 2023).
+      </p>
+    </div>
+  </section>-->
+
+  <!--<footer>
+    <div class="container">
+      <p>
+        Code released under MIT license ·
+        <a href="https://github.com/Atzerbi/msslnet" target="_blank">github.com/Atzerbi/msslnet</a>
+      </p>
+    </div>
+  </footer>-->
+
+  <script src="main.js"></script>
+</body>
+</html>

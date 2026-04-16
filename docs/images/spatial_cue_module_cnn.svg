@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 800 755"
+     font-family="'Segoe UI', Arial, sans-serif"
+     version="1.1"
+     xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- ── Arrow markers ──────────────────────────────────────────────────── -->
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0,0 10,3.5 0,7" fill="#444444"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0,0 10,3.5 0,7" fill="#2d5f8c"/>
+    </marker>
+    <marker id="arr-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0,0 10,3.5 0,7" fill="#b84a00"/>
+    </marker>
+    <!-- ── Gradients ──────────────────────────────────────────────────────── -->
+    <linearGradient id="g-input" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2c3e50"/>
+      <stop offset="100%" style="stop-color:#1a252f"/>
+    </linearGradient>
+    <linearGradient id="g-blue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d5f8c"/>
+      <stop offset="100%" style="stop-color:#1a3d5e"/>
+    </linearGradient>
+    <linearGradient id="g-orange" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#b84a00"/>
+      <stop offset="100%" style="stop-color:#8a3700"/>
+    </linearGradient>
+    <linearGradient id="g-op" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3a3a4e"/>
+      <stop offset="100%" style="stop-color:#26263a"/>
+    </linearGradient>
+    <!-- ── Drop shadow ────────────────────────────────────────────────────── -->
+    <filter id="sh">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#00000030"/>
+    </filter>
+  </defs>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       BACKGROUND
+       ════════════════════════════════════════════════════════════════════════ -->
+  <rect width="800" height="755" fill="#ffffff"/>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       TITLE
+       ════════════════════════════════════════════════════════════════════════ -->
+  <text x="400" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a2e">
+    SpatialCueModule — Internal Architecture
+  </text>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       LEGEND
+       ════════════════════════════════════════════════════════════════════════ -->
+  <rect x="606" y="42" width="12" height="12" rx="2" fill="url(#g-blue)"/>
+  <text x="624" y="53" font-size="9" fill="#333333">Feature extraction (frozen)</text>
+  <rect x="606" y="60" width="12" height="12" rx="2" fill="url(#g-orange)"/>
+  <text x="624" y="71" font-size="9" fill="#333333">Correction CNN (trainable)</text>
+  <rect x="606" y="78" width="12" height="12" rx="2" fill="url(#g-op)"/>
+  <text x="624" y="89" font-size="9" fill="#333333">Arithmetic operation</text>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       INPUT BLOCK
+       ════════════════════════════════════════════════════════════════════════ -->
+  <rect x="300" y="45" width="200" height="50" rx="6" fill="url(#g-input)" filter="url(#sh)"/>
+  <text x="400" y="67" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">source_est</text>
+  <text x="400" y="84" text-anchor="middle" font-size="10" fill="#aabbcc">(B, 2, T)</text>
+
+  <!-- Arrow: Input → ILD -->
+  <line x1="400" y1="95" x2="400" y2="128" stroke="#444444" stroke-width="1.8" marker-end="url(#arr)"/>
+  <text x="414" y="113" font-size="9" fill="#666666">split L / R</text>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       compute_ild_bands
+       ════════════════════════════════════════════════════════════════════════ -->
+  <rect x="220" y="130" width="360" height="72" rx="6" fill="url(#g-blue)" filter="url(#sh)"/>
+  <text x="400" y="154" text-anchor="middle" font-size="11" font-weight="bold" fill="#ffffff">compute_ild_bands</text>
+  <text x="400" y="172" text-anchor="middle" font-size="9" fill="#aaccee">STFT(L, R)  →  per-sub-band ILD  (n_bands = 32)</text>
+  <text x="400" y="188" text-anchor="middle" font-size="9" fill="#aaccee">(B, n_bands, T_frames)</text>
+
+  <!-- Arrow: ILD → CNN -->
+  <line x1="400" y1="202" x2="400" y2="237" stroke="#2d5f8c" stroke-width="1.8" marker-end="url(#arr-blue)"/>
+  <text x="414" y="221" font-size="9" fill="#2d5f8c">(B, n_bands, T_frames)</text>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       CORRECTION CNN  (orange = trainable)
+       ════════════════════════════════════════════════════════════════════════ -->
+  <rect x="140" y="240" width="520" height="185" rx="8" fill="url(#g-orange)" filter="url(#sh)"/>
+  <text x="400" y="261" text-anchor="middle" font-size="11" fill="#ffccaa">Correction CNN  (trainable  ·  operates along time axis)</text>
+
+  <!-- Sub-block 1: Conv1d layer 1 -->
+  <rect x="168" y="268" width="464" height="38" rx="4" fill="#ffffff1a"/>
+  <text x="400" y="284" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">Conv1d(n_bands → 64,  kernel_size=7,  padding=3)</text>
+  <text x="400" y="299" text-anchor="middle" font-size="9" fill="#ffddbb">→  ReLU</text>
+
+  <!-- Sub-block 2: Conv1d layer 2 -->
+  <rect x="168" y="312" width="464" height="38" rx="4" fill="#ffffff1a"/>
+  <text x="400" y="328" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">Conv1d(64 → 64,  kernel_size=7,  padding=3)</text>
+  <text x="400" y="343" text-anchor="middle" font-size="9" fill="#ffddbb">→  ReLU</text>
+
+  <!-- Sub-block 3: Conv1d layer 3 -->
+  <rect x="168" y="356" width="464" height="38" rx="4" fill="#ffffff1a"/>
+  <text x="400" y="372" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">Conv1d(64 → n_bands,  kernel_size=1)</text>
+  <text x="400" y="387" text-anchor="middle" font-size="9" fill="#ffddbb">→  Tanh  →  delta ∈ [−1, +1]</text>
+
+  <!-- CNN bottom: y = 240 + 185 = 425 -->
+
+  <!-- Arrow: CNN → × ild_scale -->
+  <line x1="400" y1="425" x2="400" y2="457" stroke="#b84a00" stroke-width="1.8" marker-end="url(#arr-orange)"/>
+  <text x="414" y="443" font-size="9" fill="#b84a00">delta ∈ [−1, +1]  (B, n_bands, T_frames)</text>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       × ild_scale
+       ════════════════════════════════════════════════════════════════════════ -->
+  <rect x="295" y="460" width="210" height="38" rx="6" fill="url(#g-op)" filter="url(#sh)"/>
+  <text x="400" y="476" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">× ild_scale</text>
+  <text x="400" y="491" text-anchor="middle" font-size="9" fill="#aabbcc">delta_ild ∈ [−ild_scale, +ild_scale]  dB</text>
+
+  <!-- × ild_scale bottom: y = 460 + 38 = 498 -->
+
+  <!-- Arrow: × ild_scale → ÷ 2 -->
+  <line x1="400" y1="498" x2="400" y2="528" stroke="#444444" stroke-width="1.8" marker-end="url(#arr)"/>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       ÷ 2 = half
+       ════════════════════════════════════════════════════════════════════════ -->
+  <rect x="340" y="530" width="120" height="32" rx="6" fill="url(#g-op)" filter="url(#sh)"/>
+  <text x="400" y="551" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">÷ 2  =  half</text>
+
+  <!-- ÷2 center y = 546, left edge x = 340, right edge x = 460 -->
+
+  <!-- Left branch: (340, 546) → (170, 546) → (170, 579) -->
+  <line x1="340" y1="546" x2="170" y2="546" stroke="#444444" stroke-width="1.4"/>
+  <line x1="170" y1="546" x2="170" y2="579" stroke="#444444" stroke-width="1.4" marker-end="url(#arr)"/>
+  <text x="253" y="540" text-anchor="middle" font-size="9" fill="#666666">−half  (to L)</text>
+
+  <!-- Right branch: (460, 546) → (630, 546) → (630, 579) -->
+  <line x1="460" y1="546" x2="630" y2="546" stroke="#444444" stroke-width="1.4"/>
+  <line x1="630" y1="546" x2="630" y2="579" stroke="#444444" stroke-width="1.4" marker-end="url(#arr)"/>
+  <text x="547" y="540" text-anchor="middle" font-size="9" fill="#666666">+half  (to R)</text>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       L GAIN BLOCK   center x = 170
+       ════════════════════════════════════════════════════════════════════════ -->
+  <rect x="50" y="581" width="240" height="62" rx="6" fill="url(#g-blue)" filter="url(#sh)"/>
+  <text x="170" y="599" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">_apply_subband_gain(L, −half)</text>
+  <text x="170" y="614" text-anchor="middle" font-size="9" fill="#aaccee">STFT  →  gain_l = 10^(+half/20)  →  ISTFT</text>
+  <text x="170" y="629" text-anchor="middle" font-size="9" fill="#aaccee">L corrected  (B, T)</text>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       R GAIN BLOCK   center x = 630
+       ════════════════════════════════════════════════════════════════════════ -->
+  <rect x="510" y="581" width="240" height="62" rx="6" fill="url(#g-blue)" filter="url(#sh)"/>
+  <text x="630" y="599" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">_apply_subband_gain(R, +half)</text>
+  <text x="630" y="614" text-anchor="middle" font-size="9" fill="#aaccee">STFT  →  gain_r = 10^(−half/20)  →  ISTFT</text>
+  <text x="630" y="629" text-anchor="middle" font-size="9" fill="#aaccee">R corrected  (B, T)</text>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       MERGE: L and R → stack → output
+       L gain bottom: y = 643   R gain bottom: y = 643
+       Merge horizontal at y = 668
+       ════════════════════════════════════════════════════════════════════════ -->
+  <!-- Left vertical -->
+  <line x1="170" y1="643" x2="170" y2="668" stroke="#444444" stroke-width="1.4"/>
+  <!-- Left horizontal to center -->
+  <line x1="170" y1="668" x2="400" y2="668" stroke="#444444" stroke-width="1.4"/>
+  <!-- Right vertical -->
+  <line x1="630" y1="643" x2="630" y2="668" stroke="#444444" stroke-width="1.4"/>
+  <!-- Right horizontal to center -->
+  <line x1="630" y1="668" x2="400" y2="668" stroke="#444444" stroke-width="1.4"/>
+  <!-- Down to output -->
+  <line x1="400" y1="668" x2="400" y2="677" stroke="#444444" stroke-width="1.8" marker-end="url(#arr)"/>
+  <text x="414" y="664" font-size="9" fill="#666666">stack</text>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       OUTPUT BLOCK
+       ════════════════════════════════════════════════════════════════════════ -->
+  <rect x="300" y="679" width="200" height="50" rx="6" fill="url(#g-input)" filter="url(#sh)"/>
+  <text x="400" y="701" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">corrected</text>
+  <text x="400" y="718" text-anchor="middle" font-size="10" fill="#aabbcc">(B, 2, T)</text>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       FOOTER NOTE
+       ════════════════════════════════════════════════════════════════════════ -->
+  <text x="400" y="746" text-anchor="middle" font-size="9" font-style="italic" fill="#888888">
+    Fully differentiable — gradients flow through STFT gains back to the CNN weights.  ILD correction is symmetric: gain_l · gain_r = 1.
+  </text>
+</svg>
