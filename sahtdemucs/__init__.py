@@ -45,13 +45,13 @@ Quick start
     solver = Solver(model, optimizer, loss_fn=loss)
 """
 
-from .model       import HTDemucsWithSpatial
+from .model       import SAHTDemucs
 from .losses      import SpatialLoss, SISNRLoss
 from .spatial     import compute_ild, compute_ild_bands
 from .cue_module  import SpatialCueModule, SpatialCueModule2D, build_spatial_module
 
 __all__ = [
-    "HTDemucsWithSpatial",
+    "SAHTDemucs",
     "SpatialLoss",
     "SISNRLoss",
     "compute_ild",

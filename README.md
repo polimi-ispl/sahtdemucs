@@ -7,7 +7,10 @@
 
 - **ILD** — Interaural Level Difference (perceived left/right balance per frequency band)
 
-The frozen HT-Demucs backbone provides strong separation quality for free; only lightweight per-source **spatial correction heads** are trained, making the approach practical on a small spatially-annotated dataset. Samples are available [on our sample page](https://atzerbi.github.io/htdemucswspatial/).
+The frozen HT-Demucs backbone provides strong separation quality for free; 
+only lightweight per-source **spatial correction heads** are trained, making the approach 
+practical on a small spatially-annotated dataset. 
+Samples are available [on our sample page](https://polimi-ispl.github.io/sahtdemucs/).
 
 ---
 
@@ -15,18 +18,21 @@ The frozen HT-Demucs backbone provides strong separation quality for free; only 
 
 ![SAHTDemucs Architecture](docs/images/architecture.svg)
 
-`SA-HTDemucs` wraps a frozen, pre-trained HT-Demucs model and attaches one `SpatialCueModule` per source.  Only the spatial heads (~181 K parameters) are updated during training; the HTDemucs backbone (~80 M parameters) stays frozen.
+`SA-HTDemucs` wraps a frozen, pre-trained HT-Demucs model and attaches one `SpatialCueModule` per source.  
+Only the spatial heads (~700 K parameters) are updated during training; the HT-Demucs backbone (~80 M parameters) stays 
+frozen.
 
-| Component            | Parameters | Role |
-|----------------------|---|---|
-| HT-Demucs backbone   | ~80 M (frozen) | Music source separation |
-| SpatialCueModule × S | ~181 K (trainable) | Per-source ILD correction |
+| Component            | Parameters         | Role |
+|----------------------|--------------------|---|
+| HT-Demucs backbone   | ~80 M (frozen)     | Music source separation |
+| SpatialCueModule × S | ~700 K (trainable) | Per-source ILD correction |
 
 ---
 
 ## Spatial Cue Module
 
-The `SpatialCueModule` analyses the **per-sub-band, per-frame ILD** of each separated source and applies a learned frequency-resolved ILD correction so that each source preserves a meaningful stereo position.
+The `SpatialCueModule` analyses the **per-sub-band, per-frame ILD** of each separated source and applies a learned 
+frequency-resolved ILD correction so that each source preserves a meaningful stereo position.
 
 Two architectures are available, selectable via `spatial_arch`:
 
@@ -42,13 +48,14 @@ ILD map (B, n_bands, T_frames)
     → × ild_scale                                        dB
 ```
 
-![SpatialCueModule (cnn1d)](docs/images/spatial_cue_module_cnn.svg)
-
 Default parameters: `hidden=64`, `n_fft=2048`, `hop_length=512`, `n_bands=32`, `ild_scale=6.0`, `kernel_size=7`.
 
 ### `"cnn2d"` — Spectro-temporal CNN
 
-Conv2d layers jointly model frequency and time, capturing cross-band patterns (e.g. "apply a larger correction at low frequencies when high frequencies show a consistent ILD offset").  A **global context branch** (temporal mean per frequency band) captures DC ILD offsets, freeing the local branch to focus on fine spectro-temporal variations.  The output projection is zero-initialised so corrections start near zero at the beginning of training.
+Conv2d layers jointly model frequency and time, capturing cross-band patterns (e.g. "apply a larger correction at low 
+frequencies when high frequencies show a consistent ILD offset").  A **global context branch** (temporal mean per 
+frequency band) captures DC ILD offsets, freeing the local branch to focus on fine spectro-temporal variations. 
+The output projection is zero-initialised so corrections start near zero at the beginning of training.
 
 ```
 ILD map (B, n_bands, T_frames)
@@ -70,7 +77,8 @@ Fusion + projection:
 
 ![SpatialCueModule (cnn2d)](docs/images/spatial_cue_module_cnn2d.svg)
 
-Default parameters: `hidden=32`, `n_fft=2048`, `hop_length=512`, `n_bands=32`, `ild_scale=6.0`, `freq_kernel=3`, `time_kernel=7`.
+Default parameters: `hidden=32`, `n_fft=2048`, `hop_length=512`, `n_bands=32`, `ild_scale=6.0`, `freq_kernel=3`, 
+`time_kernel=7`.
 
 ### Gain application (shared by both architectures)
 
@@ -140,7 +148,7 @@ stems = model.separate(wav)   # (2, T) → (S, 2, T)
 ### Training the spatial heads
 
 ```python
-from htdemucswspatial.losses import SpatialLoss
+from sahtdemucs.losses import SpatialLoss
 
 loss_fn = SpatialLoss(lambda_si=0.0, lambda_ild=1.0)  # ILD supervision only
 
@@ -165,7 +173,8 @@ $$
 \right)
 $$
 
-where $\mathcal{L}_{\text{ILD}}^{(s)}$ is the MSE between corrected source time-frequency ILD and groundtruth one, defined as
+where $\mathcal{L}_{\text{ILD}}^{(s)}$ is the MSE between corrected source time-frequency ILD and groundtruth one, 
+defined as
 
 $$
 \mathcal{L}_{\text{ILD}}^{(s)} =
@@ -299,7 +308,8 @@ All functions are fully differentiable.
 
 ### `sahtdemucs/dataset.py` — MUSDB18-HQ DataLoader
 
-Reads mixture and source stems from a MUSDB18-HQ style directory tree. Returns random fixed-length segments with optional gain (±6 dB) and channel-flip augmentation.
+Reads mixture and source stems from a MUSDB18-HQ style directory tree. Returns random fixed-length segments with optional
+gain (±6 dB) and channel-flip augmentation.
 
 ```
 musdb18hq/
@@ -330,12 +340,5 @@ If you build on this work, please also cite the original Demucs papers:
   author    = {Rouard, Simon and Massa, Francisco and D{\'e}fossez, Alexandre},
   booktitle = {ICASSP 2023},
   year      = {2023}
-}
-
-@inproceedings{defossez2021hybrid,
-  title     = {Hybrid Spectrogram and Waveform Source Separation},
-  author    = {D{\'e}fossez, Alexandre},
-  booktitle = {ISMIR 2021 Workshop on Music Source Separation},
-  year      = {2021}
 }
 ```

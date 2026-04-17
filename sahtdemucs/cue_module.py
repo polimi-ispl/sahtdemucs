@@ -45,7 +45,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .spatial import _mel_bin_assignment, compute_ild_bands, compute_ild_bands_mel
+from .spatial import mel_bin_assignment, compute_ild_bands, compute_ild_bands_mel
 
 __all__ = ["SpatialCueModule", "SpatialCueModule2D", "build_spatial_module"]
 
@@ -111,7 +111,7 @@ class _BaseSpatialCueModule(nn.Module):
         if self.band_scale == "mel":
             # Each STFT bin gets the gain of its Mel band — consistent with
             # the Mel analysis performed in forward().
-            band_idx     = _mel_bin_assignment(
+            band_idx     = mel_bin_assignment(
                 self.n_fft, self.n_bands, self.sample_rate
             ).to(signal.device)                          # (F_bins,)
             gain_per_bin = gain_per_band[:, band_idx, :]  # (B, F_bins, T_frames)

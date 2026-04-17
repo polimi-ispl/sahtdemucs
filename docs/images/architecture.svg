@@ -21,9 +21,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
-     inkscape:zoom="1.9610428"
-     inkscape:cx="296.52591"
-     inkscape:cy="301.37027"
+     inkscape:zoom="0.9805214"
+     inkscape:cx="487.49573"
+     inkscape:cy="357.97281"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -32,6 +32,21 @@
      inkscape:current-layer="svg-htdspatial" />
   <defs
      id="defs19717">
+    <linearGradient
+       id="linearGradient2801"
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%">
+      <stop
+         offset="0%"
+         style="stop-color:#2d5f8c"
+         id="stop2797" />
+      <stop
+         offset="100%"
+         style="stop-color:#1a3d5e"
+         id="stop2799" />
+    </linearGradient>
     <!-- ── Arrow markers ──────────────────────────────────────────────────── -->
     <marker
        id="arr"
@@ -86,10 +101,12 @@
     <!-- ── Gradients ──────────────────────────────────────────────────────── -->
     <linearGradient
        id="g-input"
-       x1="0%"
-       y1="0%"
-       x2="0%"
-       y2="100%">
+       x1="10.061989"
+       y1="358.6893"
+       x2="10.061989"
+       y2="442.1382"
+       gradientTransform="matrix(1.3903255,0,0,0.71925602,362.05227,-201.93338)"
+       gradientUnits="userSpaceOnUse">
       <stop
          offset="0%"
          style="stop-color:#2c3e50"
@@ -104,7 +121,8 @@
        x1="0%"
        y1="0%"
        x2="0%"
-       y2="100%">
+       y2="100%"
+       xlink:href="#linearGradient2801">
       <stop
          offset="0%"
          style="stop-color:#2d5f8c"
@@ -147,15 +165,18 @@
     <!-- ── Drop shadow ────────────────────────────────────────────────────── -->
     <filter
        id="sh"
-       x="0"
-       y="0"
-       width="1"
-       height="1">
+       x="-9.1034482e-05"
+       y="-0.000176"
+       width="1.0001821"
+       height="1.000352">
       <feDropShadow
          dx="2"
          dy="2"
          stdDeviation="3"
          flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0044"
+         id="feGaussianBlur5601" />
     </filter>
     <marker
        id="arr-bypass-5"
@@ -217,16 +238,6 @@
          fill="#4d88aa"
          id="polygon19693-1-0-4" />
     </marker>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#g-output"
-       id="linearGradient1645"
-       x1="354.29139"
-       y1="212.81917"
-       x2="354.29139"
-       y2="294.6727"
-       gradientTransform="matrix(1.6370706,0,0,0.61084722,28.8,0)"
-       gradientUnits="userSpaceOnUse" />
     <marker
        id="arr-blue-2"
        markerWidth="10"
@@ -239,36 +250,6 @@
          fill="#2d5f8c"
          id="polygon19687-5" />
     </marker>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#g-output"
-       id="linearGradient5666"
-       x1="354.29139"
-       y1="376.52623"
-       x2="354.29139"
-       y2="458.37976"
-       gradientTransform="matrix(1.6370706,0,0,0.61084722,28.799988,0)"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#g-output"
-       id="linearGradient5788"
-       x1="354.29139"
-       y1="540.23328"
-       x2="354.29139"
-       y2="622.08681"
-       gradientTransform="matrix(1.6370706,0,0,0.61084722,28.799988,0)"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#g-output"
-       id="linearGradient5910"
-       x1="354.29139"
-       y1="703.94034"
-       x2="354.29139"
-       y2="785.79387"
-       gradientTransform="matrix(1.6370706,0,0,0.61084722,28.799988,0)"
-       gradientUnits="userSpaceOnUse" />
     <marker
        id="arr-orange-3"
        markerWidth="10"
@@ -307,9 +288,510 @@
        viewBox="0 0 10 7"
        preserveAspectRatio="xMidYMid">
       <polygon
-         points="0,7 0,0 10,3.5 "
+         points="10,3.5 0,7 0,0 "
          fill="#b84a00"
          id="polygon19690-9" />
+    </marker>
+    <filter
+       id="filter4005"
+       x="-0.00020581395"
+       y="-8.4688996e-05"
+       width="1.0004116"
+       height="1.0001694">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.01475"
+         id="feGaussianBlur4007" />
+    </filter>
+    <filter
+       id="filter4087"
+       x="-0.0031127907"
+       y="-0.0012808612"
+       width="1.0062256"
+       height="1.0025617">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.01475"
+         id="feGaussianBlur4089" />
+    </filter>
+    <filter
+       id="filter5335"
+       x="-8.2784811e-05"
+       y="-0.000218"
+       width="1.0001656"
+       height="1.000436">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.00545"
+         id="feGaussianBlur5337" />
+    </filter>
+    <filter
+       id="filter5417"
+       x="-0.00015873418"
+       y="-0.000418"
+       width="1.0003175"
+       height="1.000836">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.01045"
+         id="feGaussianBlur5419" />
+    </filter>
+    <filter
+       id="filter5421"
+       x="-0.00015873418"
+       y="-0.000418"
+       width="1.0003175"
+       height="1.000836">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.01045"
+         id="feGaussianBlur5423" />
+    </filter>
+    <filter
+       id="filter5425"
+       x="-0.00015873418"
+       y="-0.000418"
+       width="1.0003175"
+       height="1.000836">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.01045"
+         id="feGaussianBlur5427" />
+    </filter>
+    <filter
+       id="filter5507"
+       x="-0.00021671642"
+       y="-0.0005808"
+       width="1.0004334"
+       height="1.0011616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509" />
+    </filter>
+    <filter
+       id="filter5511"
+       x="-0.00021671642"
+       y="-0.0005808"
+       width="1.0004334"
+       height="1.0011616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5513" />
+    </filter>
+    <filter
+       id="filter5515"
+       x="-0.00021671642"
+       y="-0.0005808"
+       width="1.0004334"
+       height="1.0011616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5517" />
+    </filter>
+    <filter
+       id="filter5519"
+       x="-0.00021671642"
+       y="-0.0005808"
+       width="1.0004334"
+       height="1.0011616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5521" />
+    </filter>
+    <filter
+       id="filter5507-9"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2" />
+    </filter>
+    <filter
+       id="filter5507-9-6"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5" />
+    </filter>
+    <filter
+       id="filter5507-9-6-1"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5-1" />
+    </filter>
+    <filter
+       id="filter5507-9-6-1-5"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5-1-4" />
+    </filter>
+    <filter
+       id="filter5507-9-6-1-1"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5-1-9" />
+    </filter>
+    <marker
+       id="arr-7"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="10,3.5 0,7 0,0 "
+         fill="#444444"
+         id="polygon19684-3" />
+    </marker>
+    <marker
+       id="arr-7-2"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon19684-3-1" />
+    </marker>
+    <marker
+       id="arr-7-1"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon19684-3-3" />
+    </marker>
+    <marker
+       id="arr-7-11"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon19684-3-38" />
+    </marker>
+    <marker
+       id="arr-7-11-3"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,0 10,3.5 0,7 "
+         fill="#444444"
+         id="polygon19684-3-38-7" />
+    </marker>
+    <filter
+       id="filter5507-9-6-1-5-1"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5-1-4-1" />
+    </filter>
+    <filter
+       id="filter5507-9-6-1-5-1-5"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5-1-4-1-4" />
+    </filter>
+    <filter
+       id="filter5507-9-6-1-5-1-8"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5-1-4-1-8" />
+    </filter>
+    <filter
+       id="filter5507-9-6-1-5-1-9"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5-1-4-1-2" />
+    </filter>
+    <marker
+       id="arr-7-0"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon19684-3-8" />
+    </marker>
+    <marker
+       id="arr-7-9"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon19684-3-4" />
+    </marker>
+    <marker
+       id="arr-7-3"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon19684-3-5" />
+    </marker>
+    <marker
+       id="arr-7-91"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon19684-3-56" />
+    </marker>
+    <marker
+       id="arr-7-2-6"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,0 10,3.5 0,7 "
+         fill="#444444"
+         id="polygon19684-3-1-5" />
+    </marker>
+    <filter
+       id="filter5507-9-6-5"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5-6" />
+    </filter>
+    <filter
+       id="filter5507-9-6-1-59"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5-1-7" />
+    </filter>
+    <filter
+       id="filter5507-9-6-1-5-6"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5-1-4-9" />
+    </filter>
+    <marker
+       id="arr-7-1-3"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,0 10,3.5 0,7 "
+         fill="#444444"
+         id="polygon19684-3-3-6" />
+    </marker>
+    <filter
+       id="filter5507-9-6-1-1-8"
+       x="-0.0039480597"
+       y="-0.0105808"
+       width="1.0078961"
+       height="1.0211616">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0121"
+         id="feGaussianBlur5509-2-5-1-9-3" />
+    </filter>
+    <marker
+       id="arr-7-7"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,0 10,3.5 0,7 "
+         fill="#444444"
+         id="polygon19684-3-42" />
+    </marker>
+    <marker
+       id="arr-7-11-3-9"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="10,3.5 0,7 0,0 "
+         fill="#444444"
+         id="polygon19684-3-38-7-6" />
     </marker>
   </defs>
   <!-- ════════════════════════════════════════════════════════════════════════
@@ -320,33 +802,13 @@
      height="580"
      fill="#ffffff"
      id="rect19719"
-     x="-2.4221807"
+     x="-2.4221802"
      y="-0.25496638" />
-  <line
-     x1="546"
-     y1="455"
-     x2="607"
-     y2="455"
-     stroke="#2d5f8c"
-     stroke-width="1.8"
-     marker-end="url(#arr-blue-2)"
-     id="line19825-8-4"
-     style="stroke:#b84a00;stroke-opacity:1;marker-end:url(#arr-orange-4)" />
-  <line
-     x1="546"
-     y1="355"
-     x2="607"
-     y2="355"
-     stroke="#2d5f8c"
-     stroke-width="1.8"
-     marker-end="url(#arr-blue-2)"
-     id="line19825-8-3"
-     style="stroke:#b84a00;stroke-opacity:1;marker-end:url(#arr-orange-34)" />
   <!-- ════════════════════════════════════════════════════════════════════════
        TITLE
        ════════════════════════════════════════════════════════════════════════ -->
   <text
-     x="420"
+     x="447.43329"
      y="36"
      text-anchor="middle"
      font-size="16px"
@@ -356,34 +818,6 @@
   <!-- ════════════════════════════════════════════════════════════════════════
        LEGEND  (top-right)
        ════════════════════════════════════════════════════════════════════════ -->
-  <rect
-     x="706"
-     y="68"
-     width="14"
-     height="14"
-     rx="2"
-     fill="url(#g-frozen)"
-     id="rect19723" />
-  <text
-     x="726"
-     y="80"
-     font-size="10px"
-     fill="#333333"
-     id="text19725">HT-Demucs backbone (frozen)</text>
-  <rect
-     x="706"
-     y="90"
-     width="14"
-     height="14"
-     rx="2"
-     fill="url(#g-spatial)"
-     id="rect19727" />
-  <text
-     x="726"
-     y="102"
-     font-size="10"
-     fill="#333333"
-     id="text19729">SpatialCueModule (trainable)</text>
   <!-- frozen dashed indicator in legend -->
   <!-- ════════════════════════════════════════════════════════════════════════
        MIX BYPASS — drawn BEFORE blocks so rects overlay the bus inside them
@@ -400,30 +834,6 @@
   <!-- ════════════════════════════════════════════════════════════════════════
        INPUT BLOCK
        ════════════════════════════════════════════════════════════════════════ -->
-  <rect
-     x="14"
-     y="258"
-     width="116"
-     height="60"
-     rx="6"
-     fill="url(#g-input)"
-     filter="url(#sh)"
-     id="rect19745" />
-  <text
-     x="72"
-     y="283"
-     text-anchor="middle"
-     font-size="12px"
-     font-weight="bold"
-     fill="#ffffff"
-     id="text19747">Stereo mix</text>
-  <text
-     x="72"
-     y="300"
-     text-anchor="middle"
-     font-size="10"
-     fill="#aabbcc"
-     id="text19749">(B, 2, T)</text>
   <!-- ════════════════════════════════════════════════════════════════════════
        HTDEMUCS BLOCK  (frozen backbone)
        ════════════════════════════════════════════════════════════════════════ -->
@@ -436,403 +846,577 @@
      fill="url(#g-frozen)"
      filter="url(#sh)"
      id="rect19751"
-     style="stroke:none" />
+     style="fill:#b4c8e6;fill-opacity:1;stroke:#3365a4;stroke-opacity:1;filter:url(#filter4087)"
+     transform="matrix(0.00333848,0.52848315,-1.3997373,-9.8489596e-4,865.32223,87.995103)" />
   <!-- dashed border → "frozen" visual cue -->
   <!-- block label -->
   <text
-     x="240"
-     y="270"
+     x="447.20526"
+     y="208.21211"
      text-anchor="middle"
      font-size="14px"
      font-weight="bold"
      fill="#ffffff"
-     id="text19755">HT-Demucs</text>
+     id="text19755"
+     style="font-size:16px"><tspan
+       style="font-size:16px;fill:#000000;fill-opacity:1"
+       id="tspan5231">HT-Demucs Backbone</tspan></text>
   <text
-     x="240"
-     y="291"
+     x="447.56708"
+     y="229.21211"
      text-anchor="middle"
-     font-size="11"
+     font-size="11px"
      font-style="italic"
      fill="#aaccee"
-     id="text19757">(frozen)</text>
+     id="text19757"
+     style="font-size:14.6667px;fill:#3365a4;fill-opacity:1"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.6667px;font-family:'Segoe UI', Arial, sans-serif;-inkscape-font-specification:'Segoe UI, Arial, sans-serif';fill:#000000;fill-opacity:1"
+       id="tspan8397">(frozen)</tspan></text>
   <!-- source output ports on right side of HTDemucs -->
-  <circle
-     cx="326"
-     cy="355"
-     r="3.5"
-     fill="#88bbdd"
-     id="circle19763"
-     style="fill:#2d5f8c;fill-opacity:1" />
-  <circle
-     cx="326"
-     cy="255"
-     r="3.5"
-     fill="#88bbdd"
-     id="circle19763-4"
-     style="fill:#2d5f8c;fill-opacity:1" />
-  <circle
-     cx="326"
-     cy="155"
-     r="3.5"
-     fill="#88bbdd"
-     id="circle19763-4-9"
-     style="fill:#2d5f8c;fill-opacity:1" />
-  <circle
-     cx="326"
-     cy="455"
-     r="3.5"
-     fill="#88bbdd"
-     id="circle19763-0"
-     style="fill:#2d5f8c;fill-opacity:1" />
   <!-- source labels inside HTDemucs, right-aligned near ports -->
-  <text
-     x="321.94629"
-     y="151"
-     text-anchor="end"
-     font-size="9px"
-     fill="#ccddee"
-     id="text19767">drums</text>
-  <text
-     x="318"
-     y="251"
-     text-anchor="end"
-     font-size="9"
-     fill="#ccddee"
-     id="text19769">bass</text>
-  <text
-     x="319.86328"
-     y="351"
-     text-anchor="end"
-     font-size="9px"
-     fill="#ccddee"
-     id="text19771">other</text>
-  <text
-     x="321.73975"
-     y="451"
-     text-anchor="end"
-     font-size="9px"
-     fill="#ccddee"
-     id="text19773">vocals</text>
   <!-- ════════════════════════════════════════════════════════════════════════
        SPATIALCUEMODULE BLOCKS  (trainable, 1 per source)
        centre y: drums=155  bass=255  other=355  vocals=455
        ════════════════════════════════════════════════════════════════════════ -->
   <!-- drums -->
-  <rect
-     x="388"
-     y="125"
-     width="158"
-     height="60"
-     rx="6"
-     fill="url(#g-spatial)"
-     filter="url(#sh)"
-     id="rect19775" />
-  <text
-     x="467"
-     y="149"
-     text-anchor="middle"
-     font-size="9"
-     fill="#ffccaa"
-     id="text19777">SpatialCueModule</text>
-  <text
-     x="467"
-     y="167"
-     text-anchor="middle"
-     font-size="11"
-     font-weight="bold"
-     fill="#ffffff"
-     id="text19779">drums</text>
   <!-- bass -->
-  <rect
-     x="388"
-     y="225"
-     width="158"
-     height="60"
-     rx="6"
-     fill="url(#g-spatial)"
-     filter="url(#sh)"
-     id="rect19781" />
-  <text
-     x="467"
-     y="249"
-     text-anchor="middle"
-     font-size="9"
-     fill="#ffccaa"
-     id="text19783">SpatialCueModule</text>
-  <text
-     x="467"
-     y="267"
-     text-anchor="middle"
-     font-size="11"
-     font-weight="bold"
-     fill="#ffffff"
-     id="text19785">bass</text>
   <!-- other -->
-  <rect
-     x="388"
-     y="325"
-     width="158"
-     height="60"
-     rx="6"
-     fill="url(#g-spatial)"
-     filter="url(#sh)"
-     id="rect19787" />
-  <text
-     x="467"
-     y="349"
-     text-anchor="middle"
-     font-size="9"
-     fill="#ffccaa"
-     id="text19789">SpatialCueModule</text>
-  <text
-     x="467"
-     y="367"
-     text-anchor="middle"
-     font-size="11"
-     font-weight="bold"
-     fill="#ffffff"
-     id="text19791">other</text>
   <!-- vocals -->
-  <rect
-     x="388"
-     y="425"
-     width="158"
-     height="60"
-     rx="6"
-     fill="url(#g-spatial)"
-     filter="url(#sh)"
-     id="rect19793" />
-  <text
-     x="467"
-     y="449"
-     text-anchor="middle"
-     font-size="9"
-     fill="#ffccaa"
-     id="text19795">SpatialCueModule</text>
-  <text
-     x="467"
-     y="467"
-     text-anchor="middle"
-     font-size="11"
-     font-weight="bold"
-     fill="#ffffff"
-     id="text19797">vocals</text>
   <!-- ════════════════════════════════════════════════════════════════════════
        OUTPUT BLOCKS
        ════════════════════════════════════════════════════════════════════════ -->
   <!-- drums -->
   <rect
-     x="608.79999"
-     y="130"
+     x="380.57782"
+     y="65.768021"
      width="134"
      height="50"
      rx="6"
      fill="url(#g-output)"
      filter="url(#sh)"
-     id="rect19799"
-     style="fill:url(#linearGradient1645)" />
-  <text
-     x="675.7326"
-     y="151"
-     text-anchor="middle"
-     font-size="12px"
-     font-weight="bold"
-     fill="#ffffff"
-     id="text19801">drums</text>
-  <text
-     x="675.79022"
-     y="168"
-     text-anchor="middle"
-     font-size="10px"
-     fill="#aabbcc"
-     id="text19803">(B, 2, T)</text>
+     id="rect19799-6"
+     style="fill:#c8e6c8;fill-opacity:1;stroke:#4e994e;stroke-opacity:1;filter:url(#filter5507-9)" />
+  <rect
+     x="154.54765"
+     y="312.78268"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2"
+     style="fill:#c8e6c8;fill-opacity:1;stroke:#4e994e;stroke-opacity:1;filter:url(#filter5507-9-6)" />
+  <rect
+     x="305.25055"
+     y="312.78268"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2-1"
+     style="fill:#c8e6c8;fill-opacity:1;stroke:#4e994e;stroke-opacity:1;filter:url(#filter5507-9-6-1)" />
+  <rect
+     x="455.95346"
+     y="312.78268"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2-1-9"
+     style="fill:#c8e6c8;fill-opacity:1;stroke:#4e994e;stroke-opacity:1;filter:url(#filter5507-9-6-1-5)" />
+  <rect
+     x="154.54765"
+     y="415.61896"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2-1-9-4"
+     style="fill:#f0c8c8;fill-opacity:1;stroke:#c4504e;stroke-opacity:1;filter:url(#filter5507-9-6-1-5-1)" />
+  <line
+     x1="523.16229"
+     y1="260.48816"
+     x2="522.72443"
+     y2="309.41064"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7-1)"
+     id="line19823-2-0"
+     style="marker-end:url(#arr-7-1)" />
+  <rect
+     x="606.65637"
+     y="312.78268"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2-1-4"
+     style="fill:#c8e6c8;fill-opacity:1;stroke:#4e994e;stroke-opacity:1;filter:url(#filter5507-9-6-1-1)" />
   <!-- bass -->
-  <rect
-     x="608.79999"
-     y="230"
-     width="134"
-     height="50"
-     rx="6"
-     fill="url(#g-output)"
-     filter="url(#sh)"
-     id="rect19805"
-     style="fill:url(#linearGradient5666)" />
-  <text
-     x="675.55389"
-     y="251"
-     text-anchor="middle"
-     font-size="12px"
-     font-weight="bold"
-     fill="#ffffff"
-     id="text19807">bass</text>
-  <text
-     x="675.79022"
-     y="268"
-     text-anchor="middle"
-     font-size="10px"
-     fill="#aabbcc"
-     id="text19809">(B, 2, T)</text>
   <!-- other -->
-  <rect
-     x="608.79999"
-     y="330"
-     width="134"
-     height="50"
-     rx="6"
-     fill="url(#g-output)"
-     filter="url(#sh)"
-     id="rect19811"
-     style="fill:url(#linearGradient5788)" />
-  <text
-     x="675.63007"
-     y="351"
-     text-anchor="middle"
-     font-size="12px"
-     font-weight="bold"
-     fill="#ffffff"
-     id="text19813">other</text>
-  <text
-     x="675.79022"
-     y="368"
-     text-anchor="middle"
-     font-size="10px"
-     fill="#aabbcc"
-     id="text19815">(B, 2, T)</text>
   <!-- vocals -->
-  <rect
-     x="608.79999"
-     y="430"
-     width="134"
-     height="50"
-     rx="6"
-     fill="url(#g-output)"
-     filter="url(#sh)"
-     id="rect19817"
-     style="fill:url(#linearGradient5910)" />
-  <text
-     x="675.93182"
-     y="451"
-     text-anchor="middle"
-     font-size="12px"
-     font-weight="bold"
-     fill="#ffffff"
-     id="text19819">vocals</text>
-  <text
-     x="675.79022"
-     y="468"
-     text-anchor="middle"
-     font-size="10px"
-     fill="#aabbcc"
-     id="text19821">(B, 2, T)</text>
   <!-- ════════════════════════════════════════════════════════════════════════
        ARROWS
        ════════════════════════════════════════════════════════════════════════ -->
   <!-- Mix → HTDemucs -->
   <line
-     x1="130"
-     y1="288"
-     x2="153"
-     y2="288"
+     x1="447.81088"
+     y1="116.55232"
+     x2="447.37302"
+     y2="165.47479"
      stroke="#444444"
-     stroke-width="1.8"
+     stroke-width="2.84311"
      marker-end="url(#arr)"
      id="line19823" />
+  <line
+     x1="221.7565"
+     y1="260.48816"
+     x2="221.31863"
+     y2="309.41064"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7)"
+     id="line19823-2"
+     style="marker-end:url(#arr-7)" />
+  <line
+     x1="217.44022"
+     y1="363.32443"
+     x2="217.00235"
+     y2="412.24692"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7-0)"
+     id="line19823-2-6"
+     style="marker-end:url(#arr-7-0)" />
+  <line
+     x1="372.45941"
+     y1="363.32443"
+     x2="372.02155"
+     y2="412.24692"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7-9)"
+     id="line19823-2-5"
+     style="marker-end:url(#arr-7-9)" />
+  <line
+     x1="523.16229"
+     y1="363.32443"
+     x2="522.72443"
+     y2="412.24692"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7-3)"
+     id="line19823-2-7"
+     style="marker-end:url(#arr-7-3)" />
+  <line
+     x1="673.86523"
+     y1="363.32443"
+     x2="673.42737"
+     y2="412.24692"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7-91)"
+     id="line19823-2-2"
+     style="marker-end:url(#arr-7-91)" />
+  <line
+     x1="372.45941"
+     y1="260.48816"
+     x2="372.02155"
+     y2="309.41068"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7-2)"
+     id="line19823-2-1"
+     style="marker-end:url(#arr-7-2)" />
   <!-- HTDemucs → SpatialCueModule  (one arrow per source, blue solid) -->
-  <line
-     x1="326"
-     y1="155"
-     x2="387"
-     y2="155"
-     stroke="#2d5f8c"
-     stroke-width="1.8"
-     marker-end="url(#arr-blue)"
-     id="line19825" />
-  <line
-     x1="546"
-     y1="155"
-     x2="607"
-     y2="155"
-     stroke="#2d5f8c"
-     stroke-width="1.8"
-     marker-end="url(#arr-blue-2)"
-     id="line19825-8"
-     style="stroke:#b84a00;stroke-opacity:1;marker-end:url(#arr-orange)" />
-  <line
-     x1="546"
-     y1="255"
-     x2="607"
-     y2="255"
-     stroke="#2d5f8c"
-     stroke-width="1.8"
-     marker-end="url(#arr-blue-2)"
-     id="line19825-8-5"
-     style="stroke:#b84a00;stroke-opacity:1;marker-end:url(#arr-orange-3)" />
-  <line
-     x1="326"
-     y1="255"
-     x2="387"
-     y2="255"
-     stroke="#2d5f8c"
-     stroke-width="1.8"
-     marker-end="url(#arr-blue)"
-     id="line19827" />
-  <line
-     x1="326"
-     y1="355"
-     x2="387"
-     y2="355"
-     stroke="#2d5f8c"
-     stroke-width="1.8"
-     marker-end="url(#arr-blue)"
-     id="line19829" />
-  <line
-     x1="326"
-     y1="455"
-     x2="387"
-     y2="455"
-     stroke="#2d5f8c"
-     stroke-width="1.8"
-     marker-end="url(#arr-blue)"
-     id="line19831" />
   <!-- SpatialCueModule → Output  (orange solid) -->
   <!-- ════════════════════════════════════════════════════════════════════════
        ARROW LABELS
        ════════════════════════════════════════════════════════════════════════ -->
   <!-- "raw source" label above the HTDemucs→SCM arrows (first row only) -->
-  <text
-     x="357.52109"
-     y="133.21634"
-     text-anchor="middle"
-     font-size="8px"
-     fill="#2d5f8c"
-     id="text19841"><tspan
-       sodipodi:role="line"
-       id="tspan1348"
-       x="357.52109"
-       y="133.21634">separated</tspan><tspan
-       sodipodi:role="line"
-       id="tspan1350"
-       x="357.52109"
-       y="143.21634">source</tspan></text>
-  <text
-     x="577.53674"
-     y="133.21634"
-     text-anchor="middle"
-     font-size="8px"
-     fill="#2d5f8c"
-     id="text19841-5"><tspan
-       sodipodi:role="line"
-       id="tspan1348-6"
-       x="577.53674"
-       y="133.21634"
-       style="fill:#b84a00;fill-opacity:1">corrected</tspan><tspan
-       sodipodi:role="line"
-       id="tspan1350-8"
-       x="577.53674"
-       y="143.21634"
-       style="fill:#b84a00;fill-opacity:1">source</tspan></text>
   <!-- "mix ref." labels on bypass branches (first one only, others implied) -->
   <!-- ════════════════════════════════════════════════════════════════════════
        FOOTER NOTE
        ════════════════════════════════════════════════════════════════════════ -->
+  <text
+     x="447.33466"
+     y="87.863297"
+     text-anchor="middle"
+     font-size="12px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19747"
+     style="font-size:13.3333px;fill:#000000;fill-opacity:1">Stereo mix</text>
+  <text
+     x="447.56805"
+     y="103.65089"
+     text-anchor="middle"
+     font-size="10px"
+     fill="#aabbcc"
+     id="text19749"
+     style="font-size:12px"><tspan
+       style="font-size:12px;fill:#000000;fill-opacity:1"
+       id="tspan12485">(B, 2, T)</tspan></text>
+  <line
+     x1="673.86523"
+     y1="260.48816"
+     x2="673.42737"
+     y2="309.41068"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7-11-3)"
+     id="line19823-2-3"
+     style="marker-end:url(#arr-7-11-3)" />
+  <text
+     x="221.68111"
+     y="334.30289"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18002"
+       x="221.68111"
+       y="334.30289"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">Separated</tspan><tspan
+       sodipodi:role="line"
+       x="221.68111"
+       y="350.96951"
+       id="tspan18482"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">bass</tspan><tspan
+       sodipodi:role="line"
+       id="tspan18004"
+       x="221.68111"
+       y="367.63614"
+       style="font-size:13.3333px" /></text>
+  <text
+     x="372.384"
+     y="334.30289"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0-6"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18002-2"
+       x="372.384"
+       y="334.30289"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">Separated</tspan><tspan
+       sodipodi:role="line"
+       id="tspan18004-4"
+       x="372.384"
+       y="350.96951"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">drums</tspan></text>
+  <text
+     x="221.4272"
+     y="437.13916"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0-6-2"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18004-4-9"
+       x="221.4272"
+       y="437.13916"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">SpatialCueModule</tspan><tspan
+       sodipodi:role="line"
+       x="221.4272"
+       y="453.80579"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1"
+       id="tspan20676">bass</tspan></text>
+  <rect
+     x="305.25055"
+     y="415.61896"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2-1-9-4-3"
+     style="fill:#f0c8c8;fill-opacity:1;stroke:#c4504e;stroke-opacity:1;filter:url(#filter5507-9-6-1-5-1-5)" />
+  <text
+     x="372.1301"
+     y="437.13916"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0-6-2-4"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18004-4-9-4"
+       x="372.1301"
+       y="437.13916"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">SpatialCueModule</tspan><tspan
+       sodipodi:role="line"
+       x="372.1301"
+       y="453.80579"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1"
+       id="tspan20676-7">drums</tspan></text>
+  <text
+     x="523.08691"
+     y="334.30289"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0-6-7"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18004-4-6"
+       x="523.08691"
+       y="334.30289"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">Separated</tspan><tspan
+       sodipodi:role="line"
+       x="523.08691"
+       y="350.96951"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1"
+       id="tspan18964">vocals</tspan></text>
+  <text
+     x="673.78986"
+     y="334.30289"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0-6-7-6"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18004-4-6-5"
+       x="673.78986"
+       y="334.30289"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">Separated</tspan><tspan
+       sodipodi:role="line"
+       x="673.78986"
+       y="350.96951"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1"
+       id="tspan18964-4">other</tspan></text>
+  <rect
+     x="154.54765"
+     y="518.4552"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2-16"
+     style="fill:#c8e6c8;fill-opacity:1;stroke:#4e994e;stroke-opacity:1;filter:url(#filter5507-9-6-5)" />
+  <rect
+     x="305.25055"
+     y="518.4552"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2-1-48"
+     style="fill:#c8e6c8;fill-opacity:1;stroke:#4e994e;stroke-opacity:1;filter:url(#filter5507-9-6-1-59)" />
+  <rect
+     x="455.95346"
+     y="518.4552"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2-1-9-2"
+     style="fill:#c8e6c8;fill-opacity:1;stroke:#4e994e;stroke-opacity:1;filter:url(#filter5507-9-6-1-5-6)" />
+  <line
+     x1="523.16229"
+     y1="466.16071"
+     x2="522.72443"
+     y2="515.08319"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7-1-3)"
+     id="line19823-2-0-9"
+     style="marker-end:url(#arr-7-1-3)" />
+  <rect
+     x="606.65637"
+     y="518.4552"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2-1-4-2"
+     style="fill:#c8e6c8;fill-opacity:1;stroke:#4e994e;stroke-opacity:1;filter:url(#filter5507-9-6-1-1-8)" />
+  <line
+     x1="221.7565"
+     y1="466.16071"
+     x2="221.31863"
+     y2="515.08319"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7-7)"
+     id="line19823-2-56"
+     style="marker-end:url(#arr-7-7)" />
+  <line
+     x1="372.45941"
+     y1="466.16071"
+     x2="372.02155"
+     y2="515.08325"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7-2-6)"
+     id="line19823-2-1-9"
+     style="marker-end:url(#arr-7-2-6)" />
+  <line
+     x1="673.86523"
+     y1="466.16071"
+     x2="673.42737"
+     y2="515.08325"
+     stroke="#444444"
+     stroke-width="2.84311"
+     marker-end="url(#arr-7-11-3-9)"
+     id="line19823-2-3-1"
+     style="marker-end:url(#arr-7-11-3-9)" />
+  <text
+     x="221.68111"
+     y="539.9754"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0-3"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18002-5"
+       x="221.68111"
+       y="539.9754"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">Corrected</tspan><tspan
+       sodipodi:role="line"
+       x="221.68111"
+       y="556.64203"
+       id="tspan18482-0"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">bass</tspan><tspan
+       sodipodi:role="line"
+       id="tspan18004-7"
+       x="221.68111"
+       y="573.30865"
+       style="font-size:13.3333px" /></text>
+  <text
+     x="372.384"
+     y="539.9754"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0-6-4"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18002-2-2"
+       x="372.384"
+       y="539.9754"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">Corrected</tspan><tspan
+       sodipodi:role="line"
+       id="tspan18004-4-5"
+       x="372.384"
+       y="556.64203"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">drums</tspan></text>
+  <text
+     x="523.08691"
+     y="539.9754"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0-6-7-3"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18004-4-6-0"
+       x="523.08691"
+       y="539.9754"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">Corrected</tspan><tspan
+       sodipodi:role="line"
+       x="523.08691"
+       y="556.64203"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1"
+       id="tspan18964-9">vocals</tspan></text>
+  <text
+     x="673.78986"
+     y="539.9754"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0-6-7-6-4"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18004-4-6-5-9"
+       x="673.78986"
+       y="539.9754"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">Corrected</tspan><tspan
+       sodipodi:role="line"
+       x="673.78986"
+       y="556.64203"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1"
+       id="tspan18964-4-7">other</tspan></text>
+  <rect
+     x="455.95346"
+     y="415.61896"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2-1-9-4-0"
+     style="fill:#f0c8c8;fill-opacity:1;stroke:#c4504e;stroke-opacity:1;filter:url(#filter5507-9-6-1-5-1-8)" />
+  <text
+     x="522.83301"
+     y="437.13916"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0-6-2-3"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18004-4-9-5"
+       x="522.83301"
+       y="437.13916"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">SpatialCueModule</tspan><tspan
+       sodipodi:role="line"
+       x="522.83301"
+       y="453.80579"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1"
+       id="tspan20676-6">vocals</tspan></text>
+  <rect
+     x="606.65637"
+     y="415.61896"
+     width="134"
+     height="50"
+     rx="6"
+     fill="url(#g-output)"
+     filter="url(#sh)"
+     id="rect19799-6-2-1-9-4-7"
+     style="fill:#f0c8c8;fill-opacity:1;stroke:#c4504e;stroke-opacity:1;filter:url(#filter5507-9-6-1-5-1-9)" />
+  <text
+     x="673.53595"
+     y="437.13916"
+     text-anchor="middle"
+     font-size="11px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text19779-0-6-2-0"
+     style="font-size:13.3333px"><tspan
+       sodipodi:role="line"
+       id="tspan18004-4-9-8"
+       x="673.53595"
+       y="437.13916"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1">SpatialCueModule</tspan><tspan
+       sodipodi:role="line"
+       x="673.53595"
+       y="453.80579"
+       style="font-size:13.3333px;fill:#000000;fill-opacity:1"
+       id="tspan20676-2">other</tspan></text>
 </svg>

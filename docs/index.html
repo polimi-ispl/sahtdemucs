@@ -3,22 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HTDemucsWithSpatial — Audio Demo</title>
+  <title>Preserving Spatial Cues in Music Source Separation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto+Mono:wght@400;500&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+  <div class="topbar">
+    <img src="images/ispl_logo.png" alt="Image and Sound Processing Lab" class="topbar-logo" />
+    <h1 class="topbar-title">Preserving Spatial Cues in Music Source Separation</h1>
+  </div>
+
   <!-- ─── HEADER ─── -->
   <header>
     <div class="header-inner">
       <!--div class="venue-badge">ICASSP 2025 · Submission</div>-->
-      <h1>Preserving Spatial Cues in Music Source Separation</h1>
+      <!--<h1>Preserving Spatial Cues in Music Source Separation</h1>-->
       <p class="subtitle">
-        Here we show the results achieved by <b>SA-HTDemucs</b>. We extend Hybrid Transformer Demucs with lightweight per-source <b>SpatialCueModules</b>
-        that explicitly supervise Interaural Level Differences (ILD), preventing the phantom-centre collapse that standard mono-trained separators produce. 
-        Each separated stem retains a perceptually meaningful stereo position without sacrificing separation quality.
+        Music Source Separation (MSS) models based on Deep Neural Networks have reached state-of-the-art performance in
+        splitting stereo mixtures into separate sources. However, little attention has been paid to how well these models
+        preserve the spatial properties of each separated source. Motivated by applications in virtual/augmented reality
+        and accessibility, we propose Spatially-Aware HT-Demucs (<b>SA-HTDemucs</b>), a novel CNN that extends HT-Demucs with a
+        per-source <b>SpatialCueModules</b>, which corrects the per-source Interaural Level Difference (ILD) in the time-frequency
+        domain to preserve the azimuth panning of each estimated source. The model is trained and evaluated on
+        binauralMUSDB18-HQ, a novel binaural dataset synthesized by convolving each source stem in MUSDB18-HQ with
+        open-source Head-Related Transfer Functions (HRTFs) at randomized horizontal positions. We present experiments
+        results, comparing the proposed method with the baseline.
       </p>
       <!--<p class="subtitle">
         We extend <a href="https://github.com/facebookresearch/demucs" target="_blank">Hybrid Transformer Demucs</a> 
@@ -61,10 +72,25 @@
   </section>-->
 
   <!-- ─── METHOD DIAGRAM ─── -->
-  <!--<section class="method-section">
+  <section class="method-section">
     <div class="container">
-      <h2 class="section-label">Method Overview</h2>
-      <div class="method-grid">
+      <h2 class="section-label">Method</h2>
+      <p class="method-text">
+        SA-HTDemucs wraps a frozen, pre-trained HT-Demucs model and attaches one SpatialCueModule per source
+        (<em>bass</em>, <em>drums</em>, <em>vocals</em>, <em>other</em>). Only the spatial heads (~700 K parameters)
+        are updated during training, while the HT-Demucs backbone (~80 M parameters) stays frozen.
+      </p>
+      <div class="method-image small-image">
+        <img src="images/architecture.png" alt="Spatial Cue Module diagram" />
+      </div>
+      <p class="method-text">
+        Each SpatialCueModule analyses the per-sub-band, per-frame ILD of the separated source and applies a learned
+        frequency-resolved ILD correction so that the source preserves a meaningful stereo position.
+      </p>
+      <div class="method-image">
+        <img src="images/spatial_cue_module_cnn2d.png" alt="Spatial Cue Module diagram" />
+      </div>
+      <!--<div class="method-grid">
         <div class="method-card">
           <div class="method-icon">🎛️</div>
           <h3>Frozen HTDemucs Backbone</h3>
@@ -86,16 +112,17 @@
       <p class="method-note">
         Training objective: ILD-MSE loss only (λ<sub>SI</sub>=0, λ<sub>ILD</sub>=1).
         Only 181K parameters are updated; the backbone remains frozen.
-      </p>
+      </p>-->
     </div>
-  </section>-->
+  </section>
 
   <!-- ─── LEGEND ─── -->
   <section class="demo-section">
     <div class="container">
-      <h2 class="section-label">Audio Samples</h2>
+      <h2 class="section-label">Listening tests</h2>
       <p class="demo-intro">
-      For each track we show the four separated stems. Each row has three players:
+        Here below we report some audio examples taken from binauralMUSDB18-HQ test set. For each track we show the four
+        separated sources, on per row. Each source has three players, one per column:
       </p>
       <ul class="demo-intro">
         <li><em>Reference</em> — ground-truth stem from MUSDB18-HQ</li>

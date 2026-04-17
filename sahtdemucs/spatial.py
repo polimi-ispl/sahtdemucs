@@ -19,8 +19,7 @@ The human auditory system localises sound using two main binaural cues:
         samples (or seconds).  Dominant at low frequencies (< ~1.5 kHz).
         A positive ITD means the left channel leads (source to the left).
 
-Both cues are estimated here from the waveform directly, without any
-time-frequency transformation, so gradients flow through naturally.
+Both cues are estimated here.
 """
 
 import functools
@@ -32,12 +31,9 @@ import torch.nn.functional as F
 __all__ = [
     "compute_ild",
     "compute_ild_bands",
+    "mel_bin_assignment",
     "compute_ild_bands_mel",
-    # ITD disabled — re-enable when reintroducing ITD correction:
-    # "compute_itd_samples",
-    # "apply_itd",
 ]
-
 
 # ──────────────────────────────────────────────────────────────────────────────
 # ILD — broadband scalar
@@ -65,7 +61,6 @@ def compute_ild(
     rms_l = left.pow(2).mean(dim=-1).clamp(min=eps).sqrt()
     rms_r = right.pow(2).mean(dim=-1).clamp(min=eps).sqrt()
     return 20.0 * torch.log10(rms_l / rms_r + eps)
-
 
 # ──────────────────────────────────────────────────────────────────────────────
 # ILD — frequency-resolved, per sub-band via STFT
@@ -136,7 +131,7 @@ def compute_ild_bands(
 # ──────────────────────────────────────────────────────────────────────────────
 
 @functools.lru_cache(maxsize=16)
-def _mel_bin_assignment(n_fft: int, n_bands: int, sample_rate: int) -> torch.Tensor:
+def mel_bin_assignment(n_fft: int, n_bands: int, sample_rate: int) -> torch.Tensor:
     """Map each STFT bin to a Mel-scale band index in ``[0, n_bands)``.
 
     The Mel axis from 0 Hz to Nyquist is divided into *n_bands* equal-width
@@ -200,9 +195,9 @@ def compute_ild_bands_mel(
         eps:         numerical stability constant
 
     Returns:
-        ild_bands: ``(B, n_bands, T_frames)`` — ILD in dB per Mel band and
-                   STFT frame.  Band 0 is the lowest-frequency band.
-                   Positive values indicate the left channel is louder.
+        ild_bands:  ``(B, n_bands, T_frames)`` — ILD in dB per Mel band and
+                    STFT frame.  Band 0 is the lowest-frequency band.
+                    Positive values indicate the left channel is louder.
     """
     window = torch.hann_window(n_fft, device=left.device)
 
@@ -213,7 +208,7 @@ def compute_ild_bands_mel(
 
     # ── Build rectangular Mel filterbank on the right device ─────────────────
     # band_idx[f] = Mel band that STFT bin f belongs to
-    band_idx = _mel_bin_assignment(n_fft, n_bands, sample_rate).to(left.device)
+    band_idx = mel_bin_assignment(n_fft, n_bands, sample_rate).to(left.device)
 
     # One-hot encode bin → band membership, then normalise rows to mean power
     oh = torch.zeros(F_bins, n_bands, dtype=left.dtype, device=left.device)
@@ -256,13 +251,13 @@ def compute_itd_samples(
         gradients can flow back through the ITD loss term.
 
     Args:
-        left:    ``(B, T)``
-        right:   ``(B, T)``
-        max_lag: maximum lag in samples to search over (search range:
-                 [−max_lag, +max_lag])
+        left:       ``(B, T)``
+        right:      ``(B, T)``
+        max_lag:    maximum lag in samples to search over (search range:
+                    [−max_lag, +max_lag])
 
     Returns:
-        itd: ``(B,)`` in samples (float, differentiable)
+        itd:        ``(B,)`` in samples (float, differentiable)
     """
     B, T = left.shape
     beta = 10.0
@@ -330,9 +325,9 @@ def apply_itd(
     time domain).
 
     Args:
-        signal:        `(B, T)`
-        delay_samples: `(B,)` delay in samples (may be fractional and
-                       differentiable)
+        signal:         `(B, T)`
+        delay_samples:  `(B,)` delay in samples (may be fractional and
+                        differentiable)
 
     Returns:
         shifted:        `(B, T)` — signal delayed by *delay_samples*

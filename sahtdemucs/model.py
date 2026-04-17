@@ -1,25 +1,25 @@
 """
 model.py — Plug-and-play wrapper that adds spatial cue correction to a
-pre-trained HTDemucs model from the official ``demucs`` package.
+pre-trained HT-Demucs model from the official ``demucs`` package.
 
 Motivation
 ----------
 HTDemucs is a strong music source separator but does not explicitly model
 spatial cues: its L and R channel estimates may not preserve the ILD and ITD
-of the original mix.  SAHTDemucs freezes the HTDemucs weights and
-attaches a lightweight :class:`~htdemucswspatial.cue_module.SpatialCueModule` after
+of the original mix.  SA-HTDemucs freezes the HT-Demucs weights and
+attaches a lightweight :class:`~sahtdemucs.cue_module.SpatialCueModule` after
 each source output, so only the small spatial heads need to be trained.
 
 Each SpatialCueModule learns a per-source correction function f(ild_src) → Δ_ild
-trained directly with ILD MSE loss, without a teacher-student setup.
+trained directly with ILD MSE loss.
 
 Usage
 -----
 ::
 
     from demucs.pretrained import get_model
-    from htdemucswspatial.model import SAHTDemucs
-    from htdemucswspatial.losses import SpatialLoss
+    from sahtdemucs.model import SAHTDemucs
+    from sahtdemucs.losses import SpatialLoss
     import torch
 
     base  = get_model("htdemucs")
@@ -50,7 +50,7 @@ __all__ = ["SAHTDemucs"]
 
 
 class SAHTDemucs(nn.Module):
-    """Attach :class:`~htdemucswspatial.cue_module.SpatialCueModule` instances 
+    """Attach :class:`~sahtdemucs.cue_module.SpatialCueModule` instances
     to a frozen, pre-trained HTDemucs model.
 
     The base model weights are frozen by default so that only the lightweight
@@ -65,7 +65,7 @@ class SAHTDemucs(nn.Module):
                        (default, temporal Conv1d) or ``"cnn2d"``
                        (spectro-temporal Conv2d — jointly models frequency
                        and time).  The string is forwarded to
-                       :func:`~msslnet.cue_module.build_spatial_module`.
+                       :func:`~sahtdemucs.cue_module.build_spatial_module`.
         hidden:        hidden channel width of the correction CNN (default 64
                        for ``"cnn1d"``, 32 for ``"cnn2d"``)
         n_fft:         STFT FFT size for sub-band ILD (default 2048)
@@ -75,7 +75,7 @@ class SAHTDemucs(nn.Module):
                        equal-width linear bands) or ``"mel"`` (Mel-scale
                        bands, improves ILD preservation at low frequencies)
         sample_rate:   audio sample rate in Hz, used only when
-                       ``band_scale="mel"`` (default 44100, matches HTDemucs)
+                       ``band_scale="mel"`` (default 44100, matches HT-Demucs)
         freeze_base:   if ``True`` (default), freeze all parameters of *base_model*
 
     Inputs:
@@ -137,7 +137,7 @@ class SAHTDemucs(nn.Module):
 
         This allows demucs utilities such as ``apply_model`` to access
         model metadata (``samplerate``, ``audio_channels``, ``segment``, …)
-        transparently, as if they were querying the original HTDemucs model.
+        transparently, as if they were querying the original HT-Demucs model.
         """
         # nn.Module stores its own attributes in __dict__ and _modules;
         # only fall through to base_model if the attribute truly doesn't exist
@@ -176,7 +176,7 @@ class SAHTDemucs(nn.Module):
         """Run HTDemucs separation, then apply per-source ILD correction.
 
         The base model always runs under ``torch.no_grad()`` (frozen).
-        Each :class:`~msslnet.cue_module.SpatialCueModule` receives the
+        Each :class:`~sahtdemucs.cue_module.SpatialCueModule` receives the
         corresponding raw estimate and predicts a Δ_ILD correction from its
         own estimated ILD alone.
 
@@ -218,7 +218,7 @@ class SAHTDemucs(nn.Module):
         boundaries are smoothed with overlap-add (unlike the naive manual
         chunking in ``separate_full_track``).  The spatial correction heads
         are then applied once on the **full-length** separated signal, giving
-        more stable ILD/ITD estimates than per-chunk correction would.
+        more stable ILD estimates than per-chunk correction would.
 
         Args:
             wav:      ``(2, T)`` stereo waveform, already on the correct device.
@@ -235,7 +235,7 @@ class SAHTDemucs(nn.Module):
         # ── Step 1: backbone separation via overlap-add ───────────────────
         # apply_model expects (batch, channels, time) and returns the same
         # shape with an extra source dimension: (batch, sources, channels, time).
-        # We call it on self.base_model (HTDemucs), not on self, because our
+        # We call it on self.base_model (HT-Demucs), not on self, because our
         # forward() returns a tuple that apply_model cannot handle.
         raw = apply_model(
             self.base_model,

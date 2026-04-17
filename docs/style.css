@@ -55,6 +55,31 @@ a:hover { text-decoration: underline; }
 /* ── Container ── */
 .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
 
+/* ── Topbar ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  padding: 14px 48px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.topbar-logo {
+  height: 60px;
+  width: auto;
+}
+
+.topbar-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 35px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+}
+
 /* ── Header ── */
 header {
   padding: 72px 0 56px;
@@ -160,12 +185,34 @@ h1 {
 /* ── Method ── */
 .method-section { padding: 0 0 60px; }
 
+.method-text {
+  color: var(--text-muted);
+  font-size: 14px;
+  /*max-width: 680px;*/
+  margin-bottom: 24px;
+  line-height: 1.7;
+}
+.method-text em { color: var(--text); font-style: italic; }
+
 .method-grid {
   display: flex;
   align-items: center;
   gap: 0;
   margin-bottom: 20px;
   overflow-x: auto;
+}
+.method-image {
+  margin-top: 36px;
+  text-align: center;
+}
+.method-image img {
+  max-width: 100%;
+  width: 860px;
+  height: auto;
+}
+.small-image img {
+  width: 60%;
+  height: auto;
 }
 .method-card {
   flex: 1;

@@ -1,259 +1,1899 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 900 990"
-     font-family="'Segoe UI', Arial, sans-serif"
-     version="1.1"
-     xmlns="http://www.w3.org/2000/svg">
-  <defs>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 900 990"
+   font-family="'Segoe UI', Arial, sans-serif"
+   version="1.1"
+   id="svg231"
+   sodipodi:docname="spatial_cue_module_cnn2d_hor.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   inkscape:export-filename="spatial_cue_module_cnn2d_hor.png"
+   inkscape:export-xdpi="225.92609"
+   inkscape:export-ydpi="225.92609"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview233"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.59211265"
+     inkscape:cx="711.01335"
+     inkscape:cy="52.354903"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg231" />
+  <defs
+     id="defs35">
+    <inkscape:path-effect
+       effect="powerstroke"
+       id="path-effect26951"
+       is_visible="true"
+       lpeversion="1"
+       offset_points="0.41723293,8.9565742"
+       not_jump="true"
+       sort_points="true"
+       interpolator_type="CentripetalCatmullRom"
+       interpolator_beta="0.75"
+       start_linecap_type="round"
+       linejoin_type="spiro"
+       miter_limit="4"
+       scale_width="1"
+       end_linecap_type="round" />
+    <inkscape:path-effect
+       effect="simplify"
+       id="path-effect26949"
+       is_visible="true"
+       lpeversion="1"
+       steps="1"
+       threshold="0.0047745358"
+       smooth_angles="0"
+       helper_size="0"
+       simplify_individual_paths="false"
+       simplify_just_coalesce="false"
+       step="1" />
+    <linearGradient
+       id="linearGradient13154"
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%">
+      <stop
+         offset="0"
+         style="stop-color:#f0c800;stop-opacity:1;"
+         id="stop13150" />
+      <stop
+         offset="100%"
+         style="stop-color:#8a3700"
+         id="stop13152" />
+    </linearGradient>
     <!-- ── Arrow markers ──────────────────────────────────────────────────── -->
-    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0,0 10,3.5 0,7" fill="#444444"/>
+    <marker
+       id="arr"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,0 10,3.5 0,7 "
+         fill="#444444"
+         id="polygon2" />
     </marker>
-    <marker id="arr-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0,0 10,3.5 0,7" fill="#2d5f8c"/>
+    <marker
+       id="arr-blue"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,0 10,3.5 0,7 "
+         fill="#2d5f8c"
+         id="polygon5" />
     </marker>
-    <marker id="arr-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0,0 10,3.5 0,7" fill="#b84a00"/>
+    <marker
+       id="arr-orange"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,0 10,3.5 0,7"
+         fill="#b84a00"
+         id="polygon8" />
     </marker>
-    <marker id="arr-white" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0,0 10,3.5 0,7" fill="#ffffffb0"/>
+    <marker
+       id="arr-white"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="10,3.5 0,7 0,0 "
+         fill="#ffffffb0"
+         id="polygon11" />
     </marker>
     <!-- ── Gradients ──────────────────────────────────────────────────────── -->
-    <linearGradient id="g-input" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#2c3e50"/>
-      <stop offset="100%" style="stop-color:#1a252f"/>
+    <linearGradient
+       id="g-input"
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%">
+      <stop
+         offset="0%"
+         style="stop-color:#2c3e50"
+         id="stop14" />
+      <stop
+         offset="100%"
+         style="stop-color:#1a252f"
+         id="stop16" />
     </linearGradient>
-    <linearGradient id="g-blue" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#2d5f8c"/>
-      <stop offset="100%" style="stop-color:#1a3d5e"/>
+    <linearGradient
+       id="g-blue"
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%">
+      <stop
+         offset="0%"
+         style="stop-color:#2d5f8c"
+         id="stop19" />
+      <stop
+         offset="100%"
+         style="stop-color:#1a3d5e"
+         id="stop21" />
     </linearGradient>
-    <linearGradient id="g-orange" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#b84a00"/>
-      <stop offset="100%" style="stop-color:#8a3700"/>
+    <linearGradient
+       id="g-orange"
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%">
+      <stop
+         offset="0%"
+         style="stop-color:#b84a00"
+         id="stop24" />
+      <stop
+         offset="100%"
+         style="stop-color:#8a3700"
+         id="stop26" />
     </linearGradient>
-    <linearGradient id="g-op" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#3a3a4e"/>
-      <stop offset="100%" style="stop-color:#26263a"/>
+    <linearGradient
+       id="g-op"
+       x1="0%"
+       y1="0%"
+       x2="0%"
+       y2="100%">
+      <stop
+         offset="0%"
+         style="stop-color:#3a3a4e"
+         id="stop29" />
+      <stop
+         offset="100%"
+         style="stop-color:#26263a"
+         id="stop31" />
     </linearGradient>
     <!-- ── Drop shadow ────────────────────────────────────────────────────── -->
-    <filter id="sh">
-      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#00000030"/>
+    <filter
+       id="sh"
+       x="-0.00057271707"
+       y="-0.0022908683"
+       width="1.0011454"
+       height="1.0045817">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.047726421"
+         id="feGaussianBlur1484" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1112"
+       x="-0.00068155555"
+       y="-0.00061959596"
+       width="1.0013631"
+       height="1.0012392">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1114" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1116"
+       x="-0.00033533243"
+       y="-0.0073050829"
+       width="1.0006707"
+       height="1.0146102">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1118" />
+    </filter>
+    <filter
+       id="filter1144"
+       x="-0.00056699999"
+       y="-0.0022679999"
+       width="1.001134"
+       height="1.004536">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.04725"
+         id="feGaussianBlur1146" />
+    </filter>
+    <filter
+       id="filter1164"
+       x="-0.00029076922"
+       y="-0.001575"
+       width="1.0005815"
+       height="1.00315">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.04725"
+         id="feGaussianBlur1166" />
+    </filter>
+    <filter
+       id="filter1196"
+       x="-7.8204425e-06"
+       y="-1.6666517e-05"
+       width="1.0000156"
+       height="1.0000333">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur1198" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1200"
+       x="-0.00029824438"
+       y="-0.010625575"
+       width="1.0005965"
+       height="1.0212512">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1202" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1204"
+       x="-inf"
+       y="-0.00034892307"
+       width="inf"
+       height="1.0006978">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1206" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1216"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1218" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1228"
+       x="-0.0094499998"
+       y="-inf"
+       width="1.0189"
+       height="inf">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1230" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1236"
+       x="-0.00062651932"
+       y="-inf"
+       width="1.0089878"
+       height="inf">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1238" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1248"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1250" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1264"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1266" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1308"
+       x="-inf"
+       y="-0.0080999998"
+       width="inf"
+       height="1.1162">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1310" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1336"
+       x="-0.00065172412"
+       y="-inf"
+       width="1.0093494"
+       height="inf">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1338" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1340"
+       x="-0.0082699452"
+       y="-inf"
+       width="1.0088896"
+       height="inf">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1342" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1344"
+       x="-0.023780001"
+       y="-0.023780001"
+       width="1.04756"
+       height="1.04756">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1346" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1348"
+       x="-0.014477197"
+       y="-0.014465475"
+       width="1.0289544"
+       height="1.0289309">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1350" />
+    </filter>
+    <filter
+       id="filter1380"
+       x="-0.00049304347"
+       y="-0.0029842105"
+       width="1.0009861"
+       height="1.0059684">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.04725"
+         id="feGaussianBlur1382" />
+    </filter>
+    <filter
+       id="filter1396"
+       x="-0.00094499998"
+       y="-0.0035437499"
+       width="1.00189"
+       height="1.0070875">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.04725"
+         id="feGaussianBlur1398" />
+    </filter>
+    <filter
+       id="filter1428"
+       x="-0.00043615384"
+       y="-0.0018290322"
+       width="1.0008723"
+       height="1.0036581">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.04725"
+         id="feGaussianBlur1430" />
+    </filter>
+    <filter
+       id="filter1444"
+       x="-0.00043615384"
+       y="-0.0018290322"
+       width="1.0008723"
+       height="1.0036581">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.04725"
+         id="feGaussianBlur1446" />
+    </filter>
+    <filter
+       id="filter13302"
+       x="-7.8204425e-06"
+       y="-1.6666517e-05"
+       width="1.0000156"
+       height="1.0000333">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13300" />
+    </filter>
+    <filter
+       id="filter13378"
+       x="-7.8204425e-06"
+       y="-1.6666517e-05"
+       width="1.0000156"
+       height="1.0000333">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13376" />
+    </filter>
+    <filter
+       id="filter13430"
+       x="-7.8204425e-06"
+       y="-1.6666517e-05"
+       width="1.0000156"
+       height="1.0000333">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13428" />
+    </filter>
+    <filter
+       id="filter13482"
+       x="-7.8204425e-06"
+       y="-1.6666517e-05"
+       width="1.0000156"
+       height="1.0000333">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13480" />
+    </filter>
+    <filter
+       id="filter13534"
+       x="-7.8204425e-06"
+       y="-1.6666517e-05"
+       width="1.0000156"
+       height="1.0000333">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13532" />
+    </filter>
+    <filter
+       id="filter13586"
+       x="-7.8204425e-06"
+       y="-1.6666517e-05"
+       width="1.0000156"
+       height="1.0000333">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13584" />
+    </filter>
+    <filter
+       id="filter13638"
+       x="-7.8204425e-06"
+       y="-1.6666517e-05"
+       width="1.0000156"
+       height="1.0000333">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13636" />
+    </filter>
+    <filter
+       id="filter13690"
+       x="-7.8204425e-06"
+       y="-1.6666517e-05"
+       width="1.0000156"
+       height="1.0000333">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13688" />
+    </filter>
+    <filter
+       id="filter13742"
+       x="-7.8204425e-06"
+       y="-1.6666517e-05"
+       width="1.0000156"
+       height="1.0000333">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13740" />
+    </filter>
+    <filter
+       id="filter13794"
+       x="-7.8204425e-06"
+       y="-1.6666517e-05"
+       width="1.0000156"
+       height="1.0000333">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13792" />
+    </filter>
+    <filter
+       id="filter13846"
+       x="-0.00064884608"
+       y="-0.0013827867"
+       width="1.0012977"
+       height="1.0027656">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13844" />
+    </filter>
+    <marker
+       id="arr-3"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="10,3.5 0,7 0,0 "
+         fill="#444444"
+         id="polygon2-5" />
+    </marker>
+    <marker
+       id="arr-3-4"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,0 10,3.5 0,7 "
+         fill="#444444"
+         id="polygon2-5-6" />
+    </marker>
+    <marker
+       id="arr-3-4-3"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="10,3.5 0,7 0,0 "
+         fill="#444444"
+         id="polygon2-5-6-2" />
+    </marker>
+    <marker
+       id="arr-3-4-3-8"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon2-5-6-2-6" />
+    </marker>
+    <marker
+       id="arr-3-4-3-6"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon2-5-6-2-8" />
+    </marker>
+    <marker
+       id="arr-3-4-3-8-7"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon2-5-6-2-6-8" />
+    </marker>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1248-0"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1250-1" />
+    </filter>
+    <marker
+       id="arr-3-4-3-8-74"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="10,3.5 0,7 0,0 "
+         fill="#444444"
+         id="polygon2-5-6-2-6-7" />
+    </marker>
+    <filter
+       id="filter1164-2"
+       x="-0.0015918343"
+       y="-0.0086224358"
+       width="1.0031837"
+       height="1.0172449">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.050339739"
+         id="feGaussianBlur1166-1" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1216-6"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1218-3" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1216-6-1"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1218-3-5" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1216-6-0"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1218-3-6" />
+    </filter>
+    <marker
+       id="arr-3-4-4"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="10,3.5 0,7 0,0 "
+         fill="#444444"
+         id="polygon2-5-6-6" />
+    </marker>
+    <marker
+       id="arr-3-4-4-4"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon2-5-6-6-4" />
+    </marker>
+    <marker
+       id="arr-3-4-4-4-8"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,0 10,3.5 0,7 "
+         fill="#444444"
+         id="polygon2-5-6-6-4-2" />
+    </marker>
+    <marker
+       id="arr-3-4-4-4-8-3"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="10,3.5 0,7 0,0 "
+         fill="#444444"
+         id="polygon2-5-6-6-4-2-8" />
+    </marker>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1188-5"
+       x="-0.0023594038"
+       y="-0.012986814"
+       width="1.0047188"
+       height="1.0259736">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1190-6" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1216-6-1-0"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1218-3-5-6" />
+    </filter>
+    <marker
+       id="arr-3-4-4-4-8-3-8"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon2-5-6-6-4-2-8-6" />
+    </marker>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1200-8"
+       x="-0.00094403198"
+       y="-0.0097401105"
+       width="1.0018881"
+       height="1.0194802">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1202-6" />
+    </filter>
+    <marker
+       id="arr-3-4-4-4-8-0"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon2-5-6-6-4-2-2" />
+    </marker>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1216-6-0-2"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1218-3-6-1" />
+    </filter>
+    <marker
+       id="arr-3-4-4-4-8-0-8"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon2-5-6-6-4-2-2-5" />
+    </marker>
+    <marker
+       id="arr-3-4-4-4-8-0-8-4"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#444444"
+         id="polygon2-5-6-6-4-2-2-5-4" />
+    </marker>
+    <marker
+       id="arr-3-4-4-4-8-0-8-4-3"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="10,3.5 0,7 0,0 "
+         fill="#444444"
+         id="polygon2-5-6-6-4-2-2-5-4-2" />
+    </marker>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1216-6-1-0-3"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1218-3-5-6-7" />
+    </filter>
+    <marker
+       id="arr-3-4-4-4-8-0-8-4-3-4"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="10,3.5 0,7 0,0 "
+         fill="#444444"
+         id="polygon2-5-6-6-4-2-2-5-4-2-1" />
+    </marker>
+    <filter
+       id="filter13846-5"
+       x="-0.00064884608"
+       y="-0.0013827867"
+       width="1.0012977"
+       height="1.0027656">
+      <feDropShadow
+         dx="2"
+         dy="2"
+         stdDeviation="3"
+         flood-color="#00000030" />
+      <feGaussianBlur
+         stdDeviation="0.0025416437"
+         id="feGaussianBlur13844-7" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1216-6-0-2-4-8"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1218-3-6-1-2-9" />
+    </filter>
+    <marker
+       id="arr-3-4-4-4-8-0-8-4-3-7"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,0 10,3.5 0,7 "
+         fill="#444444"
+         id="polygon2-5-6-6-4-2-2-5-4-2-3" />
+    </marker>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1216-6-0-2-1"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1218-3-6-1-8" />
+    </filter>
+    <marker
+       id="arr-3-4-4-4-8-0-8-4-9"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="10,3.5 0,7 0,0 "
+         fill="#444444"
+         id="polygon2-5-6-6-4-2-2-5-4-6" />
+    </marker>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1216-6-0-2-4"
+       x="-0.0016759563"
+       y="-0.013334783"
+       width="1.0033519"
+       height="1.0266696">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1218-3-6-1-2" />
+    </filter>
+    <marker
+       id="arr-3-4-4-4-8-0-8-2"
+       markerWidth="10"
+       markerHeight="7"
+       refX="9"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,0 10,3.5 0,7 "
+         fill="#444444"
+         id="polygon2-5-6-6-4-2-2-5-0" />
+    </marker>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1200-6"
+       x="-0.00088737274"
+       y="-0.0097401105"
+       width="1.0017747"
+       height="1.0194802">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.04725"
+         id="feGaussianBlur1202-5" />
     </filter>
   </defs>
-
   <!-- ════════════════════════════════════════════════════════════════════════
        BACKGROUND
        ════════════════════════════════════════════════════════════════════════ -->
-  <rect width="900" height="990" fill="#ffffff"/>
-
+  <rect
+     width="900"
+     height="990"
+     fill="#ffffff"
+     id="rect37"
+     style="mix-blend-mode:normal;stroke:#808080;stroke-opacity:1;filter:url(#filter1112)"
+     x="0"
+     y="0"
+     transform="matrix(1.4148638,0,0,0.53467317,-0.08335754,-0.1457355)" />
   <!-- ════════════════════════════════════════════════════════════════════════
        TITLE
        ════════════════════════════════════════════════════════════════════════ -->
-  <text x="450" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a2e">
-    SpatialCueModule2D — Internal Architecture
-  </text>
-
+  <text
+     x="636.46088"
+     y="28"
+     text-anchor="middle"
+     font-size="16px"
+     font-weight="bold"
+     fill="#1a1a2e"
+     id="text39"
+     style="mix-blend-mode:normal;filter:url(#filter1116)">SpatialCueModule — Internal Architecture</text>
   <!-- ════════════════════════════════════════════════════════════════════════
        LEGEND
        ════════════════════════════════════════════════════════════════════════ -->
-  <rect x="692" y="42" width="12" height="12" rx="2" fill="url(#g-blue)"/>
-  <text x="710" y="53" font-size="9" fill="#333333">Feature extraction (frozen)</text>
-  <rect x="692" y="60" width="12" height="12" rx="2" fill="url(#g-orange)"/>
-  <text x="710" y="71" font-size="9" fill="#333333">Correction CNN (trainable)</text>
-  <rect x="692" y="78" width="12" height="12" rx="2" fill="url(#g-op)"/>
-  <text x="710" y="89" font-size="9" fill="#333333">Arithmetic operation</text>
-
   <!-- ════════════════════════════════════════════════════════════════════════
        INPUT BLOCK
        ════════════════════════════════════════════════════════════════════════ -->
-  <rect x="350" y="45" width="200" height="50" rx="6" fill="url(#g-input)" filter="url(#sh)"/>
-  <text x="450" y="67" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">source_est</text>
-  <text x="450" y="84" text-anchor="middle" font-size="10" fill="#aabbcc">(B, 2, T)</text>
-
   <!-- Arrow: Input → ILD -->
-  <line x1="450" y1="95" x2="450" y2="128" stroke="#444444" stroke-width="1.8" marker-end="url(#arr)"/>
-  <text x="464" y="113" font-size="9" fill="#666666">split L / R</text>
-
   <!-- ════════════════════════════════════════════════════════════════════════
        compute_ild_bands
        ════════════════════════════════════════════════════════════════════════ -->
-  <rect x="255" y="130" width="390" height="72" rx="6" fill="url(#g-blue)" filter="url(#sh)"/>
-  <text x="450" y="154" text-anchor="middle" font-size="11" font-weight="bold" fill="#ffffff">compute_ild_bands</text>
-  <text x="450" y="172" text-anchor="middle" font-size="9" fill="#aaccee">STFT(L, R)  →  per-sub-band ILD  (n_bands = 32)</text>
-  <text x="450" y="188" text-anchor="middle" font-size="9" fill="#aaccee">(B, n_bands, T_frames)</text>
-
   <!-- Arrow: ILD → CNN  (with unsqueeze annotation) -->
-  <line x1="450" y1="202" x2="450" y2="307" stroke="#2d5f8c" stroke-width="1.8" marker-end="url(#arr-blue)"/>
-  <text x="464" y="222" font-size="9" fill="#2d5f8c">(B, n_bands, T_frames)</text>
-  <text x="464" y="237" font-size="9" fill="#2d5f8c">→  unsqueeze(1)</text>
-  <text x="464" y="252" font-size="9" fill="#2d5f8c">(B, 1, n_bands, T_frames)</text>
-
+  <line
+     x1="591.65259"
+     y1="97.078407"
+     x2="591.65259"
+     y2="202.0784"
+     stroke="#2d5f8c"
+     stroke-width="1.8"
+     marker-end="url(#arr-blue)"
+     id="line71" />
   <!-- ════════════════════════════════════════════════════════════════════════
        BIG CNN BOX  (y=310 … y=676)
        ════════════════════════════════════════════════════════════════════════ -->
-  <rect x="60" y="310" width="780" height="366" rx="8" fill="url(#g-orange)" filter="url(#sh)"/>
-  <text x="450" y="329" text-anchor="middle" font-size="11" fill="#ffccaa">SpatialCueModule2D  —  Correction CNN  (trainable  ·  spectro-temporal Conv2d)</text>
-
+  <rect
+     x="145.56836"
+     y="192.8886"
+     width="780"
+     height="366"
+     rx="8"
+     fill="url(#g-orange)"
+     filter="url(#sh)"
+     id="rect79"
+     style="opacity:0.3;mix-blend-mode:normal;fill:#f0c8c8;fill-opacity:1;stroke:#f0c8c8;stroke-opacity:1;filter:url(#filter13846)"
+     transform="matrix(0.55475919,0,0,1.2057806,279.19875,-172.16819)" />
+  <rect
+     x="145.56836"
+     y="192.8886"
+     width="780"
+     height="366"
+     rx="8"
+     fill="url(#g-orange)"
+     filter="url(#sh)"
+     id="rect79-4"
+     style="opacity:0.3;mix-blend-mode:normal;fill:#fae6c8;fill-opacity:1;stroke:#f0c8c8;stroke-opacity:1;filter:url(#filter13846-5)"
+     transform="matrix(0.343574,0,0,1.2062559,869.86072,-172.34684)" />
+  <text
+     x="576.50647"
+     y="74.298981"
+     text-anchor="middle"
+     font-size="11px"
+     fill="#ffccaa"
+     id="text81"
+     style="font-size:12px;mix-blend-mode:normal;fill:#c4504e;fill-opacity:1;filter:url(#filter1200)"><tspan
+       style="font-weight:bold"
+       id="tspan61824">Spectro-temporal CNN</tspan></text>
+  <text
+     x="1054.079"
+     y="74.298981"
+     text-anchor="middle"
+     font-size="11px"
+     fill="#ffccaa"
+     id="text81-3"
+     style="font-size:12px;mix-blend-mode:normal;fill:#c8821e;fill-opacity:1;filter:url(#filter1200-6)"><tspan
+       style="font-weight:bold;fill:#c8821e;fill-opacity:1"
+       id="tspan61824-2">Gain &amp; ISTFT</tspan></text>
   <!-- Dashed divider between the two branches -->
-  <line x1="456" y1="337" x2="456" y2="662" stroke="#ffffff30" stroke-width="1" stroke-dasharray="4,3"/>
-
+  <line
+     x1="456"
+     y1="207"
+     x2="456"
+     y2="532"
+     stroke="#ffffff30"
+     stroke-width="1"
+     stroke-dasharray="4, 3"
+     id="line83"
+     style="mix-blend-mode:normal;filter:url(#filter1204)" />
   <!-- Branch labels -->
-  <text x="261" y="348" text-anchor="middle" font-size="10" font-style="italic" fill="#ffddbb">Local Branch</text>
-  <text x="656" y="348" text-anchor="middle" font-size="10" font-style="italic" fill="#ffddbb">Global Context Branch</text>
-
   <!-- ──────────────────────────────────────────────────────────────────────
        LOCAL BRANCH
        ────────────────────────────────────────────────────────────────────── -->
-
   <!-- layer1: y=355–401  [h1] -->
-  <rect x="78" y="355" width="366" height="46" rx="4" fill="#ffffff1a"/>
-  <text x="261" y="373" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#ffffff">Conv2d(1→32,  k=3×7,  pad=1×3)  ·  GroupNorm(8, 32)  ·  ReLU</text>
-  <text x="261" y="389" text-anchor="middle" font-size="9" fill="#ffddbb">→  h1   (B, 32, n_bands, T_frames)</text>
-
+  <rect
+     x="78"
+     y="355"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect89"
+     style="mix-blend-mode:normal;fill:#f0c8c8;fill-opacity:1;stroke:#c4504e;stroke-opacity:1;filter:url(#filter1216)"
+     transform="rotate(-90.070324,280.89661,256.26831)" />
+  <text
+     x="-274.16809"
+     y="400.85193"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text91"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-89.758661)">Conv2d(1→32, k=3×7, pad=1×3) + GroupNorm(8, 32) → ReLU</text>
+  <text
+     x="-279.24591"
+     y="410.71088"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text93"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.423239)">→ h1 (B, 32, K, T_f)</text>
+  <rect
+     x="-501.99594"
+     y="89.650658"
+     width="441.99051"
+     height="163.09206"
+     rx="4.8304973"
+     fill="#ffffff1a"
+     id="rect89-2-1"
+     style="opacity:0.25;mix-blend-mode:normal;fill:#c8daf0;fill-opacity:1;stroke:none;stroke-width:2.0692;stroke-opacity:1"
+     transform="matrix(0.00363619,-0.99999339,0.99999991,4.2184938e-4,0,0)" />
   <!-- Residual skip: left edge of layer1 → left margin → add circle -->
-  <line x1="78"  y1="378" x2="66"  y2="378" stroke="#ffffffb0" stroke-width="1.4" stroke-dasharray="5,3"/>
-  <line x1="66"  y1="378" x2="66"  y2="544" stroke="#ffffffb0" stroke-width="1.4" stroke-dasharray="5,3"/>
-  <line x1="66"  y1="544" x2="247" y2="544" stroke="#ffffffb0" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#arr-white)"/>
-  <text x="56" y="468" text-anchor="middle" font-size="8" fill="#ffddbb"
-        transform="rotate(-90,56,468)">residual  h1</text>
-
+  <line
+     x1="179.04945"
+     y1="271.88419"
+     x2="167.04945"
+     y2="271.88419"
+     stroke="#ffffffb0"
+     stroke-width="1.4"
+     stroke-dasharray="5, 3"
+     id="line95"
+     style="mix-blend-mode:normal;filter:url(#filter1228)" />
+  <line
+     x1="207.65259"
+     y1="439.07843"
+     x2="388.65259"
+     y2="439.07843"
+     stroke="#ffffffb0"
+     stroke-width="1.4"
+     stroke-dasharray="5, 3"
+     marker-end="url(#arr-white)"
+     id="line99"
+     style="mix-blend-mode:normal;filter:url(#filter1236)" />
   <!-- Arrow layer1 → layer2 -->
-  <line x1="261" y1="401" x2="261" y2="413" stroke="#ffffffb0" stroke-width="1.4" marker-end="url(#arr-white)"/>
-
   <!-- layer2: y=415–461 -->
-  <rect x="78" y="415" width="366" height="46" rx="4" fill="#ffffff1a"/>
-  <text x="261" y="433" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#ffffff">Conv2d(32→32,  k=3×7,  pad=1×3)  ·  GroupNorm(8, 32)  ·  ReLU</text>
-  <text x="261" y="449" text-anchor="middle" font-size="9" fill="#ffddbb">(B, 32, n_bands, T_frames)</text>
-
+  <rect
+     x="461.34137"
+     y="487.8468"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect105"
+     style="mix-blend-mode:normal;fill:#f0c8c8;fill-opacity:1;stroke:#c4504e;stroke-opacity:1;filter:url(#filter1248)"
+     transform="rotate(-90.102548,498.44368,422.07164)" />
+  <rect
+     x="461.34137"
+     y="487.8468"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect105-6"
+     style="mix-blend-mode:normal;fill:#f0c8c8;fill-opacity:1;stroke:#c4504e;stroke-opacity:1;filter:url(#filter1248-0)"
+     transform="rotate(-90.102548,586.02467,339.60783)" />
+  <text
+     x="-276.88046"
+     y="581.68536"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text107"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.102548)">Conv2d(32→32, k=3×7, pad=1×3) · GroupNorm(8, 32) · ReLU</text>
+  <text
+     x="-277.08908"
+     y="597.68506"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text109"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.102548)">(B, 32, K, T_f)</text>
+  <text
+     x="-282.3624"
+     y="767.22443"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text109-1"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.102548)">(B, 1, K, T_f)</text>
   <!-- Arrow layer2 → layer3 -->
-  <line x1="261" y1="461" x2="261" y2="473" stroke="#ffffffb0" stroke-width="1.4" marker-end="url(#arr-white)"/>
-
   <!-- layer3: y=475–521 -->
-  <rect x="78" y="475" width="366" height="46" rx="4" fill="#ffffff1a"/>
-  <text x="261" y="493" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#ffffff">Conv2d(32→32,  k=3×7,  pad=1×3)  ·  GroupNorm(8, 32)  ·  ReLU</text>
-  <text x="261" y="509" text-anchor="middle" font-size="9" fill="#ffddbb">(B, 32, n_bands, T_frames)</text>
-
+  <rect
+     x="196.22075"
+     y="594.90961"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect113"
+     style="mix-blend-mode:normal;fill:#f0c8c8;fill-opacity:1;stroke:#c4504e;stroke-opacity:1;filter:url(#filter1264)"
+     transform="rotate(-90.025513,266.17613,389.16212)" />
+  <text
+     x="-276.06064"
+     y="489.75061"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text115"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.025513)">Conv2d(32→32, k=3×7, pad=1×3) · GroupNorm(8, 32) · ReLU</text>
+  <text
+     x="-276.24808"
+     y="505.75055"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text117"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.025513)">(B, 32, K, T_f)</text>
   <!-- Arrow layer3 → add circle (top of circle = y=530) -->
-  <line x1="261" y1="521" x2="261" y2="530" stroke="#ffffffb0" stroke-width="1.4" marker-end="url(#arr-white)"/>
-
   <!-- Add circle ⊕ (local residual)  center (261, 544)  r=14 -->
-  <circle cx="261" cy="544" r="14" fill="url(#g-op)" stroke="#ffffff60" stroke-width="1.2"/>
-  <text x="261" y="550" text-anchor="middle" font-size="13" fill="#ffffff">⊕</text>
-  <text x="281" y="548" font-size="9" fill="#ffddbb">h3</text>
-
+  <text
+     x="666.50256"
+     y="261.78992"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text125"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1">h3</text>
   <!-- Line from local add circle down to merge level (y=590) -->
-  <line x1="261" y1="558" x2="261" y2="590" stroke="#ffffffb0" stroke-width="1.4"/>
-
+  <line
+     x1="402.65259"
+     y1="453.07843"
+     x2="402.65259"
+     y2="485.07843"
+     stroke="#ffffffb0"
+     stroke-width="1.4"
+     id="line127" />
   <!-- ──────────────────────────────────────────────────────────────────────
        GLOBAL CONTEXT BRANCH
        ────────────────────────────────────────────────────────────────────── -->
-
   <!-- mean over time: y=355–391 -->
-  <rect x="466" y="355" width="364" height="36" rx="4" fill="#ffffff1a"/>
-  <text x="648" y="369" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#ffffff">x.mean(dim=−1,  keepdim=True)</text>
-  <text x="648" y="383" text-anchor="middle" font-size="9" fill="#ffddbb">(B, 1, n_bands, 1)  —  DC ILD per band</text>
-
   <!-- Arrow mean → global_conv -->
-  <line x1="648" y1="391" x2="648" y2="405" stroke="#ffffffb0" stroke-width="1.4" marker-end="url(#arr-white)"/>
-
+  <line
+     x1="789.65259"
+     y1="286.0784"
+     x2="789.65259"
+     y2="300.0784"
+     stroke="#ffffffb0"
+     stroke-width="1.4"
+     marker-end="url(#arr-white)"
+     id="line135"
+     style="mix-blend-mode:normal;filter:url(#filter1308)" />
   <!-- global_conv: y=407–453 -->
-  <rect x="466" y="407" width="364" height="46" rx="4" fill="#ffffff1a"/>
-  <text x="648" y="425" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#ffffff">Conv2d(1→32,  k=3×1,  pad=1×0)  →  ReLU</text>
-  <text x="648" y="441" text-anchor="middle" font-size="9" fill="#ffddbb">(B, 32, n_bands, 1)  [g]</text>
-
   <!-- Line from global_conv down to merge level, with broadcast annotations -->
-  <line x1="648" y1="453" x2="648" y2="590" stroke="#ffffffb0" stroke-width="1.4"/>
-  <text x="662" y="481" font-size="9" fill="#ffddbb">broadcast over T dimension</text>
-  <text x="662" y="495" font-size="9" fill="#ffddbb">(B, 32, n_bands, T_frames)</text>
-
+  <line
+     x1="217.97084"
+     y1="290.65689"
+     x2="217.97084"
+     y2="427.65692"
+     stroke="#ffffffb0"
+     stroke-width="1.4"
+     id="line143"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:0" />
   <!-- ──────────────────────────────────────────────────────────────────────
        MERGE CIRCLE ⊕   h3 + g
        ────────────────────────────────────────────────────────────────────── -->
-  <line x1="261" y1="590" x2="435" y2="590" stroke="#ffffffb0" stroke-width="1.4" marker-end="url(#arr-white)"/>
-  <line x1="648" y1="590" x2="465" y2="590" stroke="#ffffffb0" stroke-width="1.4" marker-end="url(#arr-white)"/>
-  <circle cx="450" cy="590" r="15" fill="url(#g-op)" stroke="#ffffff60" stroke-width="1.2"/>
-  <text x="450" y="596" text-anchor="middle" font-size="13" fill="#ffffff">⊕</text>
-  <text x="470" y="585" font-size="9" fill="#ffddbb">h3 + g</text>
-
+  <line
+     x1="402.65259"
+     y1="485.07843"
+     x2="576.65259"
+     y2="485.07843"
+     stroke="#ffffffb0"
+     stroke-width="1.4"
+     marker-end="url(#arr-white)"
+     id="line149"
+     style="mix-blend-mode:normal;filter:url(#filter1336)" />
+  <line
+     x1="789.65259"
+     y1="485.07843"
+     x2="606.65259"
+     y2="485.07843"
+     stroke="#ffffffb0"
+     stroke-width="1.4"
+     marker-end="url(#arr-white)"
+     id="line151"
+     style="mix-blend-mode:normal;filter:url(#filter1340)" />
+  <circle
+     cx="671.50793"
+     cy="282.14771"
+     r="15"
+     fill="url(#g-op)"
+     stroke="#ffffff60"
+     stroke-width="1.2"
+     id="circle153"
+     style="fill:#f0c8c8;fill-opacity:1;stroke:#c4504e;stroke-opacity:1;filter:url(#filter1344)" />
+  <text
+     x="671.50793"
+     y="285.90869"
+     text-anchor="middle"
+     font-size="13px"
+     fill="#ffffff"
+     id="text155"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1;filter:url(#filter1348)">⊕</text>
   <!-- Arrow merge → projection -->
-  <line x1="450" y1="605" x2="450" y2="618" stroke="#ffffffb0" stroke-width="1.4" marker-end="url(#arr-white)"/>
-
   <!-- ──────────────────────────────────────────────────────────────────────
        FUSION / OUTPUT PROJECTION
        ────────────────────────────────────────────────────────────────────── -->
-  <rect x="155" y="620" width="590" height="44" rx="4" fill="#ffffff1a"/>
-  <text x="450" y="638" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#ffffff">proj: Conv2d(32→1,  k=1×1,  zero-init)  →  Tanh  →  squeeze(1)</text>
-  <text x="450" y="654" text-anchor="middle" font-size="9" fill="#ffddbb">delta ∈ [−1, +1]  ·  (B, n_bands, T_frames)</text>
-
+  <text
+     x="-282.65765"
+     y="752.06708"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text163"
+     style="mix-blend-mode:normal"
+     transform="rotate(-90.1356)"><tspan
+       style="fill:#000000;fill-opacity:1"
+       id="tspan32183">Conv2d(32→1, k=1×1) → Tanh</tspan></text>
   <!-- CNN box bottom: y = 310 + 366 = 676 -->
-
   <!-- ════════════════════════════════════════════════════════════════════════
        × ild_scale
        ════════════════════════════════════════════════════════════════════════ -->
-  <line x1="450" y1="676" x2="450" y2="705" stroke="#b84a00" stroke-width="1.8" marker-end="url(#arr-orange)"/>
-  <text x="464" y="694" font-size="9" fill="#b84a00">delta ∈ [−1, +1]  (B, n_bands, T_frames)</text>
-
-  <rect x="335" y="708" width="230" height="38" rx="6" fill="url(#g-op)" filter="url(#sh)"/>
-  <text x="450" y="724" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">× ild_scale</text>
-  <text x="450" y="739" text-anchor="middle" font-size="9" fill="#aabbcc">delta_ild ∈ [−ild_scale, +ild_scale]  dB</text>
-
   <!-- Arrow → ÷ 2 -->
-  <line x1="450" y1="746" x2="450" y2="769" stroke="#444444" stroke-width="1.8" marker-end="url(#arr)"/>
-
   <!-- ════════════════════════════════════════════════════════════════════════
        ÷ 2 = half
        ════════════════════════════════════════════════════════════════════════ -->
-  <rect x="390" y="771" width="120" height="32" rx="6" fill="url(#g-op)" filter="url(#sh)"/>
-  <text x="450" y="792" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">÷ 2  =  half</text>
-
   <!-- ÷2 midheight y=787, left x=390, right x=510 -->
   <!-- Left branch: (390,787) → (195,787) → (195,825) -->
-  <line x1="390" y1="787" x2="195" y2="787" stroke="#444444" stroke-width="1.4"/>
-  <line x1="195" y1="787" x2="195" y2="825" stroke="#444444" stroke-width="1.4" marker-end="url(#arr)"/>
-  <text x="290" y="781" text-anchor="middle" font-size="9" fill="#666666">−half  (to L)</text>
-
   <!-- Right branch: (510,787) → (715,787) → (715,825) -->
-  <line x1="510" y1="787" x2="715" y2="787" stroke="#444444" stroke-width="1.4"/>
-  <line x1="715" y1="787" x2="715" y2="825" stroke="#444444" stroke-width="1.4" marker-end="url(#arr)"/>
-  <text x="614" y="781" text-anchor="middle" font-size="9" fill="#666666">+half  (to R)</text>
-
   <!-- ════════════════════════════════════════════════════════════════════════
        L GAIN BLOCK   center x=195
        ════════════════════════════════════════════════════════════════════════ -->
-  <rect x="65" y="827" width="260" height="62" rx="6" fill="url(#g-blue)" filter="url(#sh)"/>
-  <text x="195" y="845" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">_apply_subband_gain(L, −half)</text>
-  <text x="195" y="860" text-anchor="middle" font-size="9" fill="#aaccee">STFT  →  gain_l = 10^(+half/20)  →  ISTFT</text>
-  <text x="195" y="875" text-anchor="middle" font-size="9" fill="#aaccee">L corrected  (B, T)</text>
-
   <!-- ════════════════════════════════════════════════════════════════════════
        R GAIN BLOCK   center x=715
        ════════════════════════════════════════════════════════════════════════ -->
-  <rect x="585" y="827" width="260" height="62" rx="6" fill="url(#g-blue)" filter="url(#sh)"/>
-  <text x="715" y="845" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">_apply_subband_gain(R, +half)</text>
-  <text x="715" y="860" text-anchor="middle" font-size="9" fill="#aaccee">STFT  →  gain_r = 10^(−half/20)  →  ISTFT</text>
-  <text x="715" y="875" text-anchor="middle" font-size="9" fill="#aaccee">R corrected  (B, T)</text>
-
   <!-- ════════════════════════════════════════════════════════════════════════
        MERGE: stack → output
        L/R bottom: y=889
        ════════════════════════════════════════════════════════════════════════ -->
-  <line x1="195" y1="889" x2="195" y2="914" stroke="#444444" stroke-width="1.4"/>
-  <line x1="195" y1="914" x2="450" y2="914" stroke="#444444" stroke-width="1.4"/>
-  <line x1="715" y1="889" x2="715" y2="914" stroke="#444444" stroke-width="1.4"/>
-  <line x1="715" y1="914" x2="450" y2="914" stroke="#444444" stroke-width="1.4"/>
-  <line x1="450" y1="914" x2="450" y2="923" stroke="#444444" stroke-width="1.8" marker-end="url(#arr)"/>
-  <text x="464" y="910" font-size="9" fill="#666666">stack</text>
-
   <!-- ════════════════════════════════════════════════════════════════════════
        OUTPUT BLOCK
        ════════════════════════════════════════════════════════════════════════ -->
-  <rect x="350" y="925" width="200" height="50" rx="6" fill="url(#g-input)" filter="url(#sh)"/>
-  <text x="450" y="947" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">corrected</text>
-  <text x="450" y="964" text-anchor="middle" font-size="10" fill="#aabbcc">(B, 2, T)</text>
-
   <!-- ════════════════════════════════════════════════════════════════════════
        FOOTER NOTE
        ════════════════════════════════════════════════════════════════════════ -->
-  <text x="450" y="983" text-anchor="middle" font-size="9" font-style="italic" fill="#888888">
-    Global branch captures DC ILD offset; local branch models fine spectro-temporal variations.  Correction is symmetric: gain_l · gain_r = 1.
-  </text>
+  <line
+     x1="425.77808"
+     y1="282.51242"
+     x2="469.70624"
+     y2="281.88293"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4)"
+     id="line59-9"
+     style="marker-end:url(#arr-3-4)" />
+  <line
+     x1="332.83075"
+     y1="279.07074"
+     x2="376.75891"
+     y2="278.44125"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-4)"
+     id="line59-9-3"
+     style="marker-end:url(#arr-3-4-4)" />
+  <line
+     x1="517.53552"
+     y1="282.51242"
+     x2="561.46362"
+     y2="281.88293"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-3)"
+     id="line59-9-6"
+     style="marker-end:url(#arr-3-4-3)" />
+  <line
+     x1="610.41345"
+     y1="282.51242"
+     x2="654.34161"
+     y2="281.88293"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-3-8)"
+     id="line59-9-6-2"
+     style="marker-end:url(#arr-3-4-3-8)" />
+  <line
+     x1="687.23602"
+     y1="282.51242"
+     x2="731.16418"
+     y2="281.88293"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-3-8-74)"
+     id="line59-9-6-2-0"
+     style="marker-end:url(#arr-3-4-3-8-74)" />
+  <line
+     x1="671.59253"
+     y1="491.51373"
+     x2="671.44659"
+     y2="299.46942"
+     stroke="#444444"
+     stroke-width="3.36736"
+     marker-end="url(#arr-3-4-3-8-7)"
+     id="line59-9-6-2-6"
+     style="stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:4, 4;stroke-dashoffset:0;marker-end:url(#arr-3-4-3-8-7);paint-order:stroke fill markers" />
+  <path
+     style="opacity:1;fill:#000000;fill-opacity:1;stroke:#444444;stroke-width:1.996;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:3.99198, 3.99198;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
+     d="M 405.93847,492.34984 H 671.41431"
+     id="path27171" />
+  <path
+     style="fill:#000000;fill-opacity:1;stroke:#444444;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:4, 4;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
+     d="m 402.55737,492.20393 0.19045,-31.54592"
+     id="path27171-2" />
+  <rect
+     x="78"
+     y="355"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect89-2"
+     style="mix-blend-mode:normal;fill:#c8daf0;fill-opacity:1;stroke:#3465a4;stroke-opacity:1;filter:url(#filter1216-6)"
+     transform="matrix(-8.8849325e-4,-0.47580805,1.0066109,-0.00392794,-163.80014,404.37668)" />
+  <rect
+     x="78"
+     y="355"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect89-2-2"
+     style="mix-blend-mode:normal;fill:#e0e0e0;fill-opacity:1;stroke:#808080;stroke-opacity:1;filter:url(#filter1216-6-0)"
+     transform="matrix(-0.00114061,-0.47580752,1.0066087,-0.00446131,-71.382944,404.57815)" />
+  <text
+     x="-277.75299"
+     y="215.44313"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text91-7"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-89.758661)">Sub-band ILD extraction</text>
+  <text
+     x="-280.57895"
+     y="225.27396"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text93-2"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.423239)">K=64 bands</text>
+  <text
+     x="-277.64197"
+     y="306.22211"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text91-7-5"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-89.758661)">Unsqueeze</text>
+  <text
+     x="-281.03906"
+     y="316.05142"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text93-2-7"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.423239)">(B, K, T_f) → (B, 1, K, T_f)</text>
+  <rect
+     x="78"
+     y="355"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect89-2-3"
+     style="mix-blend-mode:normal;fill:#c8daf0;fill-opacity:1;stroke:#3465a4;stroke-opacity:1;filter:url(#filter1216-6-1)"
+     transform="matrix(-8.8849325e-4,-0.47580805,1.0066109,-0.00392794,-257.02267,404.37668)" />
+  <rect
+     x="78"
+     y="355"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect89-2-3-2"
+     style="mix-blend-mode:normal;fill:#c8e6c8;fill-opacity:1;stroke:#4e994e;stroke-opacity:1;filter:url(#filter1216-6-1-0)"
+     transform="matrix(-8.8849325e-4,-0.47580805,1.0066109,-0.00392794,-350.88377,405.28465)" />
+  <text
+     x="-278.35986"
+     y="120.71375"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text91-7-4"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-89.758661)">STFT</text>
+  <text
+     x="-279.82608"
+     y="130.54591"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text93-2-9"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.423239)">N_fft=2048, hop=512</text>
+  <line
+     x1="240.48019"
+     y1="279.07074"
+     x2="284.40839"
+     y2="278.44125"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-4-4-8)"
+     id="line59-9-3-1"
+     style="marker-end:url(#arr-3-4-4-4-8)" />
+  <rect
+     x="78"
+     y="355"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect89-2-2-7"
+     style="mix-blend-mode:normal;fill:#e0e0e0;fill-opacity:1;stroke:#808080;stroke-opacity:1;filter:url(#filter1216-6-0-2)"
+     transform="matrix(-0.00114061,-0.47580752,1.0066087,-0.00446131,483.15623,406.94315)" />
+  <text
+     x="-277.67117"
+     y="860.76642"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text91-7-5-5"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-89.758661)">Squeeze</text>
+  <text
+     x="-287.50027"
+     y="870.55786"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text93-2-7-0"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.423239)">(B, 1, K, T_f) → (B, K, T_f)</text>
+  <text
+     x="-228.36627"
+     y="911.39197"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text93-2-7-0-2"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.423239)">δ ∈ [-1. +1] (B, K, T_f)</text>
+  <text
+     x="-204.78766"
+     y="1005.5721"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text93-2-7-0-2-7"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.423239)">ΔILD ∈ [-α_ILD. +α_ILD] (B, K, T_f)</text>
+  <line
+     x1="792.96179"
+     y1="281.43573"
+     x2="836.89001"
+     y2="280.80624"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-4-4-8-0)"
+     id="line59-9-3-1-2"
+     style="marker-end:url(#arr-3-4-4-4-8-0)" />
+  <line
+     x1="1169.2111"
+     y1="283.56137"
+     x2="1213.1393"
+     y2="282.93188"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-4-4-8-0-8-4-3-4)"
+     id="line59-9-3-1-2-6-6-5-4"
+     style="marker-end:url(#arr-3-4-4-4-8-0-8-4-3-4)" />
+  <line
+     x1="147.19171"
+     y1="279.07074"
+     x2="191.11992"
+     y2="278.44125"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-4-4-8-3)"
+     id="line59-9-3-1-8"
+     style="marker-end:url(#arr-3-4-4-4-8-3)" />
+  <line
+     x1="53.330608"
+     y1="279.07074"
+     x2="97.258812"
+     y2="278.44125"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-4-4-8-3-8)"
+     id="line59-9-3-1-8-0"
+     style="marker-end:url(#arr-3-4-4-4-8-3-8)" />
+  <text
+     x="513.91541"
+     y="487.35516"
+     font-size="9px"
+     fill="#2d5f8c"
+     id="text75-6"
+     style="mix-blend-mode:normal;filter:url(#filter1188-5)"><tspan
+       style="fill:#000000;fill-opacity:1"
+       id="tspan55639">residual skip</tspan></text>
+  <text
+     x="170.37119"
+     y="74.298981"
+     text-anchor="middle"
+     font-size="11px"
+     fill="#ffccaa"
+     id="text81-8"
+     style="font-size:12px;mix-blend-mode:normal;fill:#3465a4;fill-opacity:1;filter:url(#filter1200-8)"><tspan
+       style="font-weight:bold"
+       id="tspan61822">ILD extraction</tspan></text>
+  <text
+     x="-279.7337"
+     y="25.196112"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text91-7-5-8"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-89.758661)">Separated source</text>
+  <text
+     x="-279.87109"
+     y="35.020267"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text93-2-7-6"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.423239)">(B, 2, T)</text>
+  <rect
+     x="78"
+     y="355"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect89-2-3-2-2"
+     style="mix-blend-mode:normal;fill:#c8e6c8;fill-opacity:1;stroke:#4e994e;stroke-opacity:1;filter:url(#filter1216-6-1-0-3)"
+     transform="matrix(-8.8849325e-4,-0.47580805,1.0066109,-0.00392794,858.8578,408.86731)" />
+  <text
+     x="-285.24606"
+     y="1237.8833"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text91-7-5-8-1"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-89.758661)">Corrected source</text>
+  <text
+     x="-299.57635"
+     y="1247.5608"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text93-2-7-6-2"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.423239)">(B, 2, T)</text>
+  <rect
+     x="78"
+     y="355"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect89-2-2-7-1"
+     style="mix-blend-mode:normal;fill:#fae6c8;fill-opacity:1;stroke:#c8821e;stroke-opacity:1;filter:url(#filter1216-6-0-2-1)"
+     transform="matrix(-0.00114061,-0.47580752,1.0066087,-0.00446131,671.06333,406.94315)" />
+  <text
+     x="-276.60803"
+     y="1048.7333"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text91-7-5-5-9"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-89.758661)">Symmetric per-bin gain</text>
+  <text
+     x="-288.7984"
+     y="1058.5229"
+     text-anchor="middle"
+     font-size="9px"
+     fill="#ffddbb"
+     id="text93-2-7-0-6"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-90.423239)">gL = 10^(+Δ/40), gR = 10^(-Δ/40)</text>
+  <rect
+     x="78"
+     y="355"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect89-2-2-7-2"
+     style="mix-blend-mode:normal;fill:#fae6c8;fill-opacity:1;stroke:#c8821e;stroke-opacity:1;filter:url(#filter1216-6-0-2-4)"
+     transform="matrix(-0.00114061,-0.47580752,1.0066087,-0.00446131,577.10984,406.94315)" />
+  <text
+     x="-277.08142"
+     y="960.92163"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text91-7-5-5-1"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-89.758661)">Scale by α_ILLD</text>
+  <rect
+     x="78"
+     y="355"
+     width="366"
+     height="46"
+     rx="4"
+     fill="#ffffff1a"
+     id="rect89-2-2-7-2-3"
+     style="mix-blend-mode:normal;fill:#fae6c8;fill-opacity:1;stroke:#c8821e;stroke-opacity:1;filter:url(#filter1216-6-0-2-4-8)"
+     transform="matrix(-0.00114061,-0.47580752,1.0066087,-0.00446131,765.01706,406.94315)" />
+  <text
+     x="-276.55765"
+     y="1149.7438"
+     text-anchor="middle"
+     font-size="9.5px"
+     font-weight="bold"
+     fill="#ffffff"
+     id="text91-7-5-5-1-7"
+     style="mix-blend-mode:normal;fill:#000000;fill-opacity:1"
+     transform="rotate(-89.758661)">ISTFT</text>
+  <line
+     x1="887.35022"
+     y1="281.43573"
+     x2="931.27844"
+     y2="280.80624"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-4-4-8-0-8-2)"
+     id="line59-9-3-1-2-6"
+     style="marker-end:url(#arr-3-4-4-4-8-0-8-2)" />
+  <line
+     x1="981.30383"
+     y1="281.43573"
+     x2="1025.2319"
+     y2="280.80624"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-4-4-8-0-8-4-9)"
+     id="line59-9-3-1-2-6-6"
+     style="marker-end:url(#arr-3-4-4-4-8-0-8-4-9)" />
+  <line
+     x1="1075.2573"
+     y1="281.43573"
+     x2="1119.1857"
+     y2="280.80624"
+     stroke="#444444"
+     stroke-width="2.05311"
+     marker-end="url(#arr-3-4-4-4-8-0-8-4-3-7)"
+     id="line59-9-3-1-2-6-6-5"
+     style="marker-end:url(#arr-3-4-4-4-8-0-8-4-3-7)" />
 </svg>
