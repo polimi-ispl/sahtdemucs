@@ -2,15 +2,19 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
 
-**SA-HTDemucs** extends the pre-trained
-[HT-Demucs](https://github.com/facebookresearch/demucs) music source separator with explicit preservation of spatial cues:
-
-- **ILD** — Interaural Level Difference (perceived left/right balance per frequency band)
-
-The frozen HT-Demucs backbone provides strong separation quality for free; 
-only lightweight per-source **spatial correction heads** are trained, making the approach 
-practical on a small spatially-annotated dataset. 
-Samples are available [on our sample page](https://polimi-ispl.github.io/sahtdemucs/).
+Spatially-Aware HT-Demucs (**SA-HTDemucs**) extends the pre-trained [HT-Demucs](https://github.com/facebookresearch/demucs)
+music source separator with explicit preservation of spatial cues.  From an input mixture $x_{gt}$, HT-Demucs separates
+$S = 4$ sources (*bass*,*drums*,*vocals*,*other*). For each of the separated source $\hat{s}$ a **Spatial Cue Module** 
+estimates the Interaural Level Difference $\widehat{ILD}^{(s)}_k(t)$ in the time-frequency domain, which is related to 
+the perceived left/right balance, and predicts a time-frequency correction $\Delta ILD_k(t)$ to be applied to $\hat{s}$
+to replicate $ILD^{(s)}_{k,gt}(t)$ of the groundtruth source $s_{gt}$. 
+While the frozen HT-Demucs backbone provides strong separation quality for free, only the Spatial Cue Modules are trained,
+making the approach practical on a small spatially-annotated dataset. SA-HTdemucs has been trained and evaluated on 
+binauralMUSDB18-HQ, a novel binaural dataset synthesized by convolving each source stem in 
+[MUSDB18-HQ](https://sigsep.github.io/datasets/musdb.html#musdb18-compressed-stems) dataset with open-source Head-Related
+Transfer Functions (HRTFs) at randomized horizontal positions (HRIR from 
+[SADIE II](https://www.york.ac.uk/sadie-project/database.html) dataset). 
+Samples are available for listening tests [on our sample page](https://polimi-ispl.github.io/sahtdemucs/).
 
 ---
 
@@ -18,7 +22,7 @@ Samples are available [on our sample page](https://polimi-ispl.github.io/sahtdem
 
 ![SAHTDemucs Architecture](docs/images/architecture.svg)
 
-`SA-HTDemucs` wraps a frozen, pre-trained HT-Demucs model and attaches one `SpatialCueModule` per source.  
+`SA-HTDemucs` wraps a frozen, pre-trained HT-Demucs model and attaches one `SpatialCueModule` per source ($S=4$). 
 Only the spatial heads (~700 K parameters) are updated during training; the HT-Demucs backbone (~80 M parameters) stays 
 frozen.
 
@@ -31,8 +35,9 @@ frozen.
 
 ## Spatial Cue Module
 
-The `SpatialCueModule` analyses the **per-sub-band, per-frame ILD** of each separated source and applies a learned 
-frequency-resolved ILD correction so that each source preserves a meaningful stereo position.
+The `SpatialCueModule` analyses the **per-sub-band, per-frame ILD** of each separated source  $\widehat{ILD}^{(s)}_k(t)$ 
+and applies a learned time-frequency-resolved ILD correction $\Delta ILD_k(t)$ so that each source preserves a meaningful
+stereo position.
 
 Two architectures are available, selectable via `spatial_arch`:
 
@@ -84,12 +89,18 @@ Default parameters: `hidden=32`, `n_fft=2048`, `hop_length=512`, `n_bands=32`, `
 
 At each forward pass both modules:
 
-1. Compute the STFT of the separated source, divide the spectrum into `n_bands` equal-width frequency sub-bands, and derive a per-band ILD trajectory `(B, n_bands, T_frames)`.
-2. Feed the ILD map into the CNN to predict Δ_ILD ∈ [−1, +1] per band per frame.
-3. Scale by `ild_scale` to obtain Δ_ILD in dB, then apply a **symmetric time-varying per-bin gain** in the STFT domain:
-   - Left channel: `gain_l = 10^(−Δ/40)` 
-   - Right channel: `gain_r = 10^(+Δ/40)`
-   - `gain_l · gain_r = 1` ⟹ total loudness is preserved
+1. Compute the STFT of the separated source and partition the frequency bins into `n_bands` sub-bands, either by splitting 
+the linear frequency axis into equal-width intervals (`band_scale`=`linear`) or by splitting the mel-frequency axis into 
+equal-width intervals and mapping each STFT bin to the mel interval containing its center frequency (`band_scale`=`mel`). 
+Derive a per-band ILD trajectory $\widehat{ILD}^{(s)}_k(t) \in \mathbb{R}^{B \times K \times T_{frames}}$, where 
+$K$=`n_bands`.
+2. Feed the ILD map into the CNN to predict a correction $\delta_{ILD} \in [−1, +1] \in \mathbb{R}^{B \times K \times T_{frames}}$ 
+per band per frame.
+3. Scale $\delta_{ILD}$ by `ild_scale` to obtain $\Delta_{ILD}$ in dB, then apply a **symmetric time-varying per-bin 
+gain** in the STFT domain:
+   - Left channel: $g_L = 10^{+\Delta/40}$ 
+   - Right channel: $g_R = 10^{-\Delta/40}$
+   - $g_L \cdot g_R = 1$ ⟹ total loudness is preserved
 4. ISTFT reconstructs the corrected waveform.
 
 The entire pipeline (STFT → CNN → gain → ISTFT) is fully differentiable.
@@ -169,12 +180,13 @@ See `notebook/TrainSAHTDemucs.ipynb` for a complete training and evaluation exam
 
 $$
 \mathcal{L} = \frac{1}{S} \sum_{s=1}^{S} \left(
-\lambda_{\text{ILD}} \cdot \mathcal{L}_{\text{ILD}}^{(s)}
+\lambda_{\text{ILD}} \cdot \mathcal{L}_{\text{ILD}}^{(s)} + \lambda_{\text{SI}} \cdot \mathcal{L}_{\text{SI-SNR}}^{(s)}
 \right)
 $$
 
-where $\mathcal{L}_{\text{ILD}}^{(s)}$ is the MSE between corrected source time-frequency ILD and groundtruth one, 
-defined as
+$\mathcal{L}_{\text{SI-SNR}}^{(s)}$ is a loss term related to separation quality and based on the evaluation of 
+Scale-Invariant Signal to Noise Ration (SI-SNR). $\mathcal{L}_{\text{ILD}}^{(s)}$ is the MSE between corrected source
+time-frequency ILD and groundtruth one, defined as
 
 $$
 \mathcal{L}_{\text{ILD}}^{(s)} =
@@ -184,16 +196,18 @@ $$
   \right)^2
 $$
 
-where $K$ = `n_bands` and $T_f$ is the number of STFT frames.
+where $K$ = `n_bands` and $T_f$ is the number of STFT frames. Here $\lambda_{\text{SI-SNR}}=0$ as we want to keep a purely
+spatial loss.
 
 ### Loss hyperparameters
 
-| Symbol | Parameter | Default | Description |
-|:------:|-----------|:-------:|-------------|
-| $\lambda_{\text{ILD}}$ | `lambda_ild` | `1.0` | Weight of the sub-band ILD penalty |
-| — | `n_bands` | `32` | Number of equal-width frequency sub-bands |
-| — | `n_fft` | `2048` | STFT FFT size |
-| — | `hop_length` | `512` | STFT hop size |
+|          Symbol           | Parameter    | Default | Description                               |
+|:-------------------------:|--------------|:-------:|-------------------------------------------|
+| $\lambda_{\text{SI-SNR}}$ | `lambda_si`  |  `0.0`  | Weight of the SI-SNR penalty              |
+|  $\lambda_{\text{ILD}}$   | `lambda_ild` |  `1.0`  | Weight of the sub-band ILD penalty        |
+|            $K$            | `n_bands`    |  `32`   | Number of equal-width frequency sub-bands |
+|             —             | `n_fft`      | `2048`  | STFT FFT size                             |
+|             —             | `hop_length` |  `512`  | STFT hop size                             |
 
 ```python
 from sahtdemucs.losses import SpatialLoss
