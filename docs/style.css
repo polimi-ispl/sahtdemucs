@@ -74,7 +74,7 @@ a:hover { text-decoration: underline; }
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 35px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
@@ -82,7 +82,7 @@ a:hover { text-decoration: underline; }
 
 /* ── Header ── */
 header {
-  padding: 72px 0 56px;
+  padding: 20px 0 20px;
   /*border-bottom: 1px solid var(--border);*/
   /*background: linear-gradient(180deg, #12121a 0%, var(--bg) 100%);*/
   background: var(--bg);
