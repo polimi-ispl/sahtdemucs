@@ -180,12 +180,12 @@ See `notebook/TrainSAHTDemucs.ipynb` for a complete training and evaluation exam
 
 $$
 \mathcal{L} = \frac{1}{S} \sum_{s=1}^{S} \left(
-\lambda_{\text{ILD}} \cdot \mathcal{L}_{\text{ILD}}^{(s)} + \lambda_{\text{SI}} \cdot \mathcal{L}_{\text{SI-SNR}}^{(s)}
+\lambda_{\text{ILD}} \cdot \mathcal{L}_{\text{ILD}}^{(s)} + \lambda_{\text{SI}} \cdot \mathcal{L}_{\text{SI-SDR}}^{(s)}
 \right)
 $$
 
-$\mathcal{L}_{\text{SI-SNR}}^{(s)}$ is a loss term related to separation quality and based on the evaluation of 
-Scale-Invariant Signal to Noise Ration (SI-SNR). $\mathcal{L}_{\text{ILD}}^{(s)}$ is the MSE between corrected source
+$\mathcal{L}_{\text{SI-SDR}}^{(s)}$ is a loss term related to separation quality and based on the evaluation of 
+Scale-Invariant Signal to Distortion Ration (SI-SDR). $\mathcal{L}_{\text{ILD}}^{(s)}$ is the MSE between corrected source
 time-frequency ILD and groundtruth one, defined as
 
 $$
@@ -196,14 +196,14 @@ $$
   \right)^2
 $$
 
-where $K$ = `n_bands` and $T_f$ is the number of STFT frames. Here $\lambda_{\text{SI-SNR}}=0$ as we want to keep a purely
+where $K$ = `n_bands` and $T_f$ is the number of STFT frames. Here $\lambda_{\text{SI-SDR}}=0$ as we want to keep a purely
 spatial loss.
 
 ### Loss hyperparameters
 
 |          Symbol           | Parameter    | Default | Description                               |
 |:-------------------------:|--------------|:-------:|-------------------------------------------|
-| $\lambda_{\text{SI-SNR}}$ | `lambda_si`  |  `0.0`  | Weight of the SI-SNR penalty              |
+| $\lambda_{\text{SI}}$ | `lambda_si`  |  `0.0`  | Weight of the SI-SDR penalty              |
 |  $\lambda_{\text{ILD}}$   | `lambda_ild` |  `1.0`  | Weight of the sub-band ILD penalty        |
 |            $K$            | `n_bands`    |  `32`   | Number of equal-width frequency sub-bands |
 |             —             | `n_fft`      | `2048`  | STFT FFT size                             |
@@ -315,8 +315,8 @@ All functions are fully differentiable.
 
 | Class | Formula                                                                                                           |
 |---|-------------------------------------------------------------------------------------------------------------------|
-| `SISNRLoss` | $-\text{SI-SNR}$ averaged over batch and channels                                                                 |
-| `SpatialLoss` | $$ \mathcal{L} = \frac{1}{S} \sum_{s=1}^{S} \left(\lambda_{\text{SI}} \cdot \mathcal{L}_{\text{SI-SNR}}^{(s)} +\lambda_{\text{ILD}} \cdot \mathcal{L}_{\text{ILD}}^{(s)}\right)$$ |
+| `SISNRLoss` | $-\text{SI-SDR}$ averaged over batch and channels                                                                 |
+| `SpatialLoss` | $$ \mathcal{L} = \frac{1}{S} \sum_{s=1}^{S} \left(\lambda_{\text{SI}} \cdot \mathcal{L}_{\text{SI-SDR}}^{(s)} +\lambda_{\text{ILD}} \cdot \mathcal{L}_{\text{ILD}}^{(s)}\right)$$ |
 
 ---
 

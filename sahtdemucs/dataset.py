@@ -56,12 +56,17 @@ class MusdbSpatialDataset(Dataset):
         * ``targets``— ``(S, 2, segment_len)`` per-source stereo stems
 
     Args:
-        root:         path to the dataset root (contains ``train/`` and/or ``test/``)
-        split:        ``"train"`` or ``"test"``
-        sources:      ordered list of source stem names
-        segment_len:  number of samples per training segment
-        sample_rate:  target sample rate; files are resampled on the fly if needed
-        augment:      if ``True``, apply random gain and channel-flip augmentation
+        root:            path to the dataset root (contains ``train/`` and/or ``test/``)
+        split:           ``"train"`` or ``"test"``
+        sources:         ordered list of source stem names
+        segment_len:     number of samples per training segment
+        sample_rate:     target sample rate; files are resampled on the fly if needed
+        augment:         if ``True``, apply random gain and channel-flip augmentation
+        crops_per_track: number of independent random crops drawn from each track per
+                         epoch (default 1).  Setting this to *k* multiplies the
+                         effective dataset size by *k* at no I/O cost — the audio
+                         file is loaded once per ``__getitem__`` call and a fresh
+                         random start offset is drawn each time.
     """
 
     def __init__(
@@ -72,12 +77,14 @@ class MusdbSpatialDataset(Dataset):
         segment_len: int = 44100 * 6,
         sample_rate: int = 44100,
         augment: bool = True,
+        crops_per_track: int = 1,
     ) -> None:
-        self.root        = Path(root) / split
-        self.sources     = sources
-        self.segment_len = segment_len
-        self.sample_rate = sample_rate
-        self.augment     = augment
+        self.root            = Path(root) / split
+        self.sources         = sources
+        self.segment_len     = segment_len
+        self.sample_rate     = sample_rate
+        self.augment         = augment
+        self.crops_per_track = max(1, crops_per_track)
 
         # Collect all track subdirectories, sorted for reproducibility
         self.tracks: List[Path] = sorted(
@@ -90,11 +97,10 @@ class MusdbSpatialDataset(Dataset):
             )
 
     def __len__(self) -> int:
-        # One item per track; a random segment is drawn at each __getitem__ call
-        return len(self.tracks)
+        return len(self.tracks) * self.crops_per_track
 
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        track_dir = self.tracks[idx]
+        track_dir = self.tracks[idx % len(self.tracks)]
 
         # Load mixture and all source stems at the target sample rate
         mix   = self._load(track_dir / "mixture.wav")   # (2, T)

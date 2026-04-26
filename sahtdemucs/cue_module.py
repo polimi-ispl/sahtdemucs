@@ -302,20 +302,23 @@ class SpatialCueModule2D(_BaseSpatialCueModule):
         sample_rate:    audio sample rate in Hz, used only when
                         ``band_scale="mel"`` (default 44100)
         max_lag:        reserved for future ITD support (default 64)
+        use_global_branch: if ``False``, skip the global context branch and
+                        use only the local Conv2d branch (default ``True``)
     """
 
     def __init__(
         self,
-        hidden: int       = 32,
-        n_fft: int        = 2048,
-        hop_length: int   = 512,
-        n_bands: int      = 32,
-        ild_scale: float  = 6.0,
-        freq_kernel: int  = 3,
-        time_kernel: int  = 7,
-        band_scale: str   = "linear",
-        sample_rate: int  = 44100,
-        max_lag: int      = 64,
+        hidden: int            = 32,
+        n_fft: int             = 2048,
+        hop_length: int        = 512,
+        n_bands: int           = 32,
+        ild_scale: float       = 6.0,
+        freq_kernel: int       = 3,
+        time_kernel: int       = 7,
+        band_scale: str        = "linear",
+        sample_rate: int       = 44100,
+        max_lag: int           = 64,
+        use_gb: bool           = True,
     ) -> None:
         super().__init__()
         self.n_fft       = n_fft
@@ -324,7 +327,8 @@ class SpatialCueModule2D(_BaseSpatialCueModule):
         self.ild_scale   = ild_scale
         self.band_scale  = band_scale
         self.sample_rate = sample_rate
-        self.max_lag     = max_lag
+        self.max_lag          = max_lag
+        self.use_global_branch = use_gb
 
         fpad   = freq_kernel // 2
         tpad   = time_kernel // 2
@@ -368,11 +372,15 @@ class SpatialCueModule2D(_BaseSpatialCueModule):
         h2 = self.local2(h1)              # (B, hidden, n_bands, T)
         h3 = self.local3(h2) + h1        # (B, hidden, n_bands, T)
 
-        # Global context: mean over T → (B, 1, n_bands, 1) → (B, hidden, n_bands, 1)
-        g  = x.mean(dim=-1, keepdim=True)
-        g  = self.global_conv(g)          # broadcasts over T in the sum below
+        if self.use_global_branch:
+            # Global context: mean over T → (B, 1, n_bands, 1) → (B, hidden, n_bands, 1)
+            g  = x.mean(dim=-1, keepdim=True)
+            g  = self.global_conv(g)      # broadcasts over T in the sum below
+            fused = h3 + g
+        else:
+            fused = h3
 
-        out = torch.tanh(self.proj(h3 + g))   # (B, 1, n_bands, T)
+        out = torch.tanh(self.proj(fused))    # (B, 1, n_bands, T)
         return out.squeeze(1)[..., :ild_tf.shape[-1]]
 
 

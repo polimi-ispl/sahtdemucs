@@ -77,6 +77,8 @@ class SAHTDemucs(nn.Module):
         sample_rate:   audio sample rate in Hz, used only when
                        ``band_scale="mel"`` (default 44100, matches HT-Demucs)
         freeze_base:   if ``True`` (default), freeze all parameters of *base_model*
+        use_gb:        whether to use or not the global branch in the "cnn2d"
+                       architecture
 
     Inputs:
         mix: ``(B, 2, T)``
@@ -99,6 +101,7 @@ class SAHTDemucs(nn.Module):
         band_scale: str   = "linear",
         sample_rate: int  = 44100,
         freeze_base: bool = True,
+        use_gb: bool      = True,
     ) -> None:
         super().__init__()
         self.base_model   = base_model
@@ -124,6 +127,7 @@ class SAHTDemucs(nn.Module):
                     band_scale  = band_scale,
                     sample_rate = sample_rate,
                     max_lag     = max_lag,
+                    use_gb      = use_gb
                 )
                 for _ in range(self.n_sources)
             ]
