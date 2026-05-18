@@ -5,9 +5,9 @@
 Spatially-Aware HT-Demucs (**SA-HTDemucs**) extends the pre-trained 
 __[HT-Demucs](https://github.com/facebookresearch/demucs)__ music source separator with explicit preservation of spatial
 cues. From an input mixture $x_{gt}$, HT-Demucs separates $S=4$ sources (bass, drums, vocals, other). For each of the 
-separated sources $\hat{s}$, a Spatial Cue Module estimates the Interaural Level Difference $\widehat{ILD}^{(s)}_{k}(t)$ 
-in the time-frequency domain, which is related to the perceived left/right balance, and predicts a time-frequency correction 
-$\Delta ILD_{k}(t)$ to be applied to $\hat{s}$ to replicate $ILD^{(s)}_{k,gt}(t)$ of the groundtruth source $s_{gt}$.
+separated sources $\hat{s}_{sep}$, a Spatial Cue Module estimates the Interaural Level Difference in the time-frequency domain, 
+which is related to the perceived left/right balance, and predicts a time-frequency correction to be applied to 
+$\hat{s}_{sep}$ to replicate the ILD of the groundtruth source $s_{gt}$.
 While the frozen HT-Demucs backbone provides strong separation quality for free, only the Spatial Cue Modules are trained,
 making the approach practical on a small spatially-annotated dataset. SA-HTdemucs has been trained and evaluated on 
 binauralMUSDB18-HQ, a novel binaural dataset synthesized by convolving each source stem in 
