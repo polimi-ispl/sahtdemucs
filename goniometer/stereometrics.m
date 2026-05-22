@@ -38,6 +38,7 @@ S.width    = zeros(1, nFrames);
 S.t        = zeros(1, nFrames);
 S.frameIdx = zeros(nFrames, 2);
 
+% Compute metrics per frame
 for k = 1:nFrames
     n0 = (k-1)*hop + 1;
     n1 = n0 + wLen - 1;
@@ -49,11 +50,13 @@ for k = 1:nFrames
     Rc = R - mean(R);
     denom = sqrt(sum(Lc.^2) * sum(Rc.^2)) + eps_;
     S.corr(k) = sum(Lc .* Rc) / denom;
-
+    
+    % Balance
     rL = sqrt(mean(L.^2));
     rR = sqrt(mean(R.^2));
     S.balance(k) = (rL - rR) / (rL + rR + eps_);    % + = left
-
+    
+    % Stereo width
     M = (L + R) / sqrt(2);
     Sd = (L - R) / sqrt(2);
     S.width(k) = sqrt(mean(Sd.^2)) / (sqrt(mean(M.^2)) + eps_);
