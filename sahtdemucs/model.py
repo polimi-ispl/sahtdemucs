@@ -176,7 +176,7 @@ class SAHTDemucs(nn.Module):
     def forward(
         self,
         mix: torch.Tensor,
-    ) -> Tuple[torch.Tensor, List[torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, torch.Tensor, List[torch.Tensor]]:
         """Run HTDemucs separation, then apply per-source ILD correction.
 
         The base model always runs under ``torch.no_grad()`` (frozen).
@@ -188,8 +188,9 @@ class SAHTDemucs(nn.Module):
             mix: `(B, 2, T)` stereo mixture
 
         Returns:
-            estimates: `(B, S, 2, T)` ILD-corrected separated sources
-            deltas:    list of S tensors `(B, n_bands, T_frames)` — raw CNN outputs in [−1, +1]
+            estimates:     `(B, S, 2, T)` ILD-corrected separated sources
+            raw_estimates: `(B, S, 2, T)` raw HTDemucs output (no spatial correction)
+            deltas:        list of S tensors `(B, n_bands, T_frames)` — raw CNN outputs in [−1, +1]
         """
         # ── Base model (always frozen, never needs grad) ──
         with torch.no_grad():
@@ -204,7 +205,7 @@ class SAHTDemucs(nn.Module):
             estimates.append(corrected)
             deltas.append(delta)
 
-        return torch.stack(estimates, dim=1), deltas  # (B, S, 2, T), [S × (B, 1)]
+        return torch.stack(estimates, dim=1), raw_estimates, deltas  # (B, S, 2, T), (B, S, 2, T), [...]
 
     # ------------------------------------------------------------------ #
     # Full-track inference
