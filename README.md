@@ -92,11 +92,11 @@ At each forward pass both modules:
 1. Compute the STFT of the separated source and partition the frequency bins into `n_bands` sub-bands, either by splitting 
 the linear frequency axis into equal-width intervals (`band_scale`=`linear`) or by splitting the mel-frequency axis into 
 equal-width intervals and mapping each STFT bin to the mel interval containing its center frequency (`band_scale`=`mel`). 
-Derive a per-band ILD trajectory $ILD^{(s)}_k(t) \in \mathbb{R}^{B \times K \times T_{frames}}$, where 
+Derive a per-band ILD trajectory $\text{ILD}^{(s)}_k(t) \in \mathbb{R}^{B \times K \times T_{frames}}$, where 
 $K$=`n_bands`.
 2. Feed the ILD map into the CNN to predict a correction $\delta_{ILD} \in [−1, +1] \in \mathbb{R}^{B \times K \times T_{frames}}$ 
 per band per frame.
-3. Scale $\delta_{ILD}$ by `ild_scale` to obtain $\Delta_{ILD}$ in dB, then apply a **symmetric time-varying per-bin 
+3. Scale $\delta_{ILD}$ by $\alpha_{ILD}$ = `ild_scale` to obtain $\Delta_{ILD}$ in dB, then apply a **symmetric time-varying per-bin 
 gain** in the STFT domain:
    - Left channel: $g_L = 10^{+\Delta/40}$ 
    - Right channel: $g_R = 10^{-\Delta/40}$
