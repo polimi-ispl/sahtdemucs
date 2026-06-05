@@ -192,7 +192,7 @@ $$
 \mathcal{L}_{\text{ILD}}^{(s)} =
   \frac{1}{K \cdot T_f} \sum_{k=1}^{K} \sum_{t=1}^{T_f}
   \left(
-    \widehat{\text{ILD}}_k^{(s)}(t) - \text{ILD}_{k,\,\text{gt}}^{(s)}(t)
+    \widehat{\text{ILD}}_k^{(s)}(t) - \text{ILD}_{k,\text{gt}}^{(s)}(t)
   \right)^2
 $$
 
