@@ -124,6 +124,69 @@ pip install demucs torchaudio soundfile
 
 ---
 
+## Binaural Dataset Generation (binauralMUSDB18-HQ)
+
+SA-HTDemucs is trained and evaluated on **binauralMUSDB18-HQ**, synthesized from
+[MUSDB18-HQ](https://sigsep.github.io/datasets/musdb.html#musdb18-compressed-stems) by convolving each source stem with a
+Head-Related Impulse Response (HRIR) at a randomized horizontal position, then summing the binaural stems into a
+normalized binaural mixture. The script `sahtdemucs/binaural_synth.py` performs this synthesis.
+
+The HRIRs are those of the Neumann KU100 dummy head from the
+[SADIE II](https://www.york.ac.uk/sadie-project/database.html) database (subject D1), diffuse-field compensated (DFC),
+at 44.1 kHz. HRIR files are expected to be named `azi_{angle}_ele_0_DFC.wav`.
+
+### What it does, per track
+
+1. Down-mixes each stereo stem to mono, then convolves it with the left/right HRIR for the chosen azimuth (elevation
+   fixed at 0°).
+2. Assigns each of the 4 stems (`vocals`, `bass`, `drums`, `other`) a **distinct** azimuth, drawn *without replacement*
+   from the frontal grid `{0, 10, …, 90} ∪ {270, …, 350}` degrees, so sources do not directly overlap — unless a
+   metadata file fixes the angles.
+3. Writes the binaural stems, the normalized `mixture.wav` (peak-normalized sum of the binaural stems), and a
+   `metadata.json` recording the per-stem azimuth angles.
+
+All audio must be at 44.1 kHz (the script raises if a stem has a different sample rate). The output tree matches what
+`MusdbSpatialDataset` expects (see [Module Reference](#sahtdemucsdatasetpy--musdb18-hq-dataloader)).
+
+### Arguments
+
+| Argument          | Required | Description                                                                              |
+|-------------------|:--------:|------------------------------------------------------------------------------------------|
+| `--input_dir`     |   yes    | MUSDB18-HQ root, containing `train/` and `test/`, each with one folder per track.         |
+| `--output_dir`    |   yes    | Target root; `train/` and `test/` are created, mirroring the input track structure.      |
+| `--hrir_dir`      |   yes    | Folder with the SADIE II HRIR WAVs named `azi_{angle}_ele_0_DFC.wav`.                     |
+| `-m`, `--metadata`|    no    | JSON mapping each track's stems to azimuth angles, to reproduce an exact dataset version. |
+
+When `--metadata` is omitted, a new random angle assignment is generated (and saved per track as `metadata.json`).
+A reusable metadata file for the published dataset version is provided at `data/binaural_musdb_metadata.json`.
+
+### Usage
+
+```bash
+python sahtdemucs/binaural_synth.py \
+    --input_dir="path/to/MUSDB18-HQ" \
+    --output_dir="path/to/binauralMUSDB18-HQ" \
+    --hrir_dir="path/to/SADIE_II/Subject_001_Wav/DFC/44K_16bit"
+```
+
+On Windows PowerShell, call the interpreter explicitly and keep the command on a single line:
+
+```powershell
+python .\sahtdemucs\binaural_synth.py --input_dir="D:\Dataset\MUSDB18HQ" --output_dir="D:\Dataset\binauralMUSDB18HQ" --hrir_dir="D:\Dataset\SADIEII\Subject_001_Wav\DFC\44K_16bit"
+```
+
+To reproduce a fixed dataset version, pass the metadata JSON:
+
+```bash
+python sahtdemucs/binaural_synth.py \
+    --input_dir="path/to/MUSDB18-HQ" \
+    --output_dir="path/to/binauralMUSDB18-HQ" \
+    --hrir_dir="path/to/SADIE_II/.../DFC/44K_16bit" \
+    -m data/binaural_musdb_metadata.json
+```
+
+---
+
 ## Quick Start
 
 ### Python API
@@ -145,8 +208,11 @@ model = SAHTDemucs(base, sources=base.sources, spatial_arch="cnn2d")
 # Only SpatialCueModule weights are updated
 optimizer = torch.optim.Adam(model.trainable_parameters(), lr=1e-3)
 
-mix = torch.randn(1, 2, 44100 * 6)   # (B, 2, T)
-estimates, deltas = model(mix)        # (B, S, 2, T), [S × (B, n_bands, T_frames)]
+mix = torch.randn(1, 2, 44100 * 6)        # (B, 2, T)
+estimates, raw_estimates, deltas = model(mix)
+# estimates:     (B, S, 2, T)  spatially corrected sources
+# raw_estimates: (B, S, 2, T)  raw HTDemucs output (no spatial correction)
+# deltas:        [S × (B, n_bands, T_frames)]  CNN corrections in [−1, +1]
 ```
 
 ### Full-track inference
@@ -164,8 +230,8 @@ from sahtdemucs.losses import SpatialLoss
 loss_fn = SpatialLoss(lambda_si=0.0, lambda_ild=1.0)  # ILD supervision only
 
 for mix, targets in train_loader:          # mix: (B,2,T)  targets: (B,S,2,T)
-    estimates, _ = model(mix)
-    loss = loss_fn(estimates, targets)
+    estimates, raw_estimates, _ = model(mix)
+    loss, loss_si, loss_ild = loss_fn(estimates, targets, raw_estimates)
     loss.backward()
     optimizer.step(); optimizer.zero_grad()
 ```
@@ -184,9 +250,8 @@ $$
 \right)
 $$
 
-$\mathcal{L}_{\text{SI-SDR}}^{(s)}$ is a loss term related to separation quality and based on the evaluation of 
-Scale-Invariant Signal to Distortion Ration (SI-SDR). $\mathcal{L}_{\text{ILD}}^{(s)}$ is the MSE between corrected source
-time-frequency ILD and groundtruth one, defined as
+$\mathcal{L}_{\text{ILD}}^{(s)}$ is the MSE between the corrected source time-frequency ILD and the ground-truth one,
+defined as
 
 $$
 \mathcal{L}_{\text{ILD}}^{(s)} =
@@ -196,28 +261,57 @@ $$
   \right)^2
 $$
 
-where $K$ = `n_bands` and $T_f$ is the number of STFT frames. Here $\lambda_{\text{SI-SDR}}=0$ as we want to keep a purely
-spatial loss.
+where $K$ = `n_bands` and $T_f$ is the number of STFT frames.
+
+$\mathcal{L}_{\text{SI-SDR}}^{(s)}$ is **not** a plain SI-SDR loss but a one-sided **degradation penalty**: it penalises the
+spatial correction only when it lowers the SI-SDR of the corrected source $s_{sep}$ below that of the frozen HT-Demucs
+output $s_{raw}$ by more than a tolerated margin $m$ = `si_margin_db` (in dB). With $\text{SI-SDR}(\cdot)$ evaluated
+against the ground-truth source $s_{gt}$,
+
+$$
+\mathcal{L}_{\text{SI-SDR}}^{(s)} =
+  \operatorname{ReLU}\!\left(
+    \text{SI-SDR}(s_{raw}, s_{gt}) - \text{SI-SDR}(s_{sep}, s_{gt}) - m
+  \right)
+$$
+
+This term is always non-negative and is zero (no gradient) as long as the spatial head does not hurt separation beyond the
+margin, letting it improve ILD freely. Being expressed in dB — the same units as the ILD term — `lambda_si` and
+`lambda_ild` are directly comparable. Setting $\lambda_{\text{SI}}=0$ recovers a purely spatial loss (and lets
+`raw_estimates` be omitted in the forward call).
+
+The forward pass takes the raw HT-Demucs output and returns the total loss together with its two (already weighted)
+components for logging:
+
+```python
+total, si_part, ild_part = loss_fn(estimates, targets, raw_estimates)
+total.backward()
+```
+
+`raw_estimates` is required whenever `lambda_si > 0`; if `None`, the SI-SDR degradation term is skipped.
 
 ### Loss hyperparameters
 
-|          Symbol           | Parameter    | Default | Description                               |
-|:-------------------------:|--------------|:-------:|-------------------------------------------|
-| $\lambda_{\text{SI}}$ | `lambda_si`  |  `0.0`  | Weight of the SI-SDR penalty              |
-|  $\lambda_{\text{ILD}}$   | `lambda_ild` |  `1.0`  | Weight of the sub-band ILD penalty        |
-|            $K$            | `n_bands`    |  `32`   | Number of equal-width frequency sub-bands |
-|             —             | `n_fft`      | `2048`  | STFT FFT size                             |
-|             —             | `hop_length` |  `512`  | STFT hop size                             |
+|          Symbol           | Parameter      | Default | Description                                            |
+|:-------------------------:|----------------|:-------:|--------------------------------------------------------|
+|   $\lambda_{\text{SI}}$   | `lambda_si`    |  `1.0`  | Weight of the SI-SDR degradation penalty               |
+|  $\lambda_{\text{ILD}}$   | `lambda_ild`   |  `1.0`  | Weight of the sub-band ILD penalty                     |
+|            $m$            | `si_margin_db` |  `0.5`  | Tolerated SI-SDR degradation (dB) before it is penalised |
+|            $K$            | `n_bands`      |  `32`   | Number of equal-width frequency sub-bands              |
+|             —             | `n_fft`        | `2048`  | STFT FFT size                                          |
+|             —             | `hop_length`   |  `512`  | STFT hop size                                          |
+|             —             | `band_scale`   |`linear` | Sub-band spacing — `linear` or `mel`                   |
 
 ```python
 from sahtdemucs.losses import SpatialLoss
 
-# ILD supervision only (recommended for SAHTDemucs)
+# ILD supervision only (recommended for SAHTDemucs) — raw_estimates not needed
 loss_fn = SpatialLoss(lambda_si=0.0, lambda_ild=1.0)
-loss    = loss_fn(estimates, targets)   # (B,S,2,T), (B,S,2,T) → scalar
+total, si_part, ild_part = loss_fn(estimates, targets)   # (B,S,2,T), (B,S,2,T) → 3 scalars
 
-# Joint reconstruction + ILD
-loss_fn = SpatialLoss(lambda_si=1.0, lambda_ild=1.0)
+# Joint ILD + SI-SDR-degradation guard (raw_estimates required when lambda_si > 0)
+loss_fn = SpatialLoss(lambda_si=1.0, lambda_ild=1.0, si_margin_db=0.5)
+total, si_part, ild_part = loss_fn(estimates, targets, raw_estimates)
 ```
 
 ---
@@ -231,8 +325,11 @@ sahtdemucs/
 │   ├── model.py              ← SAHTDemucs
 │   ├── cue_module.py         ← SpatialCueModule (cnn1d), SpatialCueModule2D (cnn2d), build_spatial_module
 │   ├── spatial.py            ← compute_ild, compute_ild_bands, compute_itd_samples, apply_itd
-│   ├── losses.py             ← SpatialLoss, SISNRLoss
-│   └── dataset.py            ← MusdbSpatialDataset
+│   ├── losses.py             ← SpatialLoss (sub-band ILD MSE + SI-SDR degradation guard)
+│   ├── dataset.py            ← MusdbSpatialDataset
+│   └── binaural_synth.py     ← binauralMUSDB18-HQ synthesis from MUSDB18-HQ + SADIE II HRIRs
+├── data/
+│   └── binaural_musdb_metadata.json   ← per-track stem azimuths (reproducible dataset)
 ├── notebook/
 │   ├── TrainHTDemucs.ipynb         ← baseline HTDemucs training
 │   ├── TrainSAHTDemucs.ipynb       ← spatial heads training & evaluation
@@ -251,6 +348,14 @@ sahtdemucs/
 ---
 
 ## Module Reference
+
+### `sahtdemucs/binaural_synth.py` — Binaural tracks synthesis
+
+Synthesizes **binauralMUSDB18-HQ**, from [MUSDB18-HQ](https://sigsep.github.io/datasets/musdb.html#musdb18-compressed-stems) by convolving each source stem with a
+Head-Related Impulse Response (HRIR) at a randomized horizontal position, then summing the binaural stems into a
+normalized binaural mixture.
+
+---
 
 ### `sahtdemucs/model.py` — SAHTDemucs
 
@@ -275,8 +380,6 @@ stems = model.separate(wav)       # full-track (2, T) → (S, 2, T)
 optimizer = torch.optim.Adam(model.trainable_parameters(), lr=3e-4)
 print(model.count_trainable())    # number of trainable parameters
 ```
-
----
 
 ### `sahtdemucs/cue_module.py` — Spatial correction heads
 
@@ -315,8 +418,7 @@ All functions are fully differentiable.
 
 | Class | Formula                                                                                                           |
 |---|-------------------------------------------------------------------------------------------------------------------|
-| `SISNRLoss` | $-\text{SI-SDR}$ averaged over batch and channels                                                                 |
-| `SpatialLoss` | $$ \mathcal{L} = \frac{1}{S} \sum_{s=1}^{S} \left(\lambda_{\text{SI}} \cdot \mathcal{L}_{\text{SI-SDR}}^{(s)} +\lambda_{\text{ILD}} \cdot \mathcal{L}_{\text{ILD}}^{(s)}\right)$$ |
+| `SpatialLoss` | $$ \mathcal{L} = \frac{1}{S} \sum_{s=1}^{S} \left(\lambda_{\text{SI}} \cdot \mathcal{L}_{\text{SI-SDR}}^{(s)} +\lambda_{\text{ILD}} \cdot \mathcal{L}_{\text{ILD}}^{(s)}\right)$$ where $\mathcal{L}_{\text{SI-SDR}}^{(s)}$ is the one-sided SI-SDR degradation penalty (see [Loss Function](#loss-function)) and $\mathcal{L}_{\text{ILD}}^{(s)}$ the sub-band ILD MSE. Returns `(total, si_part, ild_part)`. |
 
 ---
 
@@ -342,7 +444,7 @@ loader = DataLoader(ds, batch_size=4, shuffle=True, num_workers=4)
 mix, targets = next(iter(loader))   # (4, 2, 264600),  (4, 4, 2, 264600)
 ```
 
----
+<!-- ---
 
 ## Citation
 
@@ -356,3 +458,4 @@ If you build on this work, please also cite the original Demucs papers:
   year      = {2023}
 }
 ```
+-->
