@@ -264,14 +264,14 @@ $$
 where $K$ = `n_bands` and $T_f$ is the number of STFT frames.
 
 $\mathcal{L}_{\text{SI-SDR}}^{(s)}$ is **not** a plain SI-SDR loss but a one-sided **degradation penalty**: it penalises the
-spatial correction only when it lowers the SI-SDR of the corrected source $s_{sep}$ below that of the frozen HT-Demucs
-output $s_{raw}$ by more than a tolerated margin $m$ = `si_margin_db` (in dB). With $\text{SI-SDR}(\cdot)$ evaluated
+spatial correction only when it lowers the SI-SDR of the corrected source $\hat{s}$ below that of the frozen HT-Demucs
+output $\bar{s}$ by more than a tolerated margin $m_{dB}$ = `si_margin_db` (in dB). With $\text{SI-SDR}(\cdot)$ evaluated
 against the ground-truth source $s_{gt}$,
 
 $$
 \mathcal{L}_{\text{SI-SDR}}^{(s)} =
-  \operatorname{ReLU}\!\left(
-    \text{SI-SDR}(s_{raw}, s_{gt}) - \text{SI-SDR}(s_{sep}, s_{gt}) - m
+  \text{ReLU}\!\left(
+    \text{SI-SDR}(\bar{s}, s_{gt}) - \text{SI-SDR}(\hat{s}, s_{gt}) - m_{dB}
   \right)
 $$
 
