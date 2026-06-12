@@ -1,4 +1,4 @@
-<REAPER_PROJECT 0.1 "7.24/win64" 1778247182
+<REAPER_PROJECT 0.1 "7.24/win64" 1781253094
   <NOTES 0 2
   >
   RIPPLE 0
@@ -18,8 +18,8 @@
   VIDEO_CONFIG 0 0 65792
   PANMODE 3
   PANLAWFLAGS 3
-  CURSOR 204
-  ZOOM 18.0998851155557 2947 0
+  CURSOR 75
+  ZOOM 3.27605841196315 0 0
   VZOOMEX 6 0
   USE_REC_CFG 0
   RECMODE 1
@@ -66,8 +66,8 @@
   GLOBAL_AUTO -1
   TEMPO 120 4 4
   PLAYRATE 1 0 0.25 4
-  SELECTION 191 216
-  SELECTION2 191 216
+  SELECTION 75 100
+  SELECTION2 75 100
   MASTERAUTOMODE 0
   MASTERTRACKHEIGHT 0 0
   MASTERPEAKCOL 16576
@@ -81,7 +81,7 @@
   MASTER_FX 1
   MASTER_SEL 0
   <MASTERFXLIST
-    WNDRECT -109 314 1246 593
+    WNDRECT 564 233 1246 593
     SHOW 0
     LASTSEL 0
     DOCKED 0
@@ -118,22 +118,30 @@
     ARM 0
     DEFSHAPE 1 -1 -1
   >
-  MARKER 1 0 "" 1 0 1 R {7D0E0935-23D9-4A87-AE8A-66ACD44E0189} 0
+  MARKER 1 0 "song1 - bass" 1 0 1 R {7D0E0935-23D9-4A87-AE8A-66ACD44E0189} 0
   MARKER 1 25 "" 1
-  MARKER 2 25 "" 1 0 1 R {AE5B7268-686F-416F-9C75-A9F559E3DDF5} 0
+  MARKER 2 25 "song1 - drums" 1 0 1 R {AE5B7268-686F-416F-9C75-A9F559E3DDF5} 0
   MARKER 2 50 "" 1
-  MARKER 3 50 "" 1 0 1 R {ABD59B38-1F45-4CBF-B04A-9EF09519E935} 0
+  MARKER 3 50 "song1 - vocals" 1 0 1 R {ABD59B38-1F45-4CBF-B04A-9EF09519E935} 0
   MARKER 3 75 "" 1
-  MARKER 4 75 "" 1 0 1 R {1A97423F-DAAD-47C4-A991-6EDB35C5E43A} 0
-  MARKER 4 100 "" 1
-  MARKER 5 116 "" 1 0 1 R {271FDBFC-7193-43FA-A82B-23D01CDEC9D1} 0
+  MARKER 4 75 "song1 - others" 9 0 1 R {1A97423F-DAAD-47C4-A991-6EDB35C5E43A} 0
+  MARKER 4 100 "" 9
+  MARKER 5 116 "song2 - bass" 1 0 1 R {271FDBFC-7193-43FA-A82B-23D01CDEC9D1} 0
   MARKER 5 141 "" 1
-  MARKER 6 141 "" 1 0 1 R {58BEE149-6076-405F-AC16-F2744FCEDCFF} 0
+  MARKER 6 141 "song2 - drums" 1 0 1 R {58BEE149-6076-405F-AC16-F2744FCEDCFF} 0
   MARKER 6 166 "" 1
-  MARKER 7 166 "" 1 0 1 R {59B79690-103A-4829-A44D-FDB188100071} 0
+  MARKER 7 166 "song2 - vocals" 1 0 1 R {59B79690-103A-4829-A44D-FDB188100071} 0
   MARKER 7 191 "" 1
-  MARKER 8 191 "" 1 0 1 R {92B9C6B0-3B5F-4DDC-95CE-BD7AF8E25C2A} 0
+  MARKER 8 191 "song2  others" 1 0 1 R {92B9C6B0-3B5F-4DDC-95CE-BD7AF8E25C2A} 0
   MARKER 8 216 "" 1
+  MARKER 9 232 "song3 - bass" 1 0 1 R {A0E1772A-8106-450C-9C17-82349E820975} 0
+  MARKER 9 257 "" 1
+  MARKER 10 257 "song3 - drums" 1 0 1 R {D888DB00-65FD-4D66-A057-074C98C2E6C2} 0
+  MARKER 10 282 "" 1
+  MARKER 11 282 "song3 - vocas" 1 0 1 R {C36F95A5-C74B-4163-ACFD-5DA8DA93C092} 0
+  MARKER 11 307 "" 1
+  MARKER 12 307 "song3 - others" 1 0 1 R {A7DE88BA-4F79-4A20-B56B-DC6B0C6081C2} 0
+  MARKER 12 332 "" 1
   <PROJBAY
   >
   <TRACK {3D6B8A6E-A2A2-43DC-8775-7999045A1CF1}
@@ -143,7 +151,7 @@
     AUTOMODE 0
     PANLAWFLAGS 3
     VOLPAN 1 0 -1 -1 1
-    MUTESOLO 0 0 0
+    MUTESOLO 1 0 0
     IPHASE 0
     PLAYOFFS 0 1
     ISBUS 0 0
@@ -171,16 +179,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {432ABA16-F62F-4BCF-907D-E00856AFADA5}
-      IID 2
+      IGUID {8247221D-2AE9-4D7A-B15A-E98BBC3CFBE1}
+      IID 43
       NAME ref_bass.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {4C4AED23-73FD-4527-8EEA-DD9509A6DB56}
+      GUID {FA245C90-0FB2-4B62-A2D2-3F12D71776FC}
       <SOURCE WAVE
-        FILE "Media\ref_bass.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\ref_bass.wav"
       >
     >
     <ITEM
@@ -193,16 +201,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {E9C0EB4D-9B9E-43C2-9992-5C10A02B03ED}
-      IID 4
-      NAME ref_other.wav
+      IGUID {22F3D3C1-D7E5-42FA-96CB-C31140F0F071}
+      IID 44
+      NAME ref_drums.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {49D3989D-4F89-48E6-A4A4-5C05EC38C79C}
+      GUID {D10A7057-6127-440B-99D3-C098AD9B7C63}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\ref_other.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\ref_drums.wav"
       >
     >
     <ITEM
@@ -215,16 +223,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {8E0B5E0F-00DE-4337-9777-817C01DFE711}
-      IID 7
+      IGUID {1C15B083-5067-45D1-8FC5-F9020D19D4DF}
+      IID 46
       NAME ref_vocals.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {627D9507-028F-4D71-BE55-A125B783968E}
+      GUID {B8162DE7-84C0-410D-BD42-B261C7027F57}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\ref_vocals.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\ref_vocals.wav"
       >
     >
     <ITEM
@@ -237,16 +245,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {51851379-AC6B-4413-B362-36A7A7F979DD}
-      IID 10
-      NAME ref_drums.wav
+      IGUID {F0F208A2-D993-415A-8D80-A14E8E22630C}
+      IID 45
+      NAME ref_other.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {B710317D-31D2-4378-ADEE-7366DF863E83}
+      GUID {B8FB5014-9EB1-4C85-B8BD-11B24C861AEC}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\ref_drums.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\ref_other.wav"
       >
     >
     <ITEM
@@ -259,16 +267,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {36B22A0E-8A47-4A2C-BEE1-5B0E2B403FBD}
-      IID 23
+      IGUID {A36F354B-0B22-4F2C-BAD0-CF7F49ADA749}
+      IID 60
       NAME ref_bass.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {E696E80E-3B53-411C-9DAF-1DBCC9046BDE}
+      GUID {F0E79EC1-0F8B-4AEE-A764-71061C6003B9}
       <SOURCE WAVE
-        FILE "Media\ref_bass.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\ref_bass.wav"
       >
     >
     <ITEM
@@ -281,16 +289,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {E293C5BB-AA6A-467F-9BD2-13B33B296958}
-      IID 24
+      IGUID {7D71038E-7F63-481E-AA23-B3ABE5E3F71C}
+      IID 61
       NAME ref_drums.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {A3040113-71A6-4235-9FAA-4FD4B395596B}
+      GUID {47BB5E7F-AA50-4CB1-A9F5-59D8E16EAB7A}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\ref_drums.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\ref_drums.wav"
       >
     >
     <ITEM
@@ -303,16 +311,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {47C0D29D-840F-43A2-B0E6-30AA7A0372BB}
-      IID 25
-      NAME ref_other.wav
+      IGUID {2E088D84-19D8-44F5-B15D-F74762DA7330}
+      IID 63
+      NAME ref_vocals.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {6B423923-3B75-4E8C-904A-7DD91FDAD308}
+      GUID {FBCE3332-342B-4807-B171-7D86FE850952}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\ref_other.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\ref_vocals.wav"
       >
     >
     <ITEM
@@ -325,16 +333,104 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {DC71C0F0-DA36-4A83-A9C4-74B19271121D}
-      IID 26
+      IGUID {3F80EC8D-353D-461A-BD4A-91927BFB350C}
+      IID 62
+      NAME ref_other.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {87DF06AD-4EA4-4033-B2D3-C33A81E693F6}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\ref_other.wav"
+      >
+    >
+    <ITEM
+      POSITION 232
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {B187824D-A006-4EF6-812F-7E1C989720A9}
+      IID 72
+      NAME ref_bass.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {5195F364-C5BF-434F-9C73-DD3EC820792B}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\ref_bass.wav"
+      >
+    >
+    <ITEM
+      POSITION 257
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {BDA840E9-881D-4D30-B07B-8CF3C3896E28}
+      IID 73
+      NAME ref_drums.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {77D50E73-5972-4722-BE5E-96EC817E7317}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\ref_drums.wav"
+      >
+    >
+    <ITEM
+      POSITION 282
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {A606F1E2-2B4D-4EFA-8F03-1EE5263E4E85}
+      IID 75
       NAME ref_vocals.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {3FFF243D-A672-4C2E-BF0C-37965F093ADE}
+      GUID {056A8B65-BC64-4D3C-A791-1A6E542D019B}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\ref_vocals.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\ref_vocals.wav"
+      >
+    >
+    <ITEM
+      POSITION 307
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {1524FD14-79EB-4754-B862-3770949242DD}
+      IID 74
+      NAME ref_other.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {04FB8863-CAA6-4669-BD5F-D12DD5922DCA}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\ref_other.wav"
       >
     >
   >
@@ -373,16 +469,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {8B9DB78F-1BEE-4320-83AD-7DB306338E7B}
-      IID 1
+      IGUID {F49AE1A2-9A1D-4B51-AAF7-282381E7E221}
+      IID 51
       NAME htdemucs_bass.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {C0F508C4-3A50-405A-8D8E-16E47B94529B}
+      GUID {E720F37E-3A93-432B-8C86-41AD80AFF2B3}
       <SOURCE WAVE
-        FILE "Media\htdemucs_bass.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\htdemucs_bass.wav"
       >
     >
     <ITEM
@@ -395,16 +491,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {C3A96EFB-71FD-4668-96E9-E76ABBF48B18}
-      IID 5
-      NAME htdemucs_other.wav
+      IGUID {F9C7DE0A-53F9-4E0C-9137-49653A233C5F}
+      IID 52
+      NAME htdemucs_drums.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {823366F5-439A-4FBF-8A05-962AC5DA22E4}
+      GUID {CEA35252-AD13-4BEA-AE5C-8B7284C51A50}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\htdemucs_other.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\htdemucs_drums.wav"
       >
     >
     <ITEM
@@ -417,16 +513,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {DD9059FC-A069-4A6E-92E3-1FE3563FE962}
-      IID 8
+      IGUID {6F3F30C4-777A-436D-AAB6-897A0CDF3617}
+      IID 54
       NAME htdemucs_vocals.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {D301F149-ABAB-461E-82C4-484906460CC9}
+      GUID {07D0E634-45D0-4B0A-8D68-07B2F801FDE5}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\htdemucs_vocals.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\htdemucs_vocals.wav"
       >
     >
     <ITEM
@@ -439,16 +535,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {5E4235ED-ADC5-4AF4-87B3-C3B96A22A547}
-      IID 11
-      NAME htdemucs_drums.wav
+      IGUID {7B94DB1E-1450-48B8-A678-B9492D35AD9D}
+      IID 53
+      NAME htdemucs_other.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {A6892CCF-5682-4447-A364-03FED0814994}
+      GUID {C3B6ED64-32DB-4B0D-95ED-4D14109DCD7D}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\htdemucs_drums.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\htdemucs_other.wav"
       >
     >
     <ITEM
@@ -461,16 +557,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {78594DC4-8649-4498-97D3-7CA86650E24F}
-      IID 19
+      IGUID {F2C6F85F-B343-4718-B0EA-B0DD1CE65BDE}
+      IID 55
       NAME htdemucs_bass.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {F23DECE8-4965-4BE4-9193-0F28E1D2D5B7}
+      GUID {94958D9D-2909-4567-8EAA-2A6CA33E7163}
       <SOURCE WAVE
-        FILE "Media\htdemucs_bass.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\htdemucs_bass.wav"
       >
     >
     <ITEM
@@ -483,16 +579,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {B7A95E3E-326D-4EC5-8947-86A5F40B9E9C}
-      IID 20
+      IGUID {AD377D72-A473-427D-A7C4-2D27B9C924F1}
+      IID 56
       NAME htdemucs_drums.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {A93C6BEC-74B7-4FD2-9714-50F931F2F80C}
+      GUID {B4440B07-9F51-41E3-ACFC-43D31A4E2BF5}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\htdemucs_drums.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\htdemucs_drums.wav"
       >
     >
     <ITEM
@@ -505,16 +601,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {8FF9439D-73CA-45F1-B56F-36B383C27FE8}
-      IID 21
-      NAME htdemucs_other.wav
+      IGUID {BBBD23E8-B525-4811-B6C3-ED3F7BE1EF95}
+      IID 58
+      NAME htdemucs_vocals.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {38E498D7-D031-4E60-91F8-83E404A34624}
+      GUID {9424A22A-F3AB-4877-A8EA-F2DB492351E7}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\htdemucs_other.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\htdemucs_vocals.wav"
       >
     >
     <ITEM
@@ -527,16 +623,104 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {8155860F-113C-43F6-964B-16EC1D1307DF}
-      IID 22
+      IGUID {503823D3-93FB-4FCA-A1AB-60742FDA6F23}
+      IID 59
+      NAME htdemucs_other.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {1DE59E7F-83F2-4B10-9911-05C0291B28B5}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\htdemucs_other.wav"
+      >
+    >
+    <ITEM
+      POSITION 232
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {06AD9353-3E85-4D43-B6E2-2F66A0E31DE7}
+      IID 68
+      NAME htdemucs_bass.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {41E9AF95-2437-4A3F-9AAF-3A6BE4D974CB}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\htdemucs_bass.wav"
+      >
+    >
+    <ITEM
+      POSITION 257
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {D5DD2FAD-EE89-4C44-9D36-4BCC18B8D61D}
+      IID 69
+      NAME htdemucs_drums.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {698D1A70-4CCB-4041-9875-0A621CABCD82}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\htdemucs_drums.wav"
+      >
+    >
+    <ITEM
+      POSITION 282
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {B004C1B9-43EC-4621-BD4D-49F17F04D8AA}
+      IID 71
       NAME htdemucs_vocals.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {D67913DB-8EBB-4D8E-B381-979B191DB0E7}
+      GUID {44E6FCBF-6507-4BD2-BD8D-1C06D761BBEC}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\htdemucs_vocals.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\htdemucs_vocals.wav"
+      >
+    >
+    <ITEM
+      POSITION 307
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {9E48A053-0D2B-47EF-BC76-C4B6AF0435A6}
+      IID 70
+      NAME htdemucs_other.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {0077EE2F-46BE-4734-9FFD-42BC4890F3D8}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\htdemucs_other.wav"
       >
     >
   >
@@ -547,7 +731,7 @@
     AUTOMODE 0
     PANLAWFLAGS 3
     VOLPAN 1 0 -1 -1 1
-    MUTESOLO 1 0 0
+    MUTESOLO 0 0 0
     IPHASE 0
     PLAYOFFS 0 1
     ISBUS 0 0
@@ -557,7 +741,7 @@
     SEL 0
     REC 0 0 1 0 0 0 0 0
     VU 2
-    TRACKHEIGHT 0 0 0 0 0 0 0
+    TRACKHEIGHT 208 0 0 0 0 0 0
     INQ 0 0 0 0.5 100 0 0 100
     NCHAN 2
     FX 1
@@ -575,16 +759,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {30BC4162-0F1B-47A9-9C9F-6934F7F44CF5}
-      IID 3
-      NAME spatial_bass.wav
+      IGUID {24DFD11E-AB43-40B4-AD4A-9EA3AF2B5DE8}
+      IID 47
+      NAME sahtdemucs_bass.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {D58E3DCC-78C8-48DE-9B49-FBE6103E877F}
+      GUID {9F7C2EA7-332B-4982-822C-D5B551BD060D}
       <SOURCE WAVE
-        FILE "Media\spatial_bass.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\sahtdemucs_bass.wav"
       >
     >
     <ITEM
@@ -597,16 +781,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {EF8D52C8-7960-4D8D-AB9F-E0DA4571B490}
-      IID 6
-      NAME spatial_other.wav
+      IGUID {6C6BCA76-F625-49F0-BA9F-22C8BB859607}
+      IID 48
+      NAME sahtdemucs_drums.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {67EAE161-220D-4BD6-8C7A-FE693D59BACC}
+      GUID {458A4DA7-2EBF-4BD4-8FEC-7E9B34B221EA}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\sahtdemucs_other.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\sahtdemucs_drums.wav"
       >
     >
     <ITEM
@@ -619,16 +803,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {53F89ACF-A8F0-4EC2-8C97-6365B7E7091E}
-      IID 9
-      NAME spatial_vocals.wav
+      IGUID {535360B7-C3B9-4518-9700-775A102AA5E7}
+      IID 50
+      NAME sahtdemucs_vocals.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {8629DC76-E13C-4F79-94F5-7A314DC73976}
+      GUID {90418625-CAB5-4C31-AADC-7DA0DC98C48D}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\sahtdemucs_vocals.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\sahtdemucs_vocals.wav"
       >
     >
     <ITEM
@@ -641,16 +825,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {E1400B52-8E75-4E5B-B362-8ED5638EF6A0}
-      IID 12
-      NAME spatial_drums.wav
+      IGUID {0C969312-2FF6-491E-AEA1-BD074D729CA9}
+      IID 49
+      NAME sahtdemucs_other.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {79FD2DB1-FB1F-4D16-9005-8EEC79D6DE6C}
+      GUID {BE2FB086-DAD1-499A-92F6-F8F42FD9A29E}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\sahtdemucs_drums.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\sahtdemucs_other.wav"
       >
     >
     <ITEM
@@ -662,17 +846,17 @@
       FADEIN 1 0 0 1 0 0 0
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
-      SEL 1
-      IGUID {8BAFA4C1-887A-4C1E-9C2F-58BBDFF415C5}
-      IID 27
-      NAME spatial_bass.wav
+      SEL 0
+      IGUID {1BC8908F-FC92-4ACE-9F75-329E0741A5A5}
+      IID 64
+      NAME sahtdemucs_bass.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {203D0CDA-F8E6-4B4B-A737-78AB4BA82E9B}
+      GUID {BECD95DE-F574-44D5-9E93-5E00573B2F5F}
       <SOURCE WAVE
-        FILE "Media\spatial_bass.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\sahtdemucs_bass.wav"
       >
     >
     <ITEM
@@ -685,16 +869,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {5BAB3960-4EE5-4090-9B2F-A3C48816234A}
-      IID 28
-      NAME spatial_drums.wav
+      IGUID {CB4557F9-B86F-4C70-B400-B32D2D14A6AD}
+      IID 65
+      NAME sahtdemucs_drums.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {47937659-8303-4E7A-9041-22824F4C1851}
+      GUID {E4651724-AF77-41B1-950C-1AC23AAF5E4F}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\sahtdemucs_drums.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\sahtdemucs_drums.wav"
       >
     >
     <ITEM
@@ -707,16 +891,16 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {1FBEEC0F-CA6C-41CC-8632-573914605CAB}
-      IID 29
-      NAME spatial_other.wav
+      IGUID {640E804D-0E82-4769-8F35-4974E1C96947}
+      IID 67
+      NAME sahtdemucs_vocals.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {02026670-8D7A-4BB5-97A3-7B7102E36BA5}
+      GUID {4F649420-59BB-4661-8F40-8D548F5F4430}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\sahtdemucs_other.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\sahtdemucs_vocals.wav"
       >
     >
     <ITEM
@@ -729,16 +913,104 @@
       FADEOUT 1 0 0 1 0 0 0
       MUTE 0 0
       SEL 0
-      IGUID {3FFD8EAB-DBAE-483F-A602-8A19A3D56B5E}
-      IID 30
-      NAME spatial_vocals.wav
+      IGUID {5FFC245F-ADE8-4C96-9CC6-4A9712332D8C}
+      IID 66
+      NAME sahtdemucs_other.wav
       VOLPAN 1 0 1 -1
       SOFFS 0
       PLAYRATE 1 1 0 -1 0 0.0025
       CHANMODE 0
-      GUID {9E408E70-A618-466E-856C-816F5B25529D}
+      GUID {83232685-1364-4CAD-B812-55315B92CB13}
       <SOURCE WAVE
-        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song1\sahtdemucs_vocals.wav"
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song2\sahtdemucs_other.wav"
+      >
+    >
+    <ITEM
+      POSITION 232
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {26984B3D-114F-486B-A787-7B3E63C61128}
+      IID 76
+      NAME sahtdemucs_bass.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {EA385563-64EB-4E28-8906-5F45B23453D1}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\sahtdemucs_bass.wav"
+      >
+    >
+    <ITEM
+      POSITION 257
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {D651D093-16E1-458A-A63F-99C74DE7451B}
+      IID 77
+      NAME sahtdemucs_drums.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {9815B3C3-AE3E-4A90-9C7B-C1F99C289C12}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\sahtdemucs_drums.wav"
+      >
+    >
+    <ITEM
+      POSITION 282
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {777F2FB5-BBFC-42BC-8C2F-6B84F318024A}
+      IID 79
+      NAME sahtdemucs_vocals.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {8BA5C6BC-870D-4B4F-AE70-46A5E43030FF}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\sahtdemucs_vocals.wav"
+      >
+    >
+    <ITEM
+      POSITION 307
+      SNAPOFFS 0
+      LENGTH 25
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {9D0B6155-AF6D-4B25-83E0-FB753A002EA6}
+      IID 78
+      NAME sahtdemucs_other.wav
+      VOLPAN 1 0 1 -1
+      SOFFS 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {69E058F9-982C-41F3-8E2E-C4A68ABDC23E}
+      <SOURCE WAVE
+        FILE "H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\sahtdemucs\docs\audio\song3\sahtdemucs_other.wav"
       >
     >
   >

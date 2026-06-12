@@ -242,12 +242,13 @@ See `notebook/TrainSAHTDemucs.ipynb` for a complete training and evaluation exam
 
 ## Loss Function
 
-`SpatialLoss` is an objective that supervises **sub-band** spatial cue fidelity for each of the $S$ sources:
+`SpatialLoss` is an objective that supervises both **sub-band** spatial cue fidelity and separation quality for each of 
+the $S$ sources
 
 $$
 \mathcal{L} = \frac{1}{S} \sum_{s=1}^{S} \left(
 \lambda_{\text{ILD}} \cdot \mathcal{L}_{\text{ILD}}^{(s)} + \lambda_{\text{SI}} \cdot \mathcal{L}_{\text{SI-SDR}}^{(s)}
-\right)
+\right).
 $$
 
 $\mathcal{L}_{\text{ILD}}^{(s)}$ is the MSE between the corrected source time-frequency ILD and the ground-truth one,
@@ -258,26 +259,35 @@ $$
   \frac{1}{K \cdot T_f} \sum_{k=1}^{K} \sum_{t=1}^{T_f}
   \left(
     \widehat{\text{ILD}}_k^{(s)}(t) - \text{ILD}_{k,\text{gt}}^{(s)}(t)
-  \right)^2
+  \right)^2,
 $$
 
 where $K$ = `n_bands` and $T_f$ is the number of STFT frames.
 
-$\mathcal{L}_{\text{SI-SDR}}^{(s)}$ is **not** a plain SI-SDR loss but a one-sided **degradation penalty**: it penalises the
-spatial correction only when it lowers the SI-SDR of the corrected source $\hat{s}$ below that of the frozen HT-Demucs
+$\mathcal{L}_{\text{SI-SDR}}^{(s)}$ is not a plain SI-SDR loss but a one-sided **degradation penalty**: it penalises 
+the spatial correction only when it lowers the SI-SDR of the corrected source $\hat{s}$ below that of the frozen HT-Demucs
 output $\bar{s}$ by more than a tolerated margin $m_{dB}$ = `si_margin_db` (in dB). With $\text{SI-SDR}(\cdot)$ evaluated
 against the ground-truth source $s_{gt}$,
 
 $$
 \mathcal{L}_{\text{SI-SDR}}^{(s)} =
-  \text{ReLU}\!\left(
+  \text{ReLU}\left(
     \text{SI-SDR}(\bar{s}, s_{gt}) - \text{SI-SDR}(\hat{s}, s_{gt}) - m_{dB}
-  \right)
+  \right),
 $$
 
-This term is always non-negative and is zero (no gradient) as long as the spatial head does not hurt separation beyond the
-margin, letting it improve ILD freely. Being expressed in dB — the same units as the ILD term — `lambda_si` and
-`lambda_ild` are directly comparable. Setting $\lambda_{\text{SI}}=0$ recovers a purely spatial loss (and lets
+where
+
+$$ 
+\text{SI-SDR}(\hat{s}, s_{gt}) = 10 \cdot \log_{10} \left( \frac{\left\| \dfrac{\langle \hat{s}, 
+s_{gt} \rangle}{\|s_{gt}\|^2} \cdot s_{gt} \right\|^2} {\left\| \hat{s} - \dfrac{\langle \hat{s}, s_{gt} \rangle}
+{\|s_{gt}\|^2} \cdot s_{gt}\right\|^2} \right) \quad \text{[dB]}
+$$
+
+is the **Scale-invariant Signal-To-Distortion Ratio**.
+
+The $\mathcal{L}_{\text{SI-SDR}}^{(s)}$ term is always non-negative and is zero (no gradient) as long as the spatial head does not hurt separation beyond the
+margin, letting it improve ILD freely. Setting $\lambda_{\text{SI}}=0$ recovers a purely spatial loss (and lets
 `raw_estimates` be omitted in the forward call).
 
 The forward pass takes the raw HT-Demucs output and returns the total loss together with its two (already weighted)
@@ -292,15 +302,15 @@ total.backward()
 
 ### Loss hyperparameters
 
-|          Symbol           | Parameter      | Default | Description                                            |
-|:-------------------------:|----------------|:-------:|--------------------------------------------------------|
-|   $\lambda_{\text{SI}}$   | `lambda_si`    |  `1.0`  | Weight of the SI-SDR degradation penalty               |
-|  $\lambda_{\text{ILD}}$   | `lambda_ild`   |  `1.0`  | Weight of the sub-band ILD penalty                     |
-|            $m$            | `si_margin_db` |  `0.5`  | Tolerated SI-SDR degradation (dB) before it is penalised |
-|            $K$            | `n_bands`      |  `32`   | Number of equal-width frequency sub-bands              |
-|             —             | `n_fft`        | `2048`  | STFT FFT size                                          |
-|             —             | `hop_length`   |  `512`  | STFT hop size                                          |
-|             —             | `band_scale`   |`linear` | Sub-band spacing — `linear` or `mel`                   |
+|         Symbol         | Parameter      | Default | Description                                            |
+|:----------------------:|----------------|:-------:|--------------------------------------------------------|
+| $\lambda_{\text{SI}}$  | `lambda_si`    |  `1.0`  | Weight of the SI-SDR degradation penalty               |
+| $\lambda_{\text{ILD}}$ | `lambda_ild`   |  `1.0`  | Weight of the sub-band ILD penalty                     |
+|        $m_{dB}$        | `si_margin_db` |  `0.5`  | Tolerated SI-SDR degradation (dB) before it is penalised |
+|          $K$           | `n_bands`      |  `32`   | Number of equal-width frequency sub-bands              |
+|           —            | `n_fft`        | `2048`  | STFT FFT size                                          |
+|           —            | `hop_length`   |  `512`  | STFT hop size                                          |
+|           —            | `band_scale`   |`linear` | Sub-band spacing — `linear` or `mel`                   |
 
 ```python
 from sahtdemucs.losses import SpatialLoss
