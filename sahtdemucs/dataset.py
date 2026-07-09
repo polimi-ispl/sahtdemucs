@@ -47,7 +47,6 @@ __all__ = ["MusdbSpatialDataset"]
 # Default source order matches the Demucs convention
 DEFAULT_SOURCES: List[str] = ["drums", "bass", "other", "vocals"]
 
-
 class MusdbSpatialDataset(Dataset):
     """Random-segment dataset over a MUSDB18-HQ style directory.
 
@@ -74,7 +73,7 @@ class MusdbSpatialDataset(Dataset):
         root: str | Path,
         split: str = "train",
         sources: List[str] = DEFAULT_SOURCES,
-        segment_len: int = 44100 * 6,
+        segment_len: int = 44100 * 6,   # 6 seconds by default
         sample_rate: int = 44100,
         augment: bool = True,
         crops_per_track: int = 1,
@@ -109,7 +108,7 @@ class MusdbSpatialDataset(Dataset):
         )  # (S, 2, T)
 
         # ── Random crop ───────────────────────────────────────────────────────
-        T = mix.shape[-1]
+        T = mix.shape[-1]                               # songs length in samples
         if T > self.segment_len:
             # Pick a random start so the model sees diverse temporal positions
             start = random.randint(0, T - self.segment_len)
@@ -141,7 +140,7 @@ class MusdbSpatialDataset(Dataset):
 
         # Ensure exactly 2 channels
         if wav.shape[0] == 1:
-            wav = wav.repeat(2, 1)       # mono → duplicate to stereo
+            wav = wav.repeat(2, 1)       # mono -> duplicate to stereo
         elif wav.shape[0] > 2:
             wav = wav[:2]                # keep first two channels only
 
@@ -168,12 +167,12 @@ class MusdbSpatialDataset(Dataset):
         Returns:
             Augmented (mix, stems) with the same shapes.
         """
-        # Random gain: uniform in log scale → multiplicative in linear scale
+        # Random gain: uniform in log scale -> multiplicative in linear scale
         gain  = 10.0 ** (random.uniform(-0.3, 0.3))   # ±6 dB range
         mix   = mix   * gain
         stems = stems * gain
 
-        # Random channel swap: flip L↔R in both mix and all stems
+        # Random channel swap: flip L and R channels in both mix and all stems
         if random.random() < 0.5:
             mix   = mix.flip(0)          # (2, T): flip channel dim
             stems = stems.flip(1)        # (S, 2, T): flip channel dim

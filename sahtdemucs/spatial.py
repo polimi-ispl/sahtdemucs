@@ -7,7 +7,7 @@ can be used both inside the model (SpatialCueModule) and inside the loss
 
 Spatial cue primer
 ------------------
-The human auditory system localises sound using two main binaural cues:
+The human auditory system localizes sound using two main binaural cues:
 
     ILD (Interaural Level Difference)
         The ratio of RMS energy at the left and right ears, expressed in dB.
@@ -33,6 +33,10 @@ __all__ = [
     "compute_ild_bands",
     "mel_bin_assignment",
     "compute_ild_bands_mel",
+    "compute_itd_samples",
+    "compute_itd_bands",
+    "compute_itd_bands_mel",
+    "apply_itd",
 ]
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -237,7 +241,7 @@ def compute_itd_samples(
     right: torch.Tensor,
     max_lag: int = 64,
 ) -> torch.Tensor:
-    """Estimate ITD via GCC-PHAT (generalised cross-correlation) in the time domain.
+    """Estimate ITD via GCC-PHAT (generalized cross-correlation) in the time domain.
 
     GCC-PHAT computes the cross-correlation between the two channels after
     whitening in the frequency domain (PHAT = Phase Transform).  This makes
@@ -280,12 +284,12 @@ def compute_itd_samples(
     # ── Step 2: Cross-spectrum L · conj(R) ───────────────────────────────────
     cross = L * R.conj()                  # (B, F), complex
 
-    # ── Step 3: PHAT whitening — normalise by magnitude ──────────────────────
+    # ── Step 3: PHAT whitening — normalize by magnitude ──────────────────────
     # Dividing by |cross| sets all frequency bins to unit amplitude, keeping
     # only phase information.  This sharpens the correlation peak.
     cross = cross / (cross.abs() + 1e-8)
 
-    # ── Step 4: Inverse FFT → generalised cross-correlation ──────────────────
+    # ── Step 4: Inverse FFT → generalized cross-correlation ──────────────────
     cc = torch.fft.irfft(cross, n=n_fft)  # (B, n_fft), real
 
     # ── Step 5: Extract lags in [−max_lag, +max_lag] ─────────────────────────
@@ -307,6 +311,189 @@ def compute_itd_samples(
     )                                                            # (2*max_lag+1,)
     itd = (weights * lag_values).sum(dim=-1)                    # (B,)
     return itd
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# ITD — frequency-resolved, per sub-band via band-limited GCC-PHAT
+# ──────────────────────────────────────────────────────────────────────────────
+
+def _itd_bands_from_assignment(
+    left: torch.Tensor,
+    right: torch.Tensor,
+    band_idx: torch.Tensor,
+    n_bands: int,
+    n_fft: int,
+    hop_length: int,
+    max_lag: int,
+    beta: float,
+    eps: float,
+) -> torch.Tensor:
+    """Per-sub-band, per-frame ITD via band-limited GCC-PHAT.
+
+    Shared core for :func:`compute_itd_bands` (linear bands) and
+    :func:`compute_itd_bands_mel` (Mel bands).  The two public wrappers differ
+    only in how STFT bins are grouped into bands, encoded by ``band_idx``.
+
+    The cross-power spectrum of the two channels is PHAT-whitened (so only the
+    interaural *phase* survives), then — independently for every band and every
+    STFT frame — the generalised cross-correlation is reconstructed over the lag
+    range ``[-max_lag, +max_lag]`` and a **soft-argmax** picks the lag of the
+    peak.  This mirrors the broadband :func:`compute_itd_samples` but yields a
+    frequency- *and* time-resolved cue, exactly like :func:`compute_ild_bands`.
+
+    Args:
+        left:       ``(B, T)`` left-channel waveform
+        right:      ``(B, T)`` right-channel waveform
+        band_idx:   ``(n_fft // 2 + 1,)`` LongTensor mapping each STFT bin to a
+                    band in ``[0, n_bands)``; bins with value ``-1`` are ignored.
+        n_bands:    number of frequency sub-bands
+        n_fft:      FFT size
+        hop_length: STFT hop in samples
+        max_lag:    maximum lag searched, in samples (range ±max_lag)
+        beta:       soft-argmax temperature; larger → closer to a hard argmax
+        eps:        numerical-stability constant for the PHAT whitening
+
+    Returns:
+        itd_bands:  ``(B, n_bands, T_frames)`` — ITD in **samples** per sub-band
+                    and STFT frame.  The sign convention matches
+                    :func:`compute_itd_samples`: a *positive* value is the lag
+                    that maximises the PHAT cross-correlation of ``L·conj(R)``,
+                    i.e. the right channel leads (the left channel is delayed).
+    """
+    window = torch.hann_window(n_fft, device=left.device)
+
+    # STFT: (B, F_bins, T_frames), complex
+    L = torch.stft(left,  n_fft, hop_length, window=window, return_complex=True)
+    R = torch.stft(right, n_fft, hop_length, window=window, return_complex=True)
+
+    B, F_bins, T_frames = L.shape
+
+    # ── Cross-power spectrum + PHAT whitening ────────────────────────────────
+    # Dividing by the magnitude keeps only the interaural phase (the ITD cue),
+    # which sharpens the cross-correlation peak just like broadband GCC-PHAT.
+    cross = L * R.conj()                       # (B, F_bins, T_frames), complex
+    cross = cross / (cross.abs() + eps)
+
+    # ── Inverse-DFT basis restricted to the lag range of interest ────────────
+    # A delay of `lag` samples maps STFT bin f to phase exp(+j·2π·f·lag/n_fft);
+    # reconstructing only the ±max_lag lags (instead of a full irfft) is cheaper.
+    lag_values = torch.arange(
+        -max_lag, max_lag + 1, dtype=left.dtype, device=left.device
+    )                                          # (Lg,)
+    freqs = torch.arange(F_bins, dtype=left.dtype, device=left.device)  # (F_bins,)
+    phase = (2.0 * math.pi / n_fft) * freqs.unsqueeze(1) * lag_values.unsqueeze(0)
+    basis = torch.exp(1j * phase)              # (F_bins, Lg), complex
+
+    # ── Per-band band-limited GCC-PHAT + soft-argmax ─────────────────────────
+    bands = []
+    for k in range(n_bands):
+        mask  = band_idx == k
+        n_in  = int(mask.sum())
+        if n_in == 0:
+            # Empty band (can happen with Mel spacing at very low n_fft): ITD 0.
+            bands.append(left.new_zeros(B, T_frames))
+            continue
+
+        cross_k = cross[:, mask, :]            # (B, n_in, T_frames), complex
+        basis_k = basis[mask, :]               # (n_in, Lg), complex
+
+        # gcc_k[b, lag, t] = Re( Σ_f cross_k[b, f, t] · basis_k[f, lag] )
+        gcc = torch.einsum("bft,fl->blt", cross_k, basis_k).real  # (B, Lg, T_frames)
+        gcc = gcc / n_in                        # scale-invariant: coherent peak ≈ 1
+
+        weights = torch.softmax(gcc * beta, dim=1)                # over the lag axis
+        itd_k   = (weights * lag_values.view(1, -1, 1)).sum(dim=1)  # (B, T_frames)
+        bands.append(itd_k)
+
+    return torch.stack(bands, dim=1)            # (B, n_bands, T_frames)
+
+
+def compute_itd_bands(
+    left: torch.Tensor,
+    right: torch.Tensor,
+    n_fft: int = 2048,
+    hop_length: int = 512,
+    n_bands: int = 32,
+    max_lag: int = 64,
+    beta: float = 20.0,
+    eps: float = 1e-8,
+) -> torch.Tensor:
+    """Per-sub-band ITD via band-limited GCC-PHAT, **linear** frequency bands.
+
+    The STFT spectrum is split into *n_bands* equal-width (linear-frequency)
+    bands — the same partition used by :func:`compute_ild_bands` — and a
+    band-limited GCC-PHAT estimates the interaural time difference per band and
+    per STFT frame.  Fully differentiable (soft-argmax), so it can be used both
+    inside a model and inside a loss alongside the ILD term.
+
+    Args:
+        left:       ``(B, T)`` left-channel waveform
+        right:      ``(B, T)`` right-channel waveform
+        n_fft:      FFT size (default 2048 → ~46 ms @ 44 100 Hz)
+        hop_length: STFT hop in samples (default 512)
+        n_bands:    number of equal-width frequency sub-bands (default 32)
+        max_lag:    maximum lag searched, in samples (default 64 → ±1.45 ms
+                    @ 44 100 Hz, comfortably covering the human ITD range)
+        beta:       soft-argmax temperature (default 20.0)
+        eps:        numerical-stability constant
+
+    Returns:
+        itd_bands:  ``(B, n_bands, T_frames)`` — ITD in samples per sub-band and
+                    STFT frame.  Same sign convention as
+                    :func:`compute_itd_samples` (positive → right channel leads).
+    """
+    F_bins = n_fft // 2 + 1
+    bpb    = F_bins // n_bands                  # bins per band
+    F_trim = bpb * n_bands                      # drop the top remainder bins
+
+    band_idx = torch.full((F_bins,), -1, dtype=torch.long, device=left.device)
+    band_idx[:F_trim] = torch.arange(F_trim, device=left.device) // bpb
+
+    return _itd_bands_from_assignment(
+        left, right, band_idx, n_bands, n_fft, hop_length, max_lag, beta, eps,
+    )
+
+
+def compute_itd_bands_mel(
+    left: torch.Tensor,
+    right: torch.Tensor,
+    n_fft: int = 2048,
+    hop_length: int = 512,
+    n_bands: int = 32,
+    sample_rate: int = 44100,
+    max_lag: int = 64,
+    beta: float = 20.0,
+    eps: float = 1e-8,
+) -> torch.Tensor:
+    """Per-sub-band ITD via band-limited GCC-PHAT, **Mel-scale** frequency bands.
+
+    Identical to :func:`compute_itd_bands` except STFT bins are grouped with the
+    Mel partition from :func:`mel_bin_assignment` — the same band layout used by
+    :func:`compute_ild_bands_mel`.  Because Mel bands are narrower at low
+    frequencies, the bass region (where ITD perception dominates) gets finer
+    resolution.
+
+    Args:
+        left:        ``(B, T)`` left-channel waveform
+        right:       ``(B, T)`` right-channel waveform
+        n_fft:       FFT size (default 2048)
+        hop_length:  STFT hop in samples (default 512)
+        n_bands:     number of Mel-scale frequency bands (default 32)
+        sample_rate: audio sample rate in Hz (default 44 100)
+        max_lag:     maximum lag searched, in samples (default 64)
+        beta:        soft-argmax temperature (default 20.0)
+        eps:         numerical-stability constant
+
+    Returns:
+        itd_bands:   ``(B, n_bands, T_frames)`` — ITD in samples per Mel band and
+                     STFT frame.  Band 0 is the lowest-frequency band; same sign
+                     convention as :func:`compute_itd_samples` (positive → right
+                     channel leads).
+    """
+    band_idx = mel_bin_assignment(n_fft, n_bands, sample_rate).to(left.device)
+    return _itd_bands_from_assignment(
+        left, right, band_idx, n_bands, n_fft, hop_length, max_lag, beta, eps,
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
