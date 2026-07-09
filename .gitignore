@@ -3,3 +3,10 @@
 checkspatial
 plot
 goniometer/Backups
+cpp/sahtdemucs_cli/x64
+cpp/sahtdemucs_cli/output
+cpp/sahtdemucs_cli/.vs
+cpp/sahtdemucs_cli/sahtdemucs_cli
+sahtdemucs/__pycache__
+reaper
+matlab/figures

@@ -1,4 +1,4 @@
-% goniometer_compare.m
+% goniometer.m
 %
 % Emulates the behaviour of the ToneBoosters GonioMeter VST in MATLAB to
 % compare, frame by frame, the stereo panning of:
@@ -19,6 +19,8 @@
 clear
 close all
 clc
+
+addpath('helpers\')
 
 %% Parameters
 datapath = '..\docs\audio';

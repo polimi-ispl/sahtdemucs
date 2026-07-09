@@ -12,7 +12,7 @@ function S = stereometrics(in, wLen, hop)
 %   hop:    hop size (used for STFT computation)
 %
 %   Output:
-%   S:      structure containing:tes, for each time frame:
+%   S:      structure containing, for each time frame:
 %           .corr     : Pearson correlation between L and R in [-1, +1]
 %           .balance  : RMS balance (L-R)/(L+R), in [-1, +1], + = left
 %           .width    : stereo width = RMS(L-R) / (RMS(L+R)+eps)
