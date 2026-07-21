@@ -363,7 +363,7 @@ ul.demo-intro li {
 
 .stems-header {
   display: grid;
-  grid-template-columns: 110px 1fr 1fr 1fr 1fr;
+  grid-template-columns: 80px 1fr 1fr 1fr 1fr;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   padding: 0;
@@ -372,10 +372,10 @@ ul.demo-intro li {
 
 .col-header {
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: .04em;
   text-align: center;
-  padding: 10px 6px;
+  padding: 10px 4px;
   line-height: 1.2;
   /*text-transform: uppercase;*/
 }
@@ -386,7 +386,7 @@ ul.demo-intro li {
 
 .stem-row {
   display: grid;
-  grid-template-columns: 110px 1fr 1fr 1fr 1fr;
+  grid-template-columns: 80px 1fr 1fr 1fr 1fr;
   border-bottom: 1px solid var(--border);
   align-items: center;
   transition: background .15s;
@@ -395,9 +395,9 @@ ul.demo-intro li {
 .stem-row:hover { background: var(--surface2); }
 
 .stem-name {
-  padding: 14px 16px;
+  padding: 14px 10px;
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: 13px;
   color: var(--text-muted);
   display: flex;
   align-items: center;
@@ -422,7 +422,7 @@ ul.demo-intro li {
 /* ── Audio element styling ── */
 audio {
   width: 100%;
-  max-width: 200px;
+  max-width: 160px;
   height: 32px;
   outline: none;
   border-radius: 4px;
