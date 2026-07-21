@@ -49,6 +49,8 @@ from .model       import SAHTDemucs
 from .losses      import SpatialLoss
 from .spatial     import compute_ild, compute_ild_bands
 from .cue_module  import SpatialCueModule, SpatialCueModule2D, build_spatial_module
+from .dataset     import load_audio
+from .metrics     import si_sdr, ild_bands_mae, itd_bands_mae
 
 __all__ = [
     "SAHTDemucs",
@@ -58,6 +60,10 @@ __all__ = [
     "SpatialCueModule",
     "SpatialCueModule2D",
     "build_spatial_module",
+    "load_audio",
+    "si_sdr",
+    "ild_bands_mae",
+    "itd_bands_mae",
 ]
 
 __version__ = "0.1.0"

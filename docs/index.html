@@ -92,19 +92,16 @@
       </div>
       <!--<div class="method-grid">
         <div class="method-card">
-          <div class="method-icon">🎛️</div>
           <h3>Frozen HTDemucs Backbone</h3>
           <p>Pre-trained HTDemucs (~80M params) provides strong source separation, unchanged during our training.</p>
         </div>
         <div class="method-arrow">→</div>
         <div class="method-card highlight">
-          <div class="method-icon">🧠</div>
           <h3>SpatialCueModule ×4</h3>
           <p>One lightweight temporal CNN per source. Computes per-subband ILD, predicts Δ_ILD, applies symmetric STFT gains.</p>
         </div>
         <div class="method-arrow">→</div>
         <div class="method-card">
-          <div class="method-icon">🎵</div>
           <h3>Spatially-Aware Stems</h3>
           <p>Each stem retains its natural stereo position. Total loudness preserved: gain_l · gain_r = 1.</p>
         </div>
@@ -125,17 +122,12 @@
         separated sources, on per row. Each source has three players, one per column:
       </p>
       <ul class="demo-intro">
-        <li><em>Reference</em> — ground-truth stem from MUSDB18-HQ</li>
-        <li><em>HT-Demucs</em> — baseline separation output</li>
-        <li><em>SA-HTDemucs</em> — our spatially-corrected output</li>
+        <li><em>Reference</em> - ground-truth stem from MUSDB18-HQ</li>
+        <li><em>HT-Demucs</em> - baseline separation output</li>
+        <li><em>HT-Demucs SP-Finetune</em> - separation output from a finetune version of HT-Demucs</li>
+        <li><em>SA-HTDemucs</em> - our spatially-corrected output</li>
       </ul>
       <p class="demo-intro">Use headphones for best evaluation of spatial differences.</p>
-
-      <!--<div class="legend">
-        <span class="legend-item ref">Reference</span>
-        <span class="legend-item htd">HTDemucs</span>
-        <span class="legend-item spa">HTDemucsWithSpatial</span>
-      </div>-->
 
       <!-- ──── SONG 1 ──── -->
       <div class="track-block" id="song1">
@@ -160,6 +152,7 @@
             <div class="stem-label-col"></div>
             <div class="col-header ref-header">Reference</div>
             <div class="col-header htd-header">HT-Demucs</div>
+            <div class="col-header htdspft-header">HT-Demucs SP Finetune</div>
             <div class="col-header spa-header">SA-HTDemucs</div>
           </div>
 
@@ -176,6 +169,11 @@
             <div class="audio-cell htd-cell">
               <audio controls preload="none">
                 <source src="audio/song1/htdemucs_drums.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/htdemucsspft_drums.wav" type="audio/wav" />
               </audio>
             </div>
             <div class="audio-cell spa-cell">
@@ -200,6 +198,11 @@
                 <source src="audio/song1/htdemucs_bass.wav" type="audio/wav" />
               </audio>
             </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/htdemucsspft_bass.wav" type="audio/wav" />
+              </audio>
+            </div>
             <div class="audio-cell spa-cell">
               <audio controls preload="none">
                 <source src="audio/song1/sahtdemucs_bass.wav" type="audio/wav" />
@@ -222,6 +225,11 @@
                 <source src="audio/song1/htdemucs_vocals.wav" type="audio/wav" />
               </audio>
             </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/htdemucsspft_vocals.wav" type="audio/wav" />
+              </audio>
+            </div>
             <div class="audio-cell spa-cell">
               <audio controls preload="none">
                 <source src="audio/song1/sahtdemucs_vocals.wav" type="audio/wav" />
@@ -242,6 +250,11 @@
             <div class="audio-cell htd-cell">
               <audio controls preload="none">
                 <source src="audio/song1/htdemucs_other.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song1/htdemucsspft_other.wav" type="audio/wav" />
               </audio>
             </div>
             <div class="audio-cell spa-cell">
@@ -277,6 +290,7 @@
             <div class="stem-label-col"></div>
             <div class="col-header ref-header">Reference</div>
             <div class="col-header htd-header">HT-Demucs</div>
+            <div class="col-header htdspft-header">HT-Demucs SP Finetune</div>
             <div class="col-header spa-header">SA-HTDemucs</div>
           </div>
 
@@ -293,6 +307,11 @@
             <div class="audio-cell htd-cell">
               <audio controls preload="none">
                 <source src="audio/song2/htdemucs_drums.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song2/htdemucsspft_drums.wav" type="audio/wav" />
               </audio>
             </div>
             <div class="audio-cell spa-cell">
@@ -317,6 +336,11 @@
                 <source src="audio/song2/htdemucs_bass.wav" type="audio/wav" />
               </audio>
             </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song2/htdemucsspft_bass.wav" type="audio/wav" />
+              </audio>
+            </div>
             <div class="audio-cell spa-cell">
               <audio controls preload="none">
                 <source src="audio/song2/sahtdemucs_bass.wav" type="audio/wav" />
@@ -339,6 +363,11 @@
                 <source src="audio/song2/htdemucs_vocals.wav" type="audio/wav" />
               </audio>
             </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song2/htdemucsspft_vocals.wav" type="audio/wav" />
+              </audio>
+            </div>
             <div class="audio-cell spa-cell">
               <audio controls preload="none">
                 <source src="audio/song2/sahtdemucs_vocals.wav" type="audio/wav" />
@@ -359,6 +388,11 @@
             <div class="audio-cell htd-cell">
               <audio controls preload="none">
                 <source src="audio/song2/htdemucs_other.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song2/htdemucsspft_other.wav" type="audio/wav" />
               </audio>
             </div>
             <div class="audio-cell spa-cell">
@@ -393,32 +427,108 @@
             <div class="stem-label-col"></div>
             <div class="col-header ref-header">Reference</div>
             <div class="col-header htd-header">HT-Demucs</div>
+            <div class="col-header htdspft-header">HT-Demucs SP Finetune</div>
             <div class="col-header spa-header">SA-HTDemucs</div>
           </div>
 
+          <!-- drums -->
           <div class="stem-row">
             <div class="stem-name">Drums</div>
-            <div class="audio-cell ref-cell"><audio controls preload="none"><source src="audio/song3/ref_drums.wav" type="audio/wav" /></audio></div>
-            <div class="audio-cell htd-cell"><audio controls preload="none"><source src="audio/song3/htdemucs_drums.wav" type="audio/wav" /></audio></div>
-            <div class="audio-cell spa-cell"><audio controls preload="none"><source src="audio/song3/sahtdemucs_drums.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell ref-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/ref_drums.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htd-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/htdemucs_drums.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/htdemucsspft_drums.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell spa-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/sahtdemucs_drums.wav" type="audio/wav" />
+              </audio>
+            </div>
           </div>
+
+          <!-- bass -->
           <div class="stem-row">
             <div class="stem-name"> Bass</div>
-            <div class="audio-cell ref-cell"><audio controls preload="none"><source src="audio/song3/ref_bass.wav" type="audio/wav" /></audio></div>
-            <div class="audio-cell htd-cell"><audio controls preload="none"><source src="audio/song3/htdemucs_bass.wav" type="audio/wav" /></audio></div>
-            <div class="audio-cell spa-cell"><audio controls preload="none"><source src="audio/song3/sahtdemucs_bass.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell ref-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/ref_bass.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htd-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/htdemucs_bass.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/htdemucsspft_bass.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell spa-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/sahtdemucs_bass.wav" type="audio/wav" />
+              </audio>
+            </div>
           </div>
+
+          <!-- vocals -->
           <div class="stem-row">
             <div class="stem-name">Vocals</div>
-            <div class="audio-cell ref-cell"><audio controls preload="none"><source src="audio/song3/ref_vocals.wav" type="audio/wav" /></audio></div>
-            <div class="audio-cell htd-cell"><audio controls preload="none"><source src="audio/song3/htdemucs_vocals.wav" type="audio/wav" /></audio></div>
-            <div class="audio-cell spa-cell"><audio controls preload="none"><source src="audio/song3/sahtdemucs_vocals.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell ref-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/ref_vocals.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htd-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/htdemucs_vocals.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/htdemucsspft_vocals.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell spa-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/sahtdemucs_vocals.wav" type="audio/wav" />
+              </audio>
+            </div>
           </div>
+
+          <!-- other -->
           <div class="stem-row">
             <div class="stem-name">Other</div>
-            <div class="audio-cell ref-cell"><audio controls preload="none"><source src="audio/song3/ref_other.wav" type="audio/wav" /></audio></div>
-            <div class="audio-cell htd-cell"><audio controls preload="none"><source src="audio/song3/htdemucs_other.wav" type="audio/wav" /></audio></div>
-            <div class="audio-cell spa-cell"><audio controls preload="none"><source src="audio/song3/sahtdemucs_other.wav" type="audio/wav" /></audio></div>
+            <div class="audio-cell ref-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/ref_other.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htd-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/htdemucs_other.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell htdspft-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/htdemucsspft_other.wav" type="audio/wav" />
+              </audio>
+            </div>
+            <div class="audio-cell spa-cell">
+              <audio controls preload="none">
+                <source src="audio/song3/sahtdemucs_other.wav" type="audio/wav" />
+              </audio>
+            </div>
           </div>
         </div>
       </div>
@@ -426,30 +536,27 @@
   </section>
 
   <!-- ─── CITATION ─── -->
-  <!--<section class="citation-section">
+  <section class="citation-section">
     <div class="container">
       <h2 class="section-label">Citation</h2>
       <div class="cite-block">
         <button class="copy-btn" onclick="copyBibtex()" title="Copy BibTeX">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
           <span id="copy-label">Copy</span>
         </button>
         <pre id="bibtex">@inproceedings{atzerbi2025spatial,
-  title     = {Preserving Spatial Cues in Music Source Separation
-               via Lightweight ILD Correction Heads},
-  author    = {Atzerbi, [Author Names]},
-  booktitle = {ICASSP},
-  year      = {2025},
-  url       = {https://github.com/Atzerbi/msslnet}
-}</pre>
+          title     = {Preserving Spatial Information in Music Source Separation.},
+          author    = {M.Acerbi, M.Pezzoli, F. Antonacci, L. Bianchi},
+          booktitle = {IWAENC},
+          year      = {2026},
+          <!--url       = {https://github.com/Atzerbi/msslnet}-->
+        </pre>
       </div>
-      <p class="cite-note">
-        Please also cite the original
-        <a href="https://arxiv.org/abs/2211.00074" target="_blank">HTDemucs paper</a>
-        (Rouard et al., ICASSP 2023).
-      </p>
     </div>
-  </section>-->
+  </section>
 
   <footer>
     <div class="container">
