@@ -363,28 +363,30 @@ ul.demo-intro li {
 
 .stems-header {
   display: grid;
-  grid-template-columns: 130px 1fr 1fr 1fr;
+  grid-template-columns: 110px 1fr 1fr 1fr 1fr;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   padding: 0;
 }
-.stem-label-col { padding: 10px 22px; }
+.stem-label-col { padding: 10px 16px; }
 
 .col-header {
   font-family: var(--font-display);
-  font-size: 15px;
-  letter-spacing: .08em;
+  font-size: 14px;
+  letter-spacing: .04em;
   text-align: center;
-  padding: 10px 8px;
+  padding: 10px 6px;
+  line-height: 1.2;
   /*text-transform: uppercase;*/
 }
 .ref-header { color: var(--ref); border-left: 1px solid var(--border); }
 .htd-header { color: var(--htd); border-left: 1px solid var(--border); }
+.htdspft-header { color: var(--htd); border-left: 1px solid var(--border); }
 .spa-header { color: var(--spa); border-left: 1px solid var(--border); }
 
 .stem-row {
   display: grid;
-  grid-template-columns: 130px 1fr 1fr 1fr;
+  grid-template-columns: 110px 1fr 1fr 1fr 1fr;
   border-bottom: 1px solid var(--border);
   align-items: center;
   transition: background .15s;
@@ -393,7 +395,7 @@ ul.demo-intro li {
 .stem-row:hover { background: var(--surface2); }
 
 .stem-name {
-  padding: 14px 22px;
+  padding: 14px 16px;
   font-family: var(--font-body);
   font-size: 15px;
   color: var(--text-muted);
@@ -404,7 +406,7 @@ ul.demo-intro li {
 .stem-icon { font-size: 15px; }
 
 .audio-cell {
-  padding: 10px 12px;
+  padding: 10px 8px;
   border-left: 1px solid var(--border);
   display: flex;
   justify-content: center;
@@ -414,12 +416,13 @@ ul.demo-intro li {
 .spa-cell { border-left-color: rgba(200,245,66,.2); background: var(--spa-dim); }*/
 .ref-cell { border-left-color: var(--border); background: var(--ref-dim); }
 .htd-cell { border-left-color: var(--border); background: var(--htd-dim); }
+.htdspft-cell { border-left-color: var(--border); background: var(--htd-dim); }
 .spa-cell { border-left-color: var(--border); background: var(--spa-dim); }
 
 /* ── Audio element styling ── */
 audio {
   width: 100%;
-  max-width: 240px;
+  max-width: 200px;
   height: 32px;
   outline: none;
   border-radius: 4px;
@@ -497,10 +500,11 @@ footer p {
 @media (max-width: 700px) {
   .stems-header,
   .stem-row {
-    grid-template-columns: 90px 1fr 1fr 1fr;
+    grid-template-columns: 72px 1fr 1fr 1fr 1fr;
   }
-  .stem-name { padding: 10px 12px; font-size: 11px; }
-  .col-header { font-size: 9px; padding: 8px 4px; }
+  .stem-name { padding: 10px 8px; font-size: 11px; }
+  .col-header { font-size: 8.5px; padding: 8px 3px; letter-spacing: 0; }
+  .audio-cell { padding: 8px 4px; }
   audio { max-width: 100%; }
   .track-header { flex-direction: column; align-items: flex-start; }
   .method-grid { flex-direction: column; }
