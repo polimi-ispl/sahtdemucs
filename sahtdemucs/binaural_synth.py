@@ -222,10 +222,33 @@ def process_moisesdb(moisesdb_dir, ir_dir, out_root, test_frac=0.15, seed=0, lim
         seed:         RNG seed for the train/test split (default 0).
         limit:        if set, process only the first ``limit`` tracks (debug).
     """
-    from moisesdb.dataset import MoisesDB   # optional dependency; import lazily
+    from moisesdb.track import MoisesDBTrack   # optional dependency; import lazily
 
-    db = MoisesDB(data_path=moisesdb_dir, sample_rate=SAMPLE_RATE)
-    n = len(db)
+    # Discover tracks robustly, regardless of how the release is laid out:
+    #   * flat  -> ``<data_path>/<track_id>/data.json`` (the public v0.1 zip)
+    #   * nested -> ``<data_path>/<provider>/<track_id>/data.json`` (what
+    #               ``moisesdb.dataset.MoisesDB`` assumes)
+    # Each track is recorded as the ``(provider, track_id)`` pair whose join
+    # lands on the folder holding ``data.json``; an empty provider collapses
+    # the library's ``data_path/provider/track_id`` join onto the flat layout.
+    tracks = []  # list of (provider, track_id)
+    for entry in sorted(os.listdir(moisesdb_dir)):
+        entry_path = os.path.join(moisesdb_dir, entry)
+        if not os.path.isdir(entry_path):
+            continue
+        if os.path.isfile(os.path.join(entry_path, "data.json")):
+            tracks.append(("", entry))                 # flat: entry is a track
+        else:                                          # nested: entry is a provider
+            for sub in sorted(os.listdir(entry_path)):
+                if os.path.isfile(os.path.join(entry_path, sub, "data.json")):
+                    tracks.append((entry, sub))
+    if not tracks:
+        raise FileNotFoundError(
+            f"No MoisesDB tracks (folders containing data.json) found in "
+            f"{moisesdb_dir!r}"
+        )
+
+    n = len(tracks)
     idx = list(range(n))
     random.Random(seed).shuffle(idx)
     n_test = round(n * test_frac)
@@ -241,7 +264,11 @@ def process_moisesdb(moisesdb_dir, ir_dir, out_root, test_frac=0.15, seed=0, lim
     tmp_root = tempfile.mkdtemp(prefix="moisesdb_dry_")
     try:
         for done, i in enumerate(idx, 1):
-            track = db[i]
+            provider, tid = tracks[i]
+            track = MoisesDBTrack(
+                provider=provider, track_id=tid,
+                data_path=moisesdb_dir, sample_rate=SAMPLE_RATE,
+            )
             split = "test" if i in test_idx else "train"
             out_dir = os.path.join(out_root, split, f"moisesdb_{track.id}")
             if os.path.exists(os.path.join(out_dir, "mixture.wav")):
