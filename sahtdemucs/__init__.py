@@ -1,48 +1,37 @@
 """
-msslnet — Stereo source separation with spatial cue preservation (ILD/ITD).
+SA-HTDemucs — Stereo source separation with spatial cue preservation (ILD/ITD).
 
 Package overview
 ----------------
-The package is organised into the following modules:
+The package is organized into the following modules:
 
-    model.py        MSSLNet — the main separation model (U-Net + BiLSTM +
-                    per-source SpatialCueModules).
+    model.py        SAHTDemucs: the main separation model (HT-Demucs + per-source SpatialCueModules).
 
-    pretrained.py   HTDemucsWithSpatial — wraps a frozen pre-trained HTDemucs
-                    model from the ``demucs`` package and attaches trainable
-                    SpatialCueModules on top.
+    cue_module.py   SpatialCueModule: lightweight spectro-temporal CNN that estimates and applies per-source,
+                    per-band ILD corrections.
 
-    blocks.py       ConvBlock / ConvTransposeBlock — 1-D encoder/decoder
-                    building blocks shared by the U-Net backbone.
+    spatial.py      Low-level spatial cue utilities:
+                    - mel_bin_assignment
+                    - compute_ild
+                    - compute_ild_bands
+                    - compute_ild_bands_mel
+                    - compute_itd_samples
+                    - compute_itd_bands
+                    - compute_itd_bands_mel
+                    - apply_itd
 
-    cue_module.py   SpatialCueModule — lightweight temporal CNN that estimates
-                    and applies per-source, per-band ILD corrections.
+    losses.py       SpatialLoss: λ_si·SIDegradationLoss + λ_ild·ILD_MSE + λ_itd·ITD_MSE.
 
-    spatial.py      Low-level spatial cue utilities: compute_ild,
-                    compute_itd_samples (GCC-PHAT soft-argmax), apply_itd
-                    (frequency-domain fractional delay).
+    dataset.py      MusdbSpatialDataset: random-segment DataLoader for MUSDB18-HQ style directories.
 
-    losses.py       SpatialLoss — SI-SNR + λ_ild·ILD_MSE + λ_itd·ITD_MSE.
-                    SISNRLoss — standalone scale-invariant SNR loss.
+    metrics.py      Inference-time metrics: si_sdr, ild_bands_mae, itd_bands_mae.
 
-    solver.py       Solver — training/validation loop, checkpoint I/O.
+    train.py        Training CLI: ``python -m sahtdemucs.train`` — one run per
+                    process, each in its own output directory.
 
-    dataset.py      MusdbSpatialDataset — random-segment DataLoader for
-                    MUSDB18-HQ style directories.
-
-    train.py        Command-line entry point: ``python -m msslnet.train``.
-
-    separate.py     Inference CLI: ``python -m msslnet.separate``.
-
-Quick start
------------
-.. code-block:: python
-
-    from msslnet import MSSLNet, SpatialLoss, Solver
-
-    model  = MSSLNet(sources=["drums", "bass", "other", "vocals"])
-    loss   = SpatialLoss(lambda_ild=1.0, lambda_itd=0.5)
-    solver = Solver(model, optimizer, loss_fn=loss)
+    separate.py     Inference / evaluation CLI: ``python -m sahtdemucs.separate``.
+                    ``notebook/TrainSAHTDemucs.ipynb`` does the same
+                    interactively, comparing several runs at once.
 """
 
 from .model       import SAHTDemucs

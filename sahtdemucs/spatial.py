@@ -29,9 +29,9 @@ import torch.nn.functional as F
 
 
 __all__ = [
+    "mel_bin_assignment",
     "compute_ild",
     "compute_ild_bands",
-    "mel_bin_assignment",
     "compute_ild_bands_mel",
     "compute_itd_samples",
     "compute_itd_bands",

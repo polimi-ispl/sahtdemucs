@@ -28,7 +28,11 @@ from .spatial import (
 __all__ = ["si_sdr", "ild_bands_mae", "itd_bands_mae"]
 
 
-def si_sdr(est: torch.Tensor, tgt: torch.Tensor, eps: float = 1e-8) -> float:
+def si_sdr(
+        est: torch.Tensor,
+        tgt: torch.Tensor,
+        eps: float = 1e-8
+) -> float:
     """Scale-invariant SDR in dB between two stereo tensors ``(2, T)``.
 
     Both channels are flattened together and treated as a single signal, giving
@@ -37,11 +41,14 @@ def si_sdr(est: torch.Tensor, tgt: torch.Tensor, eps: float = 1e-8) -> float:
     """
     e = est.float().reshape(-1)
     t = tgt.float().reshape(-1)
+
     e = e - e.mean()
     t = t - t.mean()
+
     alpha = (e * t).sum() / (t * t).sum().clamp(min=eps)
     proj  = alpha * t
     noise = e - proj
+
     return 10 * torch.log10(
         (proj ** 2).sum() / (noise ** 2).sum().clamp(min=eps)
     ).item()

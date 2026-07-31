@@ -1,5 +1,5 @@
 """
-model.py — Plug-and-play wrapper that adds spatial cue correction to a
+model.py - Plug-and-play wrapper that adds spatial cue correction to a
 pre-trained HT-Demucs model from the official ``demucs`` package.
 
 Motivation
@@ -25,17 +25,18 @@ Usage
     base  = get_model("htdemucs")
     model = SAHTDemucs(base, sources=base.sources)
 
+    loss_fn   = SpatialLoss()
     optimizer = torch.optim.Adam(model.trainable_parameters(), lr=3e-4)
 
     # Training loop
     for mix, targets in train_loader:
-        estimates, deltas = model(mix)
-        loss = SpatialLoss()(estimates, targets)
-        loss.backward()
+        estimates, raw_estimates, deltas = model(mix)
+        total, l_si, l_ild, l_itd = loss_fn(estimates, targets, raw_estimates)
+        total.backward()
         optimizer.step()
 
-    # Inference
-    estimates, _ = model(mix)
+    # Inference (full track, with overlap-add chunking)
+    estimates = model.separate(wav)          # (S, 2, T)
 """
 
 from __future__ import annotations
@@ -134,8 +135,9 @@ class SAHTDemucs(nn.Module):
         )
 
     # ------------------------------------------------------------------ #
-    # Parameter helpers
+    # Attribute forwarding
     # ------------------------------------------------------------------ #
+
     def __getattr__(self, name: str):
         """Forward any attribute lookup not found on this wrapper to base_model.
 
@@ -216,18 +218,25 @@ class SAHTDemucs(nn.Module):
         self,
         wav: torch.Tensor,
         progress: bool = False,
+        shifts: int = 0,
     ) -> torch.Tensor:
         """Full-track inference with overlap-add chunking + spatial correction.
 
         Uses ``demucs.apply.apply_model`` for the backbone so that chunk
-        boundaries are smoothed with overlap-add (unlike the naive manual
-        chunking in ``separate_full_track``).  The spatial correction heads
+        boundaries are smoothed with overlap-add.  The spatial correction heads
         are then applied once on the **full-length** separated signal, giving
         more stable ILD estimates than per-chunk correction would.
 
         Args:
             wav:      ``(2, T)`` stereo waveform, already on the correct device.
             progress: if ``True``, show a tqdm progress bar over backbone chunks.
+            shifts:   number of random-shift passes averaged by ``apply_model``.
+                      Demucs defaults this to 1, which draws a *random* offset of
+                      up to 0.5 s and makes every call return slightly different
+                      estimates — enough to move SI-SDR by a couple of tenths of a
+                      dB between runs.  Evaluation needs to be reproducible, so
+                      the default here is ``0`` (no shift, deterministic); pass
+                      ``>= 2`` to trade determinism for shift-averaged quality.
 
         Returns:
             ``(S, 2, T)`` separated sources with spatial cues corrected.
@@ -245,6 +254,7 @@ class SAHTDemucs(nn.Module):
         raw = apply_model(
             self.base_model,
             wav.unsqueeze(0).to(device),   # (1, 2, T)
+            shifts=shifts,
             progress=progress,
         ).squeeze(0)                        # (S, 2, T)
 

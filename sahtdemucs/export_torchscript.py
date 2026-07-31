@@ -75,6 +75,9 @@ DEFAULT_REPO_PATH = r"H:\Il mio Drive\Polimi\PhD\Progetto di Ricerca\MSS & SSL\s
 _arg_parser = argparse.ArgumentParser(
     description="Export a SAHTDemucs spatial_modules checkpoint to TorchScript.")
 _arg_parser.add_argument(
+    "run_ts", nargs="?", default=DEFAULT_RUN_TS,
+    help=f"Timestamp of the run to export (default: {DEFAULT_RUN_TS}).")
+_arg_parser.add_argument(
     "--run_ts", dest="run_ts_flag", default=None,
     help="Alternative way to pass the timestamp (overrides the positional argument).")
 _arg_parser.add_argument(

@@ -231,12 +231,14 @@ loss_fn = SpatialLoss(lambda_si=0.0, lambda_ild=1.0)  # ILD supervision only
 
 for mix, targets in train_loader:          # mix: (B,2,T)  targets: (B,S,2,T)
     estimates, raw_estimates, _ = model(mix)
-    loss, loss_si, loss_ild = loss_fn(estimates, targets, raw_estimates)
+    loss, loss_si, loss_ild, loss_itd = loss_fn(estimates, targets, raw_estimates)
     loss.backward()
     optimizer.step(); optimizer.zero_grad()
 ```
 
-See `notebook/TrainSAHTDemucs.ipynb` for a complete training and evaluation example.
+In practice training is run headless — `python -m sahtdemucs.train` — and
+`notebook/TrainSAHTDemucs.ipynb` evaluates the resulting runs against the frozen
+HT-Demucs baseline on the test split.
 
 ---
 
@@ -330,19 +332,27 @@ total, si_part, ild_part = loss_fn(estimates, targets, raw_estimates)
 
 ```
 sahtdemucs/
-├── sahtdemucs/               ← Python package
+├── sahtdemucs/               ← Python package (frozen backbone + spatial heads)
 │   ├── __init__.py           ← public API
 │   ├── model.py              ← SAHTDemucs
 │   ├── cue_module.py         ← SpatialCueModule (cnn1d), SpatialCueModule2D (cnn2d), build_spatial_module
 │   ├── spatial.py            ← compute_ild, compute_ild_bands, compute_itd_samples, apply_itd
 │   ├── losses.py             ← SpatialLoss (sub-band ILD MSE + SI-SDR degradation guard)
 │   ├── dataset.py            ← MusdbSpatialDataset
+│   ├── metrics.py            ← si_sdr, ild_bands_mae, itd_bands_mae (inference-time)
+│   ├── train.py              ← training CLI: python -m sahtdemucs.train
+│   ├── separate.py           ← inference/evaluation CLI: python -m sahtdemucs.separate
 │   └── binaural_synth.py     ← binauralMUSDB18-HQ synthesis from MUSDB18-HQ + SADIE II HRIRs
+├── htdemucsspatial/          ← full-backbone spatial fine-tune (see its own README)
+│   ├── train.py              ← training CLI: python -m htdemucsspatial.train
+│   ├── freeze.py             ← freeze-strategy grammar (which blocks stay trainable)
+│   ├── losses.py             ← HTDemucsSpatialLoss (time-domain L1 + ILD/ITD MSE)
+│   └── compare_ablation.py   ← table + curves over all runs of a sweep
 ├── data/
 │   └── binaural_musdb_metadata.json   ← per-track stem azimuths (reproducible dataset)
 ├── notebook/
-│   ├── TrainHTDemucs.ipynb         ← baseline HTDemucs training
-│   ├── TrainSAHTDemucs.ipynb       ← spatial heads training & evaluation
+│   ├── TrainSAHTDemucs.ipynb       ← SA-HTDemucs evaluation & baseline comparison
+│   ├── TestHTDemucsSpatial.ipynb   ← freeze-strategy comparison of the backbone fine-tunes
 │   └── PrepareOnlineDemo.ipynb     ← generate demo page audio
 ├── docs/
 │   ├── images/

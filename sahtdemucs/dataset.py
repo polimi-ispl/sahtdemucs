@@ -21,11 +21,17 @@ Expected directory structure::
 
 Notes
 -----
-* ``__len__`` returns the number of tracks (not segments).  One random
-  segment is drawn per track per epoch, so the effective dataset size
-  scales with the number of training epochs.
+* ``__len__`` returns ``len(tracks) * crops_per_track``.  Each item draws a
+  fresh random crop from its track, so with ``crops_per_track = k`` an epoch
+  sees *k* independent segments per track at no extra I/O cost.
 * Random crops are drawn to avoid (near-)silent segments: the mixture RMS
   of each candidate must clear ``min_rms`` (see ``_choose_start``).
+* Only the crop is read from disk: the mixture header gives the track length,
+  and each of the five files is then seeked into for ``segment_len`` samples.
+  Decoding whole songs to keep 8 s of each costs ~40x more I/O and dominates
+  the epoch time on a network filesystem.  Files that ``soundfile`` cannot seek,
+  or that are not already at ``sample_rate`` (resampling needs the full signal),
+  fall back to decoding the whole track — same crops either way.
 * Tracks shorter than ``segment_len`` are zero-padded on the right.
 * Mono files are duplicated to stereo; files with > 2 channels are
   truncated to the first two channels.
@@ -44,7 +50,7 @@ import torchaudio
 import soundfile as sf
 from torch.utils.data import Dataset
 
-__all__ = ["MusdbSpatialDataset", "load_audio"]
+__all__ = ["MusdbSpatialDataset", "load_audio", "load_audio_segment"]
 
 # Default source order matches the Demucs convention
 DEFAULT_SOURCES: List[str] = ["drums", "bass", "other", "vocals"]
@@ -77,6 +83,51 @@ def load_audio(path: Path, sample_rate: int) -> torch.Tensor:
         wav = torchaudio.functional.resample(wav, sr, sample_rate)
 
     return wav
+
+
+def _to_stereo(wav: torch.Tensor) -> torch.Tensor:
+    """Force a ``(C, T)`` tensor to exactly two channels."""
+    if wav.shape[0] == 1:
+        return wav.repeat(2, 1)      # mono -> duplicate to stereo
+    if wav.shape[0] > 2:
+        return wav[:2]               # keep first two channels only
+    return wav
+
+
+def load_audio_segment(
+    path: Path,
+    start: int,
+    frames: int,
+) -> torch.Tensor:
+    """Read ``frames`` samples of a WAV starting at ``start``, as ``(2, frames)``.
+
+    Seeks straight to the crop instead of decoding the whole file, which is what
+    makes training on a network filesystem viable: a segment costs a few hundred
+    kB rather than the tens of MB of a full song.  The samples are identical to
+    the corresponding slice of :func:`load_audio` — both decode PCM to float32 in
+    ``[-1, 1)`` — so a crop read this way matches one read the long way.
+
+    The file must already be at the target sample rate (the caller checks it with
+    ``soundfile.info``); resampling needs the surrounding context and therefore
+    the full-file path.  Short reads at the end of a file are zero-padded on the
+    right, matching the padding :meth:`MusdbSpatialDataset.__getitem__` applies to
+    tracks shorter than one segment.
+
+    Args:
+        path:   WAV file to read from.
+        start:  first sample of the crop.
+        frames: how many samples to read.
+
+    Returns:
+        ``(2, frames)`` float32 stereo tensor.
+    """
+    data, _ = sf.read(str(path), start=start, frames=frames,
+                      always_2d=True, dtype="float32")     # (T, C)
+    wav = _to_stereo(torch.from_numpy(data.T.copy()))      # (2, T')
+    if wav.shape[-1] < frames:
+        wav = torch.nn.functional.pad(wav, (0, frames - wav.shape[-1]))
+    return wav
+
 
 class MusdbSpatialDataset(Dataset):
     """Random-segment dataset over a MUSDB18-HQ style directory.
@@ -124,6 +175,7 @@ class MusdbSpatialDataset(Dataset):
         self.crops_per_track   = max(1, crops_per_track)
         self.min_rms           = min_rms
         self.max_crop_attempts = max(1, max_crop_attempts)
+        self._probe_cache: dict = {}       # mixture path -> length, or None
 
         # Collect all track subdirectories, sorted for reproducibility
         self.tracks: List[Path] = sorted(
@@ -175,26 +227,18 @@ class MusdbSpatialDataset(Dataset):
 
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
         track_dir = self.tracks[idx % len(self.tracks)]
+        mix_path  = track_dir / "mixture.wav"
 
-        # Load mixture and all source stems at the target sample rate
-        mix   = self._load(track_dir / "mixture.wav")   # (2, T)
-        stems = torch.stack(
-            [self._load(track_dir / f"{src}.wav") for src in self.sources]
-        )  # (S, 2, T)
+        # Reading the crop directly beats decoding five whole songs to keep 8 s
+        # of each, by more than an order of magnitude — but it needs the file to
+        # be seekable and already at the target rate.  ``sf.info`` answers both
+        # questions from the header alone; anything else takes the slow path.
+        seekable = self._probe(mix_path)
 
-        # ── Random crop ───────────────────────────────────────────────────────
-        T = mix.shape[-1]                               # songs length in samples
-        if T > self.segment_len:
-            # Pick a random, non-silent start so the model sees diverse temporal
-            # positions with actual content (see _choose_start).
-            start = self._choose_start(mix, T)
-            mix   = mix[:, start: start + self.segment_len]
-            stems = stems[:, :, start: start + self.segment_len]
+        if seekable is None:
+            mix, stems = self._load_whole(track_dir)
         else:
-            # Zero-pad on the right if the track is shorter than the segment
-            pad   = self.segment_len - T
-            mix   = torch.nn.functional.pad(mix,   (0, pad))
-            stems = torch.nn.functional.pad(stems, (0, pad))
+            mix, stems = self._load_crop(track_dir, mix_path, n_samples=seekable)
 
         # ── Data augmentation (train split only) ──────────────────────────────
         if self.augment:
@@ -202,9 +246,84 @@ class MusdbSpatialDataset(Dataset):
 
         return mix, stems
 
+    def _load_crop(
+        self,
+        track_dir: Path,
+        mix_path: Path,
+        n_samples: int,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Read one crop out of the track, touching only the samples it needs."""
+        if n_samples <= self.segment_len:
+            # Nothing to choose from: take the track whole and pad on the right.
+            mix   = load_audio_segment(mix_path, 0, self.segment_len)
+            stems = torch.stack([load_audio_segment(track_dir / f"{src}.wav", 0,
+                                                    self.segment_len)
+                                 for src in self.sources])
+            return mix, stems
+
+        # Candidate crops are read one at a time; the winner is already in hand,
+        # so an accepted crop costs exactly one read of the mixture.
+        crops: dict = {}
+
+        def read_mix(start: int) -> torch.Tensor:
+            if start not in crops:
+                crops[start] = load_audio_segment(mix_path, start, self.segment_len)
+            return crops[start]
+
+        start = self._choose_start(read_mix, n_samples)
+        mix   = read_mix(start)
+        stems = torch.stack([
+            load_audio_segment(track_dir / f"{src}.wav", start, self.segment_len)
+            for src in self.sources
+        ])                                              # (S, 2, segment_len)
+        return mix, stems
+
+    def _load_whole(self, track_dir: Path) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Decode the full track, then crop — for files ``_load_crop`` can't seek."""
+        mix   = self._load(track_dir / "mixture.wav")   # (2, T)
+        stems = torch.stack(
+            [self._load(track_dir / f"{src}.wav") for src in self.sources]
+        )  # (S, 2, T)
+
+        T = mix.shape[-1]                               # song length in samples
+        if T > self.segment_len:
+            # Pick a random, non-silent start so the model sees diverse temporal
+            # positions with actual content (see _choose_start).
+            start = self._choose_start(
+                lambda s: mix[:, s: s + self.segment_len], T)
+            mix   = mix[:, start: start + self.segment_len]
+            stems = stems[:, :, start: start + self.segment_len]
+        else:
+            # Zero-pad on the right if the track is shorter than the segment
+            pad   = self.segment_len - T
+            mix   = torch.nn.functional.pad(mix,   (0, pad))
+            stems = torch.nn.functional.pad(stems, (0, pad))
+        return mix, stems
+
     # ── Helpers ───────────────────────────────────────────────────────────────
 
-    def _choose_start(self, mix: torch.Tensor, n: int) -> int:
+    def _probe(self, mix_path: Path) -> Optional[int]:
+        """Track length in samples when the crop can be read directly, else None.
+
+        ``None`` means the header could not be read or the file is not already at
+        ``self.sample_rate`` — resampling needs the whole signal, so those tracks
+        go through :meth:`_load_whole`.
+
+        The answer is memoised per track: a static dataset is probed once instead
+        of once per crop, which on a network filesystem saves one metadata
+        round-trip per item.
+        """
+        if mix_path in self._probe_cache:
+            return self._probe_cache[mix_path]
+        try:
+            info = sf.info(str(mix_path))
+            n = info.frames if info.samplerate == self.sample_rate else None
+        except Exception:
+            n = None                        # not seekable by soundfile
+        self._probe_cache[mix_path] = n
+        return n
+
+    def _choose_start(self, read_segment, n: int) -> int:
         """Pick a random crop start whose mixture segment is not (near-)silent.
 
         MUSDB tracks contain silent intros/outros and quiet passages; a fully
@@ -222,6 +341,14 @@ class MusdbSpatialDataset(Dataset):
         The check uses the *mixture* only: an individual stem may legitimately be
         silent over the segment (the model must still learn to output silence),
         but the segment as a whole is guaranteed to carry content.
+
+        Args:
+            read_segment: ``start -> (2, segment_len)`` mixture crop.  Slicing an
+                          already-decoded track and seeking into the file are
+                          both valid; the RNG is consumed identically either way,
+                          so the two paths select the same crops from the same
+                          seed.
+            n:            track length in samples.
         """
         hi = n - self.segment_len
         if self.min_rms <= 0.0 or self.max_crop_attempts <= 1:
@@ -230,8 +357,7 @@ class MusdbSpatialDataset(Dataset):
         best_start, best_rms = 0, -1.0
         for _ in range(self.max_crop_attempts):
             start = random.randint(0, hi)
-            seg   = mix[:, start: start + self.segment_len]
-            rms   = seg.pow(2).mean().sqrt().item()
+            rms   = read_segment(start).pow(2).mean().sqrt().item()
             if rms >= self.min_rms:
                 return start
             if rms > best_rms:

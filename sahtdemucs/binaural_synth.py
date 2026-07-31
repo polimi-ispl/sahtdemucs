@@ -38,7 +38,6 @@ MOISESDB_CATEGORY_TO_STEM = {
     "other":         "other",
 }
 
-
 def make_binaural(y, angle, ir_dir):
     """
     Turn a monophonic signal into a binaural 2-channel signal by

@@ -39,6 +39,7 @@ Pass ``arch="cnn1d"`` or ``arch="cnn2d"`` to
 
 from __future__ import annotations
 
+import inspect
 from typing import Tuple
 
 import torch
@@ -57,9 +58,9 @@ __all__ = ["SpatialCueModule", "SpatialCueModule2D", "build_spatial_module"]
 class _BaseSpatialCueModule(nn.Module):
     """Common STFT-domain gain application shared by all architectures.
 
-    Subclasses must set ``self.n_fft``, ``self.hop_length``,
-    ``self.n_bands``, and ``self.ild_scale`` in their ``__init__``, and
-    implement :meth:`_predict_delta`.
+    Subclasses must set ``self.n_fft``, ``self.hop_length``, ``self.n_bands``,
+    ``self.ild_scale``, ``self.band_scale`` and ``self.sample_rate`` in their
+    ``__init__``, and implement :meth:`_predict_delta`.
     """
 
     # ------------------------------------------------------------------ #
@@ -302,8 +303,8 @@ class SpatialCueModule2D(_BaseSpatialCueModule):
         sample_rate:    audio sample rate in Hz, used only when
                         ``band_scale="mel"`` (default 44100)
         max_lag:        reserved for future ITD support (default 64)
-        use_global_branch: if ``False``, skip the global context branch and
-                        use only the local Conv2d branch (default ``True``)
+        use_gb:         if ``False``, skip the global context branch and use
+                        only the local Conv2d branch (default ``True``)
     """
 
     def __init__(
@@ -327,7 +328,7 @@ class SpatialCueModule2D(_BaseSpatialCueModule):
         self.ild_scale   = ild_scale
         self.band_scale  = band_scale
         self.sample_rate = sample_rate
-        self.max_lag          = max_lag
+        self.max_lag           = max_lag
         self.use_global_branch = use_gb
 
         fpad   = freq_kernel // 2
@@ -393,20 +394,38 @@ _ARCH_REGISTRY = {
     "cnn2d": SpatialCueModule2D,
 }
 
+# Constructor parameters accepted by each architecture.  The architectures do
+# not share the exact same signature (``use_gb`` and ``freq_kernel`` are
+# specific to ``cnn2d``, ``kernel_size`` to ``cnn1d``), so the factory needs to
+# know which keyword belongs to which class.
+_ARCH_PARAMS = {
+    name: {p for p in inspect.signature(cls).parameters if p != "self"}
+    for name, cls in _ARCH_REGISTRY.items()
+}
+_KNOWN_PARAMS = set().union(*_ARCH_PARAMS.values())
+
 
 def build_spatial_module(arch: str = "cnn1d", **kwargs) -> _BaseSpatialCueModule:
     """Instantiate a spatial cue module by architecture name.
 
+    Keyword arguments that belong to *another* registered architecture are
+    dropped instead of raising, so a single configuration dict can be reused
+    across architectures — e.g. :class:`~sahtdemucs.model.SAHTDemucs` always
+    forwards ``use_gb``, which only ``cnn2d`` understands.  A keyword no
+    architecture accepts is still an error, so typos are not swallowed.
+
     Args:
         arch:    ``"cnn1d"`` (temporal Conv1d, default) or
                  ``"cnn2d"`` (spectro-temporal Conv2d).
-        **kwargs: forwarded to the chosen class constructor.
+        **kwargs: forwarded to the chosen class constructor, minus the keys that
+                 constructor does not accept.
 
     Returns:
         An instance of the requested :class:`_BaseSpatialCueModule` subclass.
 
     Raises:
         ValueError: if *arch* is not a recognised key.
+        TypeError:  if a keyword is not a parameter of any registered architecture.
 
     Example::
 
@@ -417,4 +436,11 @@ def build_spatial_module(arch: str = "cnn1d", **kwargs) -> _BaseSpatialCueModule
             f"Unknown spatial_arch {arch!r}. "
             f"Choose one of: {list(_ARCH_REGISTRY)}"
         )
-    return _ARCH_REGISTRY[arch](**kwargs)
+    unknown = set(kwargs) - _KNOWN_PARAMS
+    if unknown:
+        raise TypeError(
+            f"Unknown spatial module parameter(s): {sorted(unknown)}. "
+            f"Accepted parameters: {sorted(_KNOWN_PARAMS)}"
+        )
+    accepted = _ARCH_PARAMS[arch]
+    return _ARCH_REGISTRY[arch](**{k: v for k, v in kwargs.items() if k in accepted})
