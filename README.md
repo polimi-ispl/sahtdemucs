@@ -21,7 +21,9 @@ Samples are available for listening tests [on our sample page](https://polimi-is
 
 ## Architecture
 
-![SAHTDemucs Architecture](docs/images/architecture.svg)
+<p align="center">
+  <img src="docs/images/sahtdemucs_architecture.png" alt="SAHTDemucs Architecture">
+</p>
 
 `SA-HTDemucs` wraps a frozen, pre-trained HT-Demucs model and attaches one `SpatialCueModule` per source ($S=4$).
 Only the spatial heads are updated during training; the HT-Demucs backbone (~42 M parameters) stays frozen.
@@ -90,7 +92,9 @@ Fusion + projection:
     → × ild_scale                             dB
 ```
 
-![SpatialCueModule (cnn2d)](docs/images/spatial_cue_module_cnn2d.svg)
+<p align="center">
+  <img src="docs/images/spatialcuemodule_cnn2d.png" alt="SpatialCueModule (cnn2d)">
+</p>
 
 Default parameters: `hidden=32`, `n_fft=2048`, `hop_length=512`, `n_bands=32`, `ild_scale=6.0`, `freq_kernel=3`,
 `time_kernel=7`.
