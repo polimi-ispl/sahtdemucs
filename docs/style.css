@@ -207,7 +207,7 @@ h1 {
 }
 .method-image img {
   max-width: 100%;
-  width: 860px;
+  width: auto;
   height: auto;
 }
 .small-image img {
