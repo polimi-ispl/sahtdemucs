@@ -30,7 +30,7 @@ The package is organized into the following modules:
                     process, each in its own output directory.
 
     separate.py     Inference / evaluation CLI: ``python -m sahtdemucs.separate``.
-                    ``notebook/TrainSAHTDemucs.ipynb`` does the same
+                    ``notebook/TestSAHTDemucs.ipynb`` does the same
                     interactively, comparing several runs at once.
 """
 

@@ -6,7 +6,7 @@
    id="svg231"
    sodipodi:docname="spatial_cue_module_cnn2d.svg"
    inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
-   inkscape:export-filename="spatial_cue_module_cnn2d_hor.png"
+   inkscape:export-filename="spatial_cue_module_cnn2d.png"
    inkscape:export-xdpi="225.92609"
    inkscape:export-ydpi="225.92609"
    width="1275.1133"
@@ -25,9 +25,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
-     inkscape:zoom="0.83737374"
-     inkscape:cx="549.93365"
-     inkscape:cy="226.89988"
+     inkscape:zoom="0.59211265"
+     inkscape:cx="278.66319"
+     inkscape:cy="106.39867"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -221,9 +221,9 @@
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
        id="filter1116"
-       x="-0.00035753485"
+       x="-0.00036861191"
        y="-0.0073050829"
-       width="1.0007151"
+       width="1.0007372"
        height="1.0146102">
       <feGaussianBlur
          inkscape:collect="always"
@@ -1104,7 +1104,7 @@
      height="990"
      fill="#ffffff"
      id="rect37"
-     style="mix-blend-mode:normal;stroke:#808080;stroke-opacity:1;filter:url(#filter1112)"
+     style="mix-blend-mode:normal;stroke:#808080;stroke-opacity:1;filter:url(#filter1112);fill:none"
      x="0"
      y="0"
      transform="matrix(1.4148638,0,0,0.53467317,0.86787743,0.32796854)" />
@@ -1112,14 +1112,14 @@
        TITLE
        ════════════════════════════════════════════════════════════════════════ -->
   <text
-     x="637.41211"
+     x="637.41205"
      y="28.473703"
      text-anchor="middle"
      font-size="16px"
      font-weight="bold"
      fill="#1a1a2e"
      id="text39"
-     style="mix-blend-mode:normal;filter:url(#filter1116)">SpatialCueModule — Internal Architecture</text>
+     style="mix-blend-mode:normal;filter:url(#filter1116)">SpatialCueModule - Internal Architecture</text>
   <!-- ════════════════════════════════════════════════════════════════════════
        LEGEND
        ════════════════════════════════════════════════════════════════════════ -->

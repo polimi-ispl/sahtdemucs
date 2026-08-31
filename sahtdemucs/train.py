@@ -20,7 +20,7 @@ Layout produced for a run::
         history.csv                     one row per epoch (appended live)
         train.log                       full textual log
 
-``notebook/TrainSAHTDemucs.ipynb`` discovers these run directories under a shared
+``notebook/TestSAHTDemucs.ipynb`` discovers these run directories under a shared
 ``RUNS_ROOT``, rebuilds each head set from its ``config.json`` and compares them
 on the test split against the frozen HTDemucs baseline; ``sahtdemucs.separate``
 does the same headless, for a single run.
