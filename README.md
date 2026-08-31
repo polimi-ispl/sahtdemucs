@@ -4,7 +4,7 @@
 
 **Spatially-Aware HT-Demucs** (**SA-HTDemucs**) extends the pre-trained
 __[HT-Demucs](https://github.com/facebookresearch/demucs)__ music source separator with explicit preservation of spatial
-cues. From an input mixture $x_{gt}$, HT-Demucs separates $S=4$ sources — `drums`, `bass`, `other`, `vocals`, in the
+cues. From an input mixture $x_{gt}$, HT-Demucs separates $S=4$ sources - `drums`, `bass`, `other`, `vocals`, in the
 Demucs output order. For each of the separated sources $\widehat{s}$, a **SpatialCueModule** estimates the
 **Interaural Level Difference** in the time-frequency domain, which is related to the perceived left/right balance,
 and predicts a time-frequency correction to be applied to $\widehat{s}$ to replicate the ILD of the groundtruth
@@ -31,7 +31,7 @@ Only the spatial heads are updated during training; the HT-Demucs backbone (~42 
 | HT-Demucs backbone   | ~42 M (frozen)     | Music source separation |
 | SpatialCueModule × S | ~700 K (trainable) | Per-source ILD correction |
 
-The ~700 K figure is that of the **shipped training configuration** — `spatial_arch="cnn2d"`, `hidden=64`,
+The ~700 K figure is that of the **shipped training configuration** - `spatial_arch="cnn2d"`, `hidden=64`,
 `n_bands=64`, `n_fft=4096`, `ild_scale=15.0`, `band_scale="mel"`, i.e. the defaults of `sahtdemucs.train` and
 `sahtdemucs.separate`. The library-level defaults of `SAHTDemucs` build lighter heads:
 
@@ -341,7 +341,7 @@ $$
 $$
 
 It is **disabled by default** ($\lambda_{\text{ITD}}=0$): an ILD-gain head cannot change interaural phase, so the term
-yields no useful gradient for SA-HTDemucs (see the note on ITD above) — it is wired in for the full-backbone fine-tune
+yields no useful gradient for SA-HTDemucs (see the note on ITD above) - it is wired in for the full-backbone fine-tune
 in `htdemucsspatial/`.  Being in samples², it sits on a far larger numerical scale than the ILD's dB², so a non-zero
 $\lambda_{\text{ITD}}$ is typically one to two orders of magnitude below $\lambda_{\text{ILD}}$.
 
