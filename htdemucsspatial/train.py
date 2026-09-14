@@ -22,7 +22,7 @@ Examples
 Single run::
 
     python -m htdemucsspatial.train \
-        --dataset-root /nas/home/macerbi/Dataset/binauralMUSMOISESDB \
+        --dataset-root /nas/home/macerbi/dataset/binauralmusmoisesdb \
         --out-root     /nas/home/macerbi/sahtdemucs/runs/htdemucsspatial \
         --freeze-strategy dec_last2 --epochs 100
 
@@ -303,7 +303,7 @@ def main(argv=None) -> int:
              f"accum={args.accum_steps} -> effective {args.batch_size * args.accum_steps})")
     log.info(f"valid      : {n_valid} tracks ({len(valid_loader)} batches)")
 
-    # ── Optimiser / scheduler (Adam, no weight decay — HTDemucs recipe) ───────
+    # ── Optimiser / scheduler (Adam, no weight decay - HTDemucs recipe) ───────
     optimizer = torch.optim.Adam(
         filter(lambda p: p.requires_grad, model.parameters()),
         lr=args.lr, betas=(0.9, 0.999), weight_decay=0.0,
@@ -315,7 +315,7 @@ def main(argv=None) -> int:
 
     start_epoch, best_valid = 1, math.inf
     if args.resume and last_path.exists():
-        # weights_only=False: last.pt also carries the optimiser/scheduler state.
+        # weights_only=False: last.pt also carries the optimizer/scheduler state.
         ck = torch.load(last_path, map_location=device, weights_only=False)
         model.load_state_dict(ck["model_state"])
         optimizer.load_state_dict(ck["optim_state"])
@@ -410,7 +410,7 @@ def main(argv=None) -> int:
             log.info(msg)
 
     except KeyboardInterrupt:
-        log.info("interrupted — history and the best checkpoint are preserved")
+        log.info("interrupted - history and the best checkpoint are preserved")
 
     log.info(f"done. best valid = {best_valid:.4f}")
     log.info(f"checkpoint      : {ckpt_path}")
