@@ -23,27 +23,25 @@ clc
 addpath('helpers\')
 
 %% Parameters
-datapath = '..\docs\audio';
-nSongs   = 3;
-sources  = {'bass', 'drums', 'other', 'vocals'};
-nfft     = 1024;
-fs       = 44100;
-nBands   = 64;
+datapath    = '..\docs\audio';
+nSongs      = 3;
+sources     = {'bass', 'drums', 'other', 'vocals'};
+fs          = 44100;
+nfft        = 2048;
+wLen        = 2048;
+nBands      = 64;
 
 % Range of frames to plot for each song (NB: one figure per frame!).
 % To avoid opening hundreds of figures, by default only a few frames
 % spread along the track are shown. Set frameSel = [] for all of them.
 frameSel = 'sparse';       % 'sparse' | 'all' | explicit vector of indices
-nFramesShown = 6;          % used only if frameSel = 'sparse'
+nFramesShown = 20;         % used only if frameSel = 'sparse'
 
-% Frequency axis (band-center Hz) for the per-band plots
-bin_hz = (0:floor(nfft/2)).' * (fs / nfft);
-ba_ref = melbinassignment(fs, nfft, nBands);
-sum_hz = accumarray(ba_ref, bin_hz, [nBands 1], @sum, 0);
-cnt_hz = accumarray(ba_ref, ones(size(bin_hz)), [nBands 1], @sum, 0);
-band_hz = zeros(nBands, 1);
-nz = cnt_hz > 0;
-band_hz(nz) = sum_hz(nz) ./ cnt_hz(nz);
+% Linear frequency axis
+f = (0:floor(nfft/2)).' * (fs / nfft);
+
+% Mel-band frequency axis
+[~, band_hz] = melbinassignment(fs, nfft, nBands);
 
 %% Loop over songs and over sources
 for i = 1:nSongs
@@ -54,36 +52,30 @@ for i = 1:nSongs
     for s = 3:length(sources)
 
         % Import audio files
-        gt_s_path      = [gt_path,      sources{s}, '.wav'];
-        bl_s_path      = [bl_path,      sources{s}, '.wav'];
-        spatial_s_path = [spatial_path, sources{s}, '.wav'];
-
-        [gt_s, fs] = audioread(gt_s_path);
-        bl_s       = audioread(bl_s_path);
-        spatial_s  = audioread(spatial_s_path);
+        gt_s_path   = [gt_path,      sources{s}, '.wav'];
+        bl_s_path   = [bl_path,      sources{s}, '.wav'];
+        sp_s_path   = [spatial_path, sources{s}, '.wav'];
+        [gt_s, fs]  = audioread(gt_s_path);
+        bl_s        = audioread(bl_s_path);
+        sp_s        = audioread(sp_s_path);
 
         % Time-frequency panning index
-        [~, PSI_gt, phi_gt, Xg]  = ild(fs, gt_s, 'stft', nfft);
-        [~, PSI_bl, phi_bl, Xb]  = ild(fs, bl_s, 'stft', nfft);
-        [~, PSI_sp, phi_sp, Xs]  = ild(fs, spatial_s, 'stft', nfft);
-
-        % stft is two-sided -> keep only the upper half [0, Nyquist]
-        F_one = floor(nfft/2) + 1;
-        sel   = (size(Xg.PL,1) - F_one + 1) : size(Xg.PL,1);
-
-        PSI_gt = PSI_gt(sel, :);   Wgt = Xg.PL(sel, :) + Xg.PR(sel, :);
-        PSI_bl = PSI_bl(sel, :);   Wbl = Xb.PL(sel, :) + Xb.PR(sel, :);
-        PSI_sp = PSI_sp(sel, :);   Wsp = Xs.PL(sel, :) + Xs.PR(sel, :);
+        [~, PSI_gt, phi_gt, X_gt]  = ild(fs, gt_s, 'mode', 'stft', ...
+            'nfft', nfft, 'wLen', wLen);
+        [~, PSI_bl, phi_bl, X_bl]  = ild(fs, bl_s, 'mode', 'stft', ...
+            'nfft', nfft, 'wLen', wLen);
+        [~, PSI_sp, phi_sp, X_sp]  = ild(fs, sp_s, 'mode', 'stft', ...
+            'nfft', nfft, 'wLen', wLen);
 
         % Panning index per Mel band (weighted aggregation)
-        PSI_mel_gt = panindextomelbands(PSI_gt, Wgt, nfft, fs, nBands);
-        PSI_mel_bl = panindextomelbands(PSI_bl, Wbl, nfft, fs, nBands);
-        PSI_mel_sp = panindextomelbands(PSI_sp, Wsp, nfft, fs, nBands);
+        PSI_mel_gt = melbandaggregate(PSI_gt, fs, nBands, X_gt.PL + X_gt.PR);
+        PSI_mel_bl = melbandaggregate(PSI_bl, fs, nBands, X_bl.PL + X_bl.PR);
+        PSI_mel_sp = melbandaggregate(PSI_sp, fs, nBands, X_sp.PL + X_sp.PR);
 
         % Frame metrics (correlation, balance, width)
-        Mgt = stereometrics(gt_s, nfft, nfft/2);
-        Mbl = stereometrics(bl_s, nfft, nfft/2);
-        Msp = stereometrics(spatial_s, nfft, nfft/2);
+        M_gt = stereometrics(gt_s, nfft, nfft/2);
+        M_bl = stereometrics(bl_s, nfft, nfft/2);
+        M_sp = stereometrics(sp_s, nfft, nfft/2);
 
         % Frames selection for plot visualization
         nFrames = min([size(PSI_gt,2), size(PSI_bl,2), size(PSI_sp,2)]);
@@ -96,42 +88,51 @@ for i = 1:nSongs
         end
 
         % Plot per selected frame
+        fig = figure;
         for k = kList
-            close
-            fig = figure('Color', 'w', 'Position', [80 80 1200 780]);
-            sgtitle(sprintf('Song %d - %s.wav - frame %d/%d  (t = %.2f s)', ...
-                i, sources{s}, k, nFrames, Mgt.t(k)/fs), ...
-                'FontWeight', 'bold');
+            clf(fig);
+            figure(fig);
+            sgtitle(sprintf(['Song %d - %s.wav - frame %d/%d ' ...
+                '(t = %.2f s)'], i, sources{s}, k, nFrames, ...
+                M_gt.t(k)/fs), 'FontWeight', 'bold');
 
             % Time-domain sub-blocks (for the time-domain vectorscope)
-            n0 = Mgt.frameIdx(k,1); n1 = Mgt.frameIdx(k,2);
-            blk_gt = gt_s(n0:n1, :)      .* Xb.win;
-            blk_bl = bl_s(n0:n1, :)      .* Xb.win;
-            blk_sp = spatial_s(n0:n1, :) .* Xb.win;
+            n0      = M_gt.frameIdx(k,1);
+            n1      = M_gt.frameIdx(k,2);
+            win     = X_gt.win;
+            blk_gt  = gt_s(n0:n1, :) .* win;
+            blk_bl  = bl_s(n0:n1, :) .* win;
+            blk_sp  = sp_s(n0:n1, :) .* win;
 
-            % --- Row 1: Mid/Side vectorscope ---------------------------
-            ax1 = subplot(3,3,1); plot_vectorscope(ax1, blk_gt, ...
-                'Groundtruth');
-            ax2 = subplot(3,3,2); plot_vectorscope(ax2, blk_bl, ...
-                'HT-Demucs baseline');
-            ax3 = subplot(3,3,3); plot_vectorscope(ax3, blk_sp, ...
-                'SA-HTDemucs');
+            % --- Row 1: Mid/Side vectorscope -----------------------------
+            ax1 = subplot(3,3,1);
+            plotvectorscope(blk_gt, 'ax', ax1);
+            title(ax1, {'\fontsize{12}Groundtruth', 'Vectorscope'});
+            ax2 = subplot(3,3,2); 
+            plotvectorscope(blk_bl, 'ax', ax2);
+            title(ax2, {'\fontsize{12}HTDemucs', 'Vectorscope'});
+            ax3 = subplot(3,3,3);
+            plotvectorscope(blk_sp, 'ax', ax3);
+            title(ax3, {'\fontsize{12}SA-HTDemucs', 'Vectorscope'});
 
-            % --- Row 2: panning index per band -------------------------
+            % --- Row 2: panning index per band ---------------------------
             ax4 = subplot(3,3,4);
-            plot_pan_bands(ax4, band_hz, PSI_mel_gt(:,k), 'GT');
+            plotpanbands(ax4, band_hz, PSI_mel_gt(:,k));
             ax5 = subplot(3,3,5);
-            plot_pan_bands(ax5, band_hz, PSI_mel_bl(:,k), 'baseline');
+            plotpanbands(ax5, band_hz, PSI_mel_bl(:,k));
             ax6 = subplot(3,3,6);
-            plot_pan_bands(ax6, band_hz, PSI_mel_sp(:,k), 'SA-HTDemucs');
+            plotpanbands(ax6, band_hz, PSI_mel_sp(:,k));
 
-            % --- Row 3: textual panels with metrics --------------------
+            % --- Row 3: textual panels with metrics ----------------------
             ax7 = subplot(3,3,7);
-            plot_metrics_panel(ax7, Mgt, phi_gt, k);
+            plotstereometricspanel(M_gt, phi_gt, k, 'ax', ax7);
             ax8 = subplot(3,3,8);
-            plot_metrics_panel(ax8, Mbl, phi_bl, k);
+            plotstereometricspanel(M_bl, phi_bl, k, 'ax', ax8);
             ax9 = subplot(3,3,9);
-            plot_metrics_panel(ax9, Msp, phi_sp, k);
+            plotstereometricspanel(M_sp, phi_sp, k, 'ax', ax9);
+
+            drawnow;
+            pause(0.5);
         end
         pause(0.5)
     end
@@ -140,54 +141,7 @@ end
 
 % Local plot functions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function plot_vectorscope(ax, frameBlock, ttl)
-% GonioMeter-style vectorscope: X axis = Side (L-R)/sqrt(2),
-% Y axis = Mid (L+R)/sqrt(2). A perfectly mono signal -> vertical line.
-L = frameBlock(:,1);
-R = frameBlock(:,2);
-M = (L + R) / sqrt(2);
-Sd = (L - R) / sqrt(2);
-
-% Auto-scaling based on the frame peak (with a floor)
-r = max([abs(M); abs(Sd); 1e-3]);
-r = 1.1 * r;
-
-hold(ax, 'on');
-% Reference circle (relative unit peak)
-th = linspace(0, 2*pi, 200);
-plot(ax, r*cos(th), r*sin(th), 'Color', [0.85 0.85 0.85]);
-% +-45 deg diagonals (correspond to hard-L and hard-R in M/S coords)
-plot(ax, [-r r], [-r r], ':',  'Color', [0.7 0.7 0.7]);
-plot(ax, [-r r], [ r -r], ':', 'Color', [0.7 0.7 0.7]);
-% Axes
-plot(ax, [-r r], [0 0], 'Color', [0.6 0.6 0.6]);
-plot(ax, [0 0], [-r r], 'Color', [0.6 0.6 0.6]);
-
-% Frame samples cloud
-scatter(ax, Sd, M, 6, 'filled', ...
-    'MarkerFaceColor', [0.10 0.45 0.80], 'MarkerFaceAlpha', 0.6);
-
-axis(ax, 'equal');
-xlim(ax, [-r r]); ylim(ax, [-r r]);
-grid(ax, 'on');
-xlabel(ax, 'Side  (L-R)/\surd2');
-ylabel(ax, 'Mid  (L+R)/\surd2');
-title(ax, sprintf('Vectorscope - %s', ttl));
-% L / R labels on the diagonals, NOT on the horizontal sides:
-% hard-L  => L>0, R=0  =>  Side=+ , Mid=+  -> upper-right diagonal
-% hard-R  => L=0, R>0  =>  Side=- , Mid=+  -> upper-left diagonal
-text(ax,  0.72*r,  0.72*r, 'L', 'FontWeight', 'bold', ...
-    'Color', [0.55 0.30 0.05], ...
-    'BackgroundColor', [1 1 1], 'Margin', 1, ...
-    'HorizontalAlignment', 'center');
-text(ax, -0.72*r,  0.72*r, 'R', 'FontWeight', 'bold', ...
-    'Color', [0.05 0.25 0.55], ...
-    'BackgroundColor', [1 1 1], 'Margin', 1, ...
-    'HorizontalAlignment', 'center');
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function plot_pan_bands(ax, band_hz, psi_col, tag)
+function plotpanbands(ax, band_hz, psi_col)
 % Panning index per band in the current frame.
 semilogx(ax, band_hz, psi_col, 'LineWidth', 1.4);
 hold(ax, 'on');
@@ -198,33 +152,6 @@ grid(ax, 'on');
 xlim(ax, [20 2e4]);
 ylim(ax, [-1.05 1.05]);
 xlabel(ax, 'Frequency [Hz]');
-ylabel(ax, '\Psi   (+1 L / -1 R)');
-title(ax, sprintf('Panning index per band - %s', tag));
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function plot_metrics_panel(ax, M, phi, k)
-% Textual panel with correlation, balance, width and broadband azimuth.
-cla(ax); axis(ax, 'off');
-box(ax, 'on');
-txt = {
-    sprintf('Correlation: %+0.2f', M.corr(k))
-    sprintf('Balance:     %+0.2f', M.balance(k))   % + = L
-    sprintf('Width  S/M:  %0.2f',  M.width(k))
-    sprintf('Azimuth:     %+0.1f deg', phi(k))     % + = L
-    ' '
-    '(+ = LEFT, - = RIGHT)'
-    };
-text(ax, 0.05, 0.5, txt, 'FontName', 'Consolas', ...
-    'FontSize', 11, 'VerticalAlignment', 'middle');
-% Mini balance bar at the bottom
-hold(ax, 'on');
-plot(ax, [0 1], [0.08 0.08], 'Color', [0.85 0.85 0.85], 'LineWidth', 4);
-bx = 0.5 + 0.5 * max(-1, min(1, M.balance(k)));
-plot(ax, [0.5 bx], [0.08 0.08], 'Color', [0.10 0.45 0.80], ...
-    'LineWidth', 4);
-plot(ax, [0.5 0.5], [0.05 0.11], 'k-');
-text(ax, 0.0, 0.02, 'R', 'FontSize', 9);
-text(ax, 0.97, 0.02, 'L', 'FontSize', 9);
-xlim(ax, [-0.05 1.05]); ylim(ax, [0 1]);
+ylabel('\Psi (-1 R / +1 L)');
+title(ax, 'Panning index per Mel band');
 end
