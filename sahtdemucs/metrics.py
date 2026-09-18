@@ -17,12 +17,15 @@ metric and the objective can be kept in sync from a single config.
 
 from __future__ import annotations
 
+from typing import Optional
+
 import numpy as np
 import torch
 
 from .spatial import (
     compute_ild_bands, compute_ild_bands_mel,
     compute_itd_bands, compute_itd_bands_mel,
+    audible_band_mask,
 )
 
 __all__ = ["si_sdr", "ild_bands_mae", "itd_bands_mae"]
@@ -63,27 +66,41 @@ def ild_bands_mae(
     n_bands: int = 32,
     scale: str = "linear",
     sample_rate: int = 44100,
+    floor_db: Optional[float] = None,
 ) -> np.ndarray:
     """Per-sub-band ILD MAE ``(n_bands,)`` between estimate and target ``(2, T)``.
 
     Uses the same band ``scale`` ("linear" or "mel") as the training loss so the
     metric is consistent with the objective.
+
+    With ``floor_db`` (e.g. -40.0) the error is averaged only over the audible
+    frames of each band of the *target* (see :func:`spatial.audible_band_mask`),
+    so silent passages - whose ILD is noise - do not dominate the metric.  The
+    mask depends on the target only, so every model is scored on the same cells;
+    a band with no audible frame reports 0.  ``None`` averages over all frames.
     """
     if scale == "mel":
-        def _fn(l, r):
+        def _fn(l, r, **kw):
             return compute_ild_bands_mel(
                 l, r, n_fft=int(n_fft), hop_length=int(hop_length),
-                n_bands=int(n_bands), sample_rate=int(sample_rate),
+                n_bands=int(n_bands), sample_rate=int(sample_rate), **kw,
             )
     else:
-        def _fn(l, r):
+        def _fn(l, r, **kw):
             return compute_ild_bands(
                 l, r, n_fft=int(n_fft), hop_length=int(hop_length),
-                n_bands=int(n_bands),
+                n_bands=int(n_bands), **kw,
             )
     ild_est = _fn(est[0].unsqueeze(0).cpu(), est[1].unsqueeze(0).cpu())
-    ild_tgt = _fn(tgt[0].unsqueeze(0).cpu(), tgt[1].unsqueeze(0).cpu())
-    return torch.abs(ild_est - ild_tgt).mean(dim=-1).squeeze(0).numpy()   # (n_bands,)
+    if floor_db is None:
+        ild_tgt = _fn(tgt[0].unsqueeze(0).cpu(), tgt[1].unsqueeze(0).cpu())
+        return torch.abs(ild_est - ild_tgt).mean(dim=-1).squeeze(0).numpy()   # (n_bands,)
+
+    ild_tgt, p_l, p_r = _fn(tgt[0].unsqueeze(0).cpu(), tgt[1].unsqueeze(0).cpu(),
+                            return_power=True)
+    mask = audible_band_mask(p_l + p_r, floor_db).float()
+    err  = torch.abs(ild_est - ild_tgt) * mask
+    return (err.sum(dim=-1) / mask.sum(dim=-1).clamp(min=1)).squeeze(0).numpy()   # (n_bands,)
 
 
 def itd_bands_mae(

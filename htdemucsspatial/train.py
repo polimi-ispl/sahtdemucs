@@ -11,7 +11,9 @@ those run directories and compares them against the frozen baseline.
 Layout produced for a run::
 
     <out-root>/<strategy>[__<tag>]/
-        htdmcs_sp_<strategy>.pt     best checkpoint (lowest total validation loss)
+        htdmcs_sp_<strategy>.pt     best checkpoint (lowest total validation loss among
+                                    the epochs whose valid SI-SDR has not dropped by more
+                                    than --max-si-sdr-drop w.r.t. the initial model)
         last.pt                     latest epoch (for --resume), unless --no-save-last
         config.json                 full argv + environment of the run
         history.csv                 one row per epoch (appended live)
@@ -70,11 +72,12 @@ from demucs.pretrained import get_model                        # noqa: E402
 from sahtdemucs.dataset import MusdbSpatialDataset             # noqa: E402
 from htdemucsspatial.freeze import apply_freeze_strategy       # noqa: E402
 from htdemucsspatial.losses import HTDemucsSpatialLoss         # noqa: E402
+from sahtdemucs.metrics import si_sdr                          # noqa: E402
 
 SOURCES = ["drums", "bass", "other", "vocals"]
 HISTORY_FIELDS = [
     "epoch", "train_total", "train_td", "train_ild", "train_itd",
-    "valid_total", "valid_td", "valid_ild", "valid_itd", "lr", "seconds",
+    "valid_total", "valid_td", "valid_ild", "valid_itd", "valid_si_sdr", "lr", "seconds",
 ]
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
@@ -91,6 +94,9 @@ def parse_args(argv=None) -> argparse.Namespace:
                    help="parent directory that will hold one sub-directory per run")
     p.add_argument("--tag", default="",
                    help="optional suffix appended to the run directory name")
+    p.add_argument("--init-ckpt", type=Path, default=None,
+                   help="start from the model_state of this checkpoint instead of the "
+                        "pre-trained htdemucs (e.g. the best checkpoint of a td-only run)")
 
     # What to train
     p.add_argument("--freeze-strategy", required=True,
@@ -120,6 +126,16 @@ def parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--ild-band-scale", choices=["mel", "linear"], default="mel")
     p.add_argument("--itd-max-lag", type=int,   default=64)
     p.add_argument("--itd-beta",    type=float, default=20.0)
+    p.add_argument("--ild-floor-db", type=float, default=-40.0,
+                   help="ILD term only on cells within this many dB of the loudest "
+                        "source's band peak; 0 disables the mask")
+    p.add_argument("--ild-criterion", choices=["huber", "mse"], default="huber")
+
+    # Checkpoint selection
+    p.add_argument("--max-si-sdr-drop", type=float, default=0.2,
+                   help="an epoch can become the best checkpoint only if its valid "
+                        "SI-SDR is at most this many dB below the initial model's "
+                        "('inf' = legacy, select on the total loss alone)")
 
     # Runtime
     p.add_argument("--device", default="auto",
@@ -204,8 +220,8 @@ def run_valid(model, loader, loss_fn, device, amp, limit=0):
     py_rng, th_rng = random.getstate(), torch.get_rng_state()
     random.seed(1234)
     torch.manual_seed(1234)
-    tot = td = il = it = 0.0
-    n = 0
+    tot = td = il = it = si = 0.0
+    n = n_si = 0
     for i, (mix, targets) in enumerate(loader):
         if limit and i >= limit:
             break
@@ -215,10 +231,15 @@ def run_valid(model, loader, loss_fn, device, amp, limit=0):
         total, l_td, l_il, l_it = loss_fn(estimates, targets)
         tot += total.item(); td += l_td.item(); il += l_il.item(); it += l_it.item()
         n += 1
+        # SI-SDR per (item, source); stems silent in the crop (RMS < 1e-4) are skipped,
+        # their SI-SDR is undefined.  The crops are fixed, so the set is the same every epoch.
+        for est_bs, tgt_bs in zip(estimates.float().flatten(0, 1), targets.flatten(0, 1)):
+            if tgt_bs.pow(2).mean() > 1e-8:
+                si += si_sdr(est_bs, tgt_bs); n_si += 1
     random.setstate(py_rng)
     torch.set_rng_state(th_rng)
     d = max(n, 1)
-    return tot / d, td / d, il / d, it / d
+    return tot / d, td / d, il / d, it / d, (si / n_si if n_si else float("nan"))
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -251,8 +272,13 @@ def main(argv=None) -> int:
     bag   = get_model("htdemucs")
     model = bag.models[0] if hasattr(bag, "models") else bag
     model = model.to(device)
+    if args.init_ckpt is not None:
+        # weights_only=False: the checkpoint also carries plain Python metadata.
+        init = torch.load(args.init_ckpt, map_location=device, weights_only=False)
+        model.load_state_dict(init["model_state"])
+        log.info(f"init from  : {args.init_ckpt} (epoch {init.get('epoch', '?')})")
 
-    sample_rate = model.samplerate                          # 44100 Hz
+    sample_rate = model.samplerate                         # 44100 Hz
     seg_len     = int(float(model.segment) * sample_rate)   # ~8 s
 
     groups      = apply_freeze_strategy(model, args.freeze_strategy)
@@ -280,6 +306,7 @@ def main(argv=None) -> int:
         n_fft=args.ild_n_fft, hop_length=args.ild_hop, n_bands=args.ild_n_bands,
         band_scale=args.ild_band_scale, sample_rate=sample_rate,
         itd_max_lag=args.itd_max_lag, itd_beta=args.itd_beta,
+        ild_floor_db=args.ild_floor_db, ild_criterion=args.ild_criterion,
     )
 
     # ── Data (track-level split, identical across runs thanks to --seed) ──────
@@ -312,6 +339,16 @@ def main(argv=None) -> int:
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, T_max=args.epochs, eta_min=args.lr / 20,
     )
+
+    # Reference valid SI-SDR of the initial model (pre-trained or --init-ckpt), for
+    # the checkpoint-selection rule.  Computed before --resume loads trained weights,
+    # so a resumed run gets the same reference.
+    ref_si_sdr = float("nan")
+    if len(valid_ds):
+        ref_si_sdr = run_valid(model, valid_loader, loss_fn, device, amp,
+                               limit=args.limit_valid_batches)[4]
+    log.info(f"initial valid SI-SDR = {ref_si_sdr:.3f} dB "
+             f"(best checkpoint requires >= {ref_si_sdr - args.max_si_sdr_drop:.3f} dB)")
 
     start_epoch, best_valid = 1, math.inf
     if args.resume and last_path.exists():
@@ -376,7 +413,7 @@ def main(argv=None) -> int:
             d = max(n_batches, 1)
             tr = (tot / d, td / d, il / d, it / d)
             va = run_valid(model, valid_loader, loss_fn, device, amp,
-                           limit=args.limit_valid_batches) if len(valid_ds) else (float("nan"),) * 4
+                           limit=args.limit_valid_batches) if len(valid_ds) else (float("nan"),) * 5
 
             elapsed = time.time() - t0
             row = dict(zip(HISTORY_FIELDS,
@@ -387,7 +424,14 @@ def main(argv=None) -> int:
             msg = (f"epoch {epoch:4d}/{args.epochs}  "
                    f"train={tr[0]:.4f} (td={tr[1]:.3f} ild={tr[2]:.3f} itd={tr[3]:.3f})  "
                    f"valid={va[0]:.4f} (td={va[1]:.3f} ild={va[2]:.3f} itd={va[3]:.3f})  "
+                   f"si-sdr={va[4]:.2f} dB ({va[4] - ref_si_sdr:+.2f})  "
                    f"lr={scheduler.get_last_lr()[0]:.2e}  {elapsed:.0f}s  eta={eta / 3600:.1f}h")
+
+            # Best = lowest total loss among the epochs that kept the separation quality.
+            si_ok   = math.isnan(ref_si_sdr) or va[4] >= ref_si_sdr - args.max_si_sdr_drop
+            is_best = si_ok and va[0] < best_valid
+            if is_best:
+                best_valid = va[0]
 
             payload = {
                 "epoch": epoch, "model_state": model.state_dict(),
@@ -396,13 +440,12 @@ def main(argv=None) -> int:
                 "scaler_state": scaler.state_dict() if amp else None,
                 "train_loss": tr[0], "valid_loss": va[0],
                 "valid_ild": va[2], "valid_itd": va[3],
+                "valid_si_sdr": va[4], "ref_si_sdr": ref_si_sdr,
                 "freeze_strategy": args.freeze_strategy,
-                "best_valid": min(best_valid, va[0]),
+                "best_valid": best_valid,
                 "config": str(run_dir / "config.json"),
             }
-            if va[0] < best_valid:
-                best_valid = va[0]
-                payload["best_valid"] = best_valid
+            if is_best:
                 torch.save(payload, ckpt_path)
                 msg += "  <- best"
             if args.save_last:

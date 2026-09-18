@@ -33,6 +33,7 @@ __all__ = [
     "compute_ild",
     "compute_ild_bands",
     "compute_ild_bands_mel",
+    "audible_band_mask",
     "compute_itd_samples",
     "compute_itd_bands",
     "compute_itd_bands_mel",
@@ -77,6 +78,7 @@ def compute_ild_bands(
     hop_length: int = 512,
     n_bands: int = 32,
     eps: float = 1e-8,
+    return_power: bool = False,
 ) -> torch.Tensor:
     """Per-sub-band ILD via STFT magnitude spectrum.
 
@@ -101,10 +103,12 @@ def compute_ild_bands(
         hop_length: STFT hop in samples (default 512 → ~11.6 ms @ 44 100 Hz)
         n_bands:    number of equal-width frequency sub-bands (default 32)
         eps:        numerical stability constant
+        return_power: also return the mean band powers ``(pw_l, pw_r)``
 
     Returns:
         ild_bands: ``(B, n_bands, T_frames)`` — ILD in dB per sub-band and STFT
                    frame.  Positive values indicate the left channel is louder.
+                   With ``return_power`` a tuple ``(ild_bands, pw_l, pw_r)``.
     """
     window = torch.hann_window(n_fft, device=left.device)
 
@@ -125,9 +129,12 @@ def compute_ild_bands(
     # Mean power per band (over frequency bins only) → RMS → ILD in dB
     # dim=2 averages over the bpb frequency bins within each band;
     # T_frames is kept so the output captures temporal ILD variation.
-    rms_l = pw_l.mean(dim=2).clamp(min=eps).sqrt()   # (B, n_bands, T_frames)
-    rms_r = pw_r.mean(dim=2).clamp(min=eps).sqrt()
-    return 20.0 * torch.log10(rms_l / rms_r + eps)   # (B, n_bands, T_frames)
+    mean_l = pw_l.mean(dim=2)                        # (B, n_bands, T_frames)
+    mean_r = pw_r.mean(dim=2)
+    rms_l = mean_l.clamp(min=eps).sqrt()
+    rms_r = mean_r.clamp(min=eps).sqrt()
+    ild = 20.0 * torch.log10(rms_l / rms_r + eps)    # (B, n_bands, T_frames)
+    return (ild, mean_l, mean_r) if return_power else ild
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -172,6 +179,7 @@ def compute_ild_bands_mel(
     n_bands: int      = 32,
     sample_rate: int  = 44100,
     eps: float        = 1e-8,
+    return_power: bool = False,
 ) -> torch.Tensor:
     """Per-sub-band ILD via STFT with **Mel-scale** frequency bands.
 
@@ -197,11 +205,13 @@ def compute_ild_bands_mel(
         n_bands:     number of Mel-scale frequency bands (default 32)
         sample_rate: audio sample rate in Hz (default 44 100)
         eps:         numerical stability constant
+        return_power: also return the mean band powers ``(mean_l, mean_r)``
 
     Returns:
         ild_bands:  ``(B, n_bands, T_frames)`` — ILD in dB per Mel band and
                     STFT frame.  Band 0 is the lowest-frequency band.
                     Positive values indicate the left channel is louder.
+                    With ``return_power`` a tuple ``(ild_bands, mean_l, mean_r)``.
     """
     window = torch.hann_window(n_fft, device=left.device)
 
@@ -229,7 +239,40 @@ def compute_ild_bands_mel(
 
     rms_l = mean_l.clamp(min=eps).sqrt()
     rms_r = mean_r.clamp(min=eps).sqrt()
-    return 20.0 * torch.log10(rms_l / rms_r + eps)
+    ild = 20.0 * torch.log10(rms_l / rms_r + eps)
+    return (ild, mean_l, mean_r) if return_power else ild
+
+
+def audible_band_mask(
+    power: torch.Tensor,
+    floor_db: float     = -40.0,
+    abs_floor_db: float = -60.0,
+    peak_db: torch.Tensor = None,
+) -> torch.Tensor:
+    """Boolean mask of the audible (band, frame) cells of a band-power map.
+
+    The ILD of a (near-)silent cell is the log-ratio of two noise floors: it is
+    meaningless as a target, and its error (tens of dB) would otherwise dominate
+    both the loss and the metric.  A cell is kept when its power is within
+    ``floor_db`` of ``peak_db`` **and** above the absolute ``abs_floor_db``
+    (unnormalised ``torch.stft`` power; -60 dB is inaudible at n_fft = 4096).
+
+    The reference is per band, so the spectral tilt of music does not mask out
+    the high bands, where the ILD matters most.
+
+    Args:
+        power:        ``(..., n_bands, T_frames)`` band power, typically the
+                      target's ``P_L + P_R``
+        floor_db:     relative floor below the reference peak (negative)
+        abs_floor_db: absolute floor in dB
+        peak_db:      reference peak in dB, broadcastable to ``power``; defaults
+                      to the per-band peak over frames of ``power`` itself.  Pass
+                      the loudest source's peak to mask a silent stem entirely.
+    """
+    p_db = 10.0 * torch.log10(power.clamp(min=1e-12))
+    if peak_db is None:
+        peak_db = p_db.amax(dim=-1, keepdim=True)
+    return (p_db > peak_db + floor_db) & (p_db > abs_floor_db)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
