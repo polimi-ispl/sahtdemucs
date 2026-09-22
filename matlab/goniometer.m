@@ -49,7 +49,7 @@ for i = 1:nSongs
     bl_path      = fullfile(datapath, ['song', num2str(i), '\htdemucs_']);
     spatial_path = fullfile(datapath, ['song', num2str(i), '\sahtdemucs_']);
 
-    for s = 3:length(sources)
+    for s = 1:length(sources)
 
         % Import audio files
         gt_s_path   = [gt_path,      sources{s}, '.wav'];
