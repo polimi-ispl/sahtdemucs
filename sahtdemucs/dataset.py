@@ -1,5 +1,5 @@
 """
-dataset.py — PyTorch Dataset wrappers for spatially-annotated audio datasets.
+dataset.py - PyTorch Dataset wrappers for spatially-annotated audio datasets.
 
 MusdbSpatialDataset
     Loads mixture + per-source stereo stems from a MUSDB18-HQ style directory
@@ -31,7 +31,7 @@ Notes
   Decoding whole songs to keep 8 s of each costs ~40x more I/O and dominates
   the epoch time on a network filesystem.  Files that ``soundfile`` cannot seek,
   or that are not already at ``sample_rate`` (resampling needs the full signal),
-  fall back to decoding the whole track — same crops either way.
+  fall back to decoding the whole track - same crops either way.
 * Tracks shorter than ``segment_len`` are zero-padded on the right.
 * Mono files are duplicated to stereo; files with > 2 channels are
   truncated to the first two channels.
@@ -54,7 +54,6 @@ __all__ = ["MusdbSpatialDataset", "load_audio", "load_audio_segment"]
 
 # Default source order matches the Demucs convention
 DEFAULT_SOURCES: List[str] = ["drums", "bass", "other", "vocals"]
-
 
 def load_audio(path: Path, sample_rate: int) -> torch.Tensor:
     """Load a WAV file and return a ``(2, T)`` stereo tensor at ``sample_rate``.
@@ -84,7 +83,6 @@ def load_audio(path: Path, sample_rate: int) -> torch.Tensor:
 
     return wav
 
-
 def _to_stereo(wav: torch.Tensor) -> torch.Tensor:
     """Force a ``(C, T)`` tensor to exactly two channels."""
     if wav.shape[0] == 1:
@@ -92,7 +90,6 @@ def _to_stereo(wav: torch.Tensor) -> torch.Tensor:
     if wav.shape[0] > 2:
         return wav[:2]               # keep first two channels only
     return wav
-
 
 def load_audio_segment(
     path: Path,
@@ -104,8 +101,8 @@ def load_audio_segment(
     Seeks straight to the crop instead of decoding the whole file, which is what
     makes training on a network filesystem viable: a segment costs a few hundred
     kB rather than the tens of MB of a full song.  The samples are identical to
-    the corresponding slice of :func:`load_audio` — both decode PCM to float32 in
-    ``[-1, 1)`` — so a crop read this way matches one read the long way.
+    the corresponding slice of :func:`load_audio` - both decode PCM to float32 in
+    ``[-1, 1)`` - so a crop read this way matches one read the long way.
 
     The file must already be at the target sample rate (the caller checks it with
     ``soundfile.info``); resampling needs the surrounding context and therefore
@@ -128,13 +125,12 @@ def load_audio_segment(
         wav = torch.nn.functional.pad(wav, (0, frames - wav.shape[-1]))
     return wav
 
-
 class MusdbSpatialDataset(Dataset):
     """Random-segment dataset over a MUSDB18-HQ style directory.
 
     Each item is a ``(mix, targets)`` tuple:
-        * ``mix``    — ``(2, segment_len)`` stereo mixture
-        * ``targets``— ``(S, 2, segment_len)`` per-source stereo stems
+        * ``mix``    - ``(2, segment_len)`` stereo mixture
+        * ``targets``- ``(S, 2, segment_len)`` per-source stereo stems
 
     Args:
         root:            path to the dataset root (contains ``train/`` and/or ``test/``)
@@ -145,7 +141,7 @@ class MusdbSpatialDataset(Dataset):
         augment:         if ``True``, apply random gain and channel-flip augmentation
         crops_per_track: number of independent random crops drawn from each track per
                          epoch (default 1).  Setting this to *k* multiplies the
-                         effective dataset size by *k* at no I/O cost — the audio
+                         effective dataset size by *k* at no I/O cost - the audio
                          file is loaded once per ``__getitem__`` call and a fresh
                          random start offset is drawn each time.
         min_rms:         minimum mixture RMS a random crop must have to be
@@ -202,7 +198,7 @@ class MusdbSpatialDataset(Dataset):
         The clone shares all configuration (``root``, ``sample_rate``,
         ``segment_len``, ``sources``, …) with the parent dataset but serves only
         the given track list, so a train/valid split can be made at the *track*
-        level — no crop of the same song ever leaks across the split (which
+        level - no crop of the same song ever leaks across the split (which
         ``torch.utils.data.random_split`` cannot guarantee, since it splits at
         the crop level).  ``crops_per_track`` and ``augment`` can be overridden
         for the clone, e.g. a single, non-augmented crop per track for
@@ -230,7 +226,7 @@ class MusdbSpatialDataset(Dataset):
         mix_path  = track_dir / "mixture.wav"
 
         # Reading the crop directly beats decoding five whole songs to keep 8 s
-        # of each, by more than an order of magnitude — but it needs the file to
+        # of each, by more than an order of magnitude - but it needs the file to
         # be seekable and already at the target rate.  ``sf.info`` answers both
         # questions from the header alone; anything else takes the slow path.
         seekable = self._probe(mix_path)
@@ -279,7 +275,7 @@ class MusdbSpatialDataset(Dataset):
         return mix, stems
 
     def _load_whole(self, track_dir: Path) -> Tuple[torch.Tensor, torch.Tensor]:
-        """Decode the full track, then crop — for files ``_load_crop`` can't seek."""
+        """Decode the full track, then crop - for files ``_load_crop`` can't seek."""
         mix   = self._load(track_dir / "mixture.wav")   # (2, T)
         stems = torch.stack(
             [self._load(track_dir / f"{src}.wav") for src in self.sources]
@@ -300,13 +296,14 @@ class MusdbSpatialDataset(Dataset):
             stems = torch.nn.functional.pad(stems, (0, pad))
         return mix, stems
 
-    # ── Helpers ───────────────────────────────────────────────────────────────
-
+    # ------------------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------------------
     def _probe(self, mix_path: Path) -> Optional[int]:
         """Track length in samples when the crop can be read directly, else None.
 
         ``None`` means the header could not be read or the file is not already at
-        ``self.sample_rate`` — resampling needs the whole signal, so those tracks
+        ``self.sample_rate`` - resampling needs the whole signal, so those tracks
         go through :meth:`_load_whole`.
 
         The answer is memoised per track: a static dataset is probed once instead
@@ -327,7 +324,7 @@ class MusdbSpatialDataset(Dataset):
         """Pick a random crop start whose mixture segment is not (near-)silent.
 
         MUSDB tracks contain silent intros/outros and quiet passages; a fully
-        silent crop wastes a training step and — worse for the spatial terms —
+        silent crop wastes a training step and - worse for the spatial terms -
         makes the ILD (a log-ratio of L/R energy) and the GCC-PHAT ITD
         ill-defined, injecting noise into those gradients.
 

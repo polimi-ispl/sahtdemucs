@@ -5,7 +5,7 @@ train.py - headless HTDemucs spatial fine-tune (one run = one process).
 Training half of the HTDemucs spatial fine-tune: no notebook state, no live
 plots, and every artifact of a run lives in its own directory named after the
 freeze strategy, so several runs can be launched in parallel on the same machine
-and compared afterwards.  ``notebook/TestHTDemucsSpatial.ipynb`` then discovers
+and compared afterwards. ``notebook/TestHTDemucsSpatial.ipynb`` then discovers
 those run directories and compares them against the frozen baseline.
 
 Layout produced for a run::
@@ -30,11 +30,10 @@ Single run::
 
 Smoke test (few minutes, verifies the whole path before launching the sweep)::
 
-    python -m htdemucsspatial.train ... --epochs 1 \
-        --limit-train-batches 4 --limit-valid-batches 2
+    python -m htdemucsspatial.train ... --epochs 1 --limit-train-batches 4 --limit-valid-batches 2
 
 Once a sweep is done, ``python htdemucsspatial/compare_ablation.py <out-root>``
-summarises every run from its ``history.csv``.
+summarizes every run from its ``history.csv``.
 
 The script can also be run directly (``python htdemucsspatial/train.py ...``); it
 inserts the repository root into ``sys.path`` itself.
@@ -80,7 +79,9 @@ HISTORY_FIELDS = [
     "valid_total", "valid_td", "valid_ild", "valid_itd", "valid_si_sdr", "lr", "seconds",
 ]
 
-# ── CLI ───────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# CLI
+# ------------------------------------------------------------------------------
 
 def parse_args(argv=None) -> argparse.Namespace:
     p = argparse.ArgumentParser(
@@ -154,8 +155,9 @@ def parse_args(argv=None) -> argparse.Namespace:
                         "indistinguishable from a hung one (0 = epoch end only)")
     return p.parse_args(argv)
 
-
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# Helpers
+# ------------------------------------------------------------------------------
 
 def setup_logger(log_path: Path) -> logging.Logger:
     log = logging.getLogger("train")
@@ -167,7 +169,6 @@ def setup_logger(log_path: Path) -> logging.Logger:
         handler.setFormatter(fmt)
         log.addHandler(handler)
     return log
-
 
 def pick_device(spec: str) -> torch.device:
     """Resolve --device; "auto" returns the visible CUDA device with most free VRAM."""
@@ -185,13 +186,11 @@ def pick_device(spec: str) -> torch.device:
             best_free, best_idx = free, i
     return torch.device(f"cuda:{best_idx}")
 
-
 def seed_everything(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-
 
 def git_commit() -> str:
     try:
@@ -202,7 +201,6 @@ def git_commit() -> str:
     except Exception:
         return "unknown"
 
-
 def append_history(csv_path: Path, row: dict) -> None:
     """Append one epoch to history.csv, writing the header on first use."""
     new = not csv_path.exists()
@@ -211,7 +209,6 @@ def append_history(csv_path: Path, row: dict) -> None:
         if new:
             w.writeheader()
         w.writerow({k: row[k] for k in HISTORY_FIELDS})
-
 
 @torch.no_grad()
 def run_valid(model, loader, loss_fn, device, amp, limit=0):
@@ -241,8 +238,9 @@ def run_valid(model, loader, loss_fn, device, amp, limit=0):
     d = max(n, 1)
     return tot / d, td / d, il / d, it / d, (si / n_si if n_si else float("nan"))
 
-
-# ── Main ──────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# Main
+# ------------------------------------------------------------------------------
 
 def main(argv=None) -> int:
     args = parse_args(argv)
@@ -268,7 +266,9 @@ def main(argv=None) -> int:
                 if device.type == "cuda" else ""))
     log.info(f"CUDA_VISIBLE_DEVICES={os.environ.get('CUDA_VISIBLE_DEVICES', '<unset>')}  amp={amp}")
 
-    # ── Model + freeze strategy ───────────────────────────────────────────────
+    # --------------------------------------------------------------------------
+    # Model + freeze strategy
+    # --------------------------------------------------------------------------
     bag   = get_model("htdemucs")
     model = bag.models[0] if hasattr(bag, "models") else bag
     model = model.to(device)
@@ -300,7 +300,9 @@ def main(argv=None) -> int:
         "sample_rate": sample_rate, "segment_samples": seg_len,
     }, indent=2), encoding="utf-8")
 
-    # ── Loss ──────────────────────────────────────────────────────────────────
+    # --------------------------------------------------------------------------
+    # Loss
+    # --------------------------------------------------------------------------
     loss_fn = HTDemucsSpatialLoss(
         lambda_td=args.lambda_td, lambda_ild=args.lambda_ild, lambda_itd=args.lambda_itd,
         n_fft=args.ild_n_fft, hop_length=args.ild_hop, n_bands=args.ild_n_bands,
@@ -309,7 +311,9 @@ def main(argv=None) -> int:
         ild_floor_db=args.ild_floor_db, ild_criterion=args.ild_criterion,
     )
 
-    # ── Data (track-level split, identical across runs thanks to --seed) ──────
+    # --------------------------------------------------------------------------
+    # Data (track-level split, identical across runs thanks to --seed)
+    # --------------------------------------------------------------------------
     full_ds = MusdbSpatialDataset(
         args.dataset_root, split="train", sources=SOURCES,
         segment_len=seg_len, sample_rate=sample_rate, augment=True,
@@ -330,7 +334,9 @@ def main(argv=None) -> int:
              f"accum={args.accum_steps} -> effective {args.batch_size * args.accum_steps})")
     log.info(f"valid      : {n_valid} tracks ({len(valid_loader)} batches)")
 
-    # ── Optimiser / scheduler (Adam, no weight decay - HTDemucs recipe) ───────
+    # --------------------------------------------------------------------------
+    # Optimizer / scheduler (Adam, no weight decay - HTDemucs recipe)
+    # --------------------------------------------------------------------------
     optimizer = torch.optim.Adam(
         filter(lambda p: p.requires_grad, model.parameters()),
         lr=args.lr, betas=(0.9, 0.999), weight_decay=0.0,
@@ -364,7 +370,9 @@ def main(argv=None) -> int:
         best_valid  = ck.get("best_valid", math.inf)
         log.info(f"resumed from {last_path} at epoch {start_epoch} (best={best_valid:.4f})")
 
-    # ── Training loop ─────────────────────────────────────────────────────────
+    # --------------------------------------------------------------------------
+    # Training loop
+    # --------------------------------------------------------------------------
     t_start = time.time()
     try:
         for epoch in range(start_epoch, args.epochs + 1):
@@ -458,7 +466,6 @@ def main(argv=None) -> int:
     log.info(f"done. best valid = {best_valid:.4f}")
     log.info(f"checkpoint      : {ckpt_path}")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

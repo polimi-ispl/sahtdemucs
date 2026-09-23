@@ -1,5 +1,5 @@
 """
-SA-HTDemucs — Stereo source separation with spatial cue preservation (ILD/ITD).
+SA-HTDemucs - Stereo source separation with spatial cue preservation (ILD/ITD).
 
 Package overview
 ----------------
@@ -24,9 +24,9 @@ The package is organized into the following modules:
 
     dataset.py      MusdbSpatialDataset: random-segment DataLoader for MUSDB18-HQ style directories.
 
-    metrics.py      Inference-time metrics: si_sdr, ild_bands_mae, itd_bands_mae.
+    metrics.py      Inference-time metrics: si_sdr, ild/itd/ipd/ic_bands_mae.
 
-    train.py        Training CLI: ``python -m sahtdemucs.train`` — one run per
+    train.py        Training CLI: ``python -m sahtdemucs.train`` - one run per
                     process, each in its own output directory.
 
     separate.py     Inference / evaluation CLI: ``python -m sahtdemucs.separate``.
@@ -39,7 +39,7 @@ from .losses      import SpatialLoss
 from .spatial     import compute_ild, compute_ild_bands
 from .cue_module  import SpatialCueModule, SpatialCueModule2D, build_spatial_module
 from .dataset     import load_audio
-from .metrics     import si_sdr, ild_bands_mae, itd_bands_mae
+from .metrics     import si_sdr, ild_bands_mae, itd_bands_mae, ipd_bands_mae, ic_bands_mae
 
 __all__ = [
     "SAHTDemucs",
@@ -53,6 +53,8 @@ __all__ = [
     "si_sdr",
     "ild_bands_mae",
     "itd_bands_mae",
+    "ipd_bands_mae",
+    "ic_bands_mae",
 ]
 
 __version__ = "0.1.0"

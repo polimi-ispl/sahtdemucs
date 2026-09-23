@@ -13,7 +13,7 @@ directly with:
     auto output  = module.forward({input_tensor}).toTensor();
 
 ------------------------------------------------------------------------------
-CUSTOMISATION POINTS (search for "# >>> CUSTOMISE")
+CUSTOMIZATION POINTS (search for "# >>> CUSTOMISE")
 ------------------------------------------------------------------------------
 
 This script makes the following ASSUMPTIONS about the model interface, which
@@ -35,7 +35,7 @@ MODEL LOADING
 ------------------------------------------------------------------------------
 
 build_model() constructs SAHTDemucs by wrapping a pretrained HTDemucs
-instance (via demucs.pretrained.get_model) — so backbone weights are
+instance (via demucs.pretrained.get_model) - so backbone weights are
 already loaded at construction time, exactly as in the training script
 (`bag = get_model("htdemucs"); base = bag.models[0]; model = SAHTDemucs(base, ...)`).
 
@@ -50,9 +50,9 @@ import warnings
 import torch
 import torch.nn as nn
 
-# ==============================================================================
+# ------------------------------------------------------------------------------
 # COMMAND-LINE ARGUMENTS
-# ==============================================================================
+# ------------------------------------------------------------------------------
 #
 # _run_ts identifies which training run's spatial module checkpoint to
 # export. It determines:
@@ -66,7 +66,7 @@ import torch.nn as nn
 #
 DEFAULT_RUN_TS = "20260531_155238"
 
-# Default repo root — the folder that CONTAINS the importable `sahtdemucs`
+# Default repo root - the folder that CONTAINS the importable `sahtdemucs`
 # package (i.e. it has a subfolder `sahtdemucs/` with `__init__.py`, NOT the
 # `runs/` output folder). Override with --repo-path if running from a
 # different machine / checkout.
@@ -94,21 +94,21 @@ _run_ts = _args.run_ts_flag if _args.run_ts_flag is not None else _args.run_ts
 # checks, etc. inside demucs/hdemucs.py, htdemucs.py, transformer.py,
 # cue_module.py). These are expected and harmless as long as
 # EXAMPLE_LENGTH_SAMPLES matches the actual input length used at inference
-# time (see comment on EXAMPLE_LENGTH_SAMPLES below) — the traced graph
+# time (see comment on EXAMPLE_LENGTH_SAMPLES below) - the traced graph
 # bakes in the branch taken for that specific length.
 warnings.filterwarnings("ignore", category=torch.jit.TracerWarning)
 
 # Suppress the FutureWarning about torch.load's default weights_only=False.
-# We trust CHECKPOINT_PATH_SPATIAL (our own training output) — this only
+# We trust CHECKPOINT_PATH_SPATIAL (our own training output) - this only
 # affects the spatial checkpoint load below (the backbone is loaded via
 # demucs.pretrained.get_model(), not torch.load directly).
 warnings.filterwarnings("ignore", category=FutureWarning, module="torch.serialization")
 
-# ==============================================================================
-# CONFIG — edit these paths and settings for your setup
-# ==============================================================================
+# ------------------------------------------------------------------------------
+# CONFIG - edit these paths and settings for your setup
+# ------------------------------------------------------------------------------
 
-# Root of the sahtdemucs repository — the folder that CONTAINS the importable
+# Root of the sahtdemucs repository - the folder that CONTAINS the importable
 # `sahtdemucs` package (e.g. it has a subfolder `sahtdemucs/` with
 # `__init__.py`, NOT the `runs/` output folder). Set via --repo-path
 # (default: DEFAULT_REPO_PATH above).
@@ -125,10 +125,10 @@ RUNS_DIR = SAHTDEMUCS_REPO_PATH / "runs"
 # Check your training script for the exact name passed to get_model().
 BACKBONE_MODEL_NAME = "htdemucs"
 
-# Checkpoint path — spatial cue module weights
+# Checkpoint path - spatial cue module weights
 CHECKPOINT_PATH_SPATIAL = RUNS_DIR / f"spatial_modules_{_run_ts}.pt"
 
-# SAHTDemucs constructor hyperparameters — copy these EXACTLY
+# SAHTDemucs constructor hyperparameters - copy these EXACTLY
 # from your training script (the values used when the spatial_modules
 # checkpoint was produced). A mismatch here loads weights into the wrong
 # tensors (silently, if shapes happen to match) or raises shape errors.
@@ -155,11 +155,11 @@ EXPORT_METHOD = "trace"
 # Example input length for tracing, in samples.
 # This should match (or be a representative multiple of) the chunk size used
 # by the VST plugin. HTDemucs is convolutional and handles variable lengths,
-# but tracing fixes the shape used during trace — test with the actual
+# but tracing fixes the shape used during trace - test with the actual
 # plugin chunk size to be safe (e.g. 4 seconds @ 44100 Hz = 176400 samples).
 EXAMPLE_LENGTH_SAMPLES = 44100 * 4  # 4 seconds
 
-# Device for export. CPU is recommended even if you trained on GPU — the VST
+# Device for export. CPU is recommended even if you trained on GPU - the VST
 # plugin will run inference on CPU (LibTorch CPU build is much simpler to
 # integrate into JUCE/CMake than the CUDA build, and avoids requiring an
 # NVIDIA GPU on the end user's machine). If you need GPU inference in the
@@ -172,9 +172,9 @@ DEVICE = "cpu"
 # ExportWrapper.forward() is configured correctly.
 VERBOSE_SHAPES = False
 
-# ==============================================================================
+# ------------------------------------------------------------------------------
 # Model loading
-# ==============================================================================
+# ------------------------------------------------------------------------------
 
 import sys
 sys.path.insert(0, str(SAHTDEMUCS_REPO_PATH))
@@ -226,11 +226,11 @@ def build_model() -> nn.Module:
 def load_weights(model: nn.Module):
     """
     Load the spatial cue module weights from CHECKPOINT_PATH_SPATIAL on top
-    of `model` (whose HTDemucs backbone weights are already loaded — see
+    of `model` (whose HTDemucs backbone weights are already loaded - see
     build_model()).
     """
     # ---------------------------------------------------------------
-    # Backbone weights are ALREADY loaded — `model` was built in
+    # Backbone weights are ALREADY loaded - `model` was built in
     # build_model() by wrapping a pretrained HTDemucs instance (`base`),
     # so model.state_dict() already contains correct backbone values.
     # We only need to load the spatial cue module weights from your
@@ -239,9 +239,11 @@ def load_weights(model: nn.Module):
     spatial_ckpt = torch.load(CHECKPOINT_PATH_SPATIAL, map_location=DEVICE, weights_only=True)
     spatial_state = spatial_ckpt.get("state_dict", spatial_ckpt)
 
-    # ── Key check ─────────────────────────────────────────────────────────
+    # ----------------------------------------------------------------
+    # Key check
+    # ----------------------------------------------------------------
     # Print a small sample of keys to help verify that the spatial
-    # checkpoint's key names line up with model.state_dict() — i.e. that
+    # checkpoint's key names line up with model.state_dict() - i.e. that
     # load_state_dict will actually overwrite the right tensors.
     model_keys = set(model.state_dict().keys())
     print(f"  Model has {len(model_keys)} parameter/buffer tensors total.")
@@ -259,7 +261,7 @@ def load_weights(model: nn.Module):
 
     # `missing` here is EXPECTED to be large: it's every backbone tensor not
     # present in the spatial checkpoint (those were already loaded via `base`
-    # in build_model() and remain correctly populated — load_state_dict
+    # in build_model() and remain correctly populated - load_state_dict
     # (strict=False) does not zero them out).
     # What matters is `unexpected`: any spatial checkpoint key that doesn't
     # match a tensor name in `model` was silently NOT loaded.
@@ -270,7 +272,7 @@ def load_weights(model: nn.Module):
         print(f"[WARN] {len(unexpected)} spatial checkpoint key(s) did NOT "
               f"match any tensor in the model (NOT loaded): "
               f"{unexpected[:10]}{' ...' if len(unexpected) > 10 else ''}")
-        print(f"[INFO] These likely need a prefix remap — see the "
+        print(f"[INFO] These likely need a prefix remap - see the "
               f">>> CUSTOMISE comment above. Compare these names against "
               f"the model's own keys printed above to find the correct prefix.")
     else:
@@ -278,9 +280,9 @@ def load_weights(model: nn.Module):
 
     return model
 
-# ==============================================================================
+# ------------------------------------------------------------------------------
 # Export wrapper
-# ==============================================================================
+# ------------------------------------------------------------------------------
 
 class ExportWrapper(nn.Module):
     """
@@ -289,7 +291,7 @@ class ExportWrapper(nn.Module):
          (TorchScript / LibTorch work best with simple tensor I/O, not dicts
          or custom objects).
       2. Set eval() mode and disable gradient tracking permanently.
-      3. Optionally apply any pre/post-processing (normalisation, etc.) that
+      3. Optionally apply any pre/post-processing (normalization, etc.) that
          your training pipeline expects, so the C++ side only has to feed raw
          audio samples.
 
@@ -311,10 +313,10 @@ class ExportWrapper(nn.Module):
             mix: [batch, 2, T] stereo waveform, float32, range [-1, 1]
 
         Returns:
-            stems: [batch, S, 2, T] — ILD-corrected separated sources
+            stems: [batch, S, 2, T] - ILD-corrected separated sources
                    (the spatially-corrected `estimates` output of
                    SAHTDemucs.forward(), which returns
-                   (estimates, raw_estimates, deltas) — see model.py).
+                   (estimates, raw_estimates, deltas) - see model.py).
 
         Source order S follows `base.sources` from the HTDemucs backbone
         (typically ["drums", "bass", "other", "vocals"] for "htdemucs").
@@ -345,10 +347,9 @@ class ExportWrapper(nn.Module):
 
         return out[0]
 
-
-# ==============================================================================
+# ------------------------------------------------------------------------------
 # Main export routine
-# ==============================================================================
+# ------------------------------------------------------------------------------
 
 def main():
     print(f"Building model...")
@@ -356,7 +357,7 @@ def main():
 
     # model.sources comes from base.sources (HTDemucs backbone), forwarded
     # through SAHTDemucs.__getattr__. This is the stem order of the output
-    # tensor's S dimension — must match `busToStem` in PluginProcessor.h.
+    # tensor's S dimension - must match `busToStem` in PluginProcessor.h.
     sources = list (model.sources)
     print(f"Model sources (output dim 1 order): {sources}")
 
@@ -405,7 +406,7 @@ def main():
     traced.save(OUTPUT_PATH)
     print(f"Saved TorchScript model to: {OUTPUT_PATH}")
 
-    # ── Sanity check: reload and compare ─────────────────────────────────────
+    # Sanity check: reload and compare
     print("Reloading exported model for a sanity check...")
     reloaded = torch.jit.load(OUTPUT_PATH, map_location=DEVICE)
     with torch.no_grad():
@@ -414,7 +415,7 @@ def main():
     max_diff = (reloaded_output - test_output).abs().max().item()
     print(f"Max abs difference (original vs reloaded): {max_diff:.3e}")
     if max_diff > 1e-4:
-        print("[WARN] Difference is larger than expected — verify the export.")
+        print("[WARN] Difference is larger than expected - verify the export.")
     else:
         print("OK - exported model matches the original.")
 

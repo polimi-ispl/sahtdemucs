@@ -146,7 +146,6 @@ def process_song(song_dir, ir_dir, output_dir, angles=None):
     with open(out_file, 'w') as f:
         json.dump(metadata, f)
 
-
 def _to_stereo_cs(a):
     """Normalize an audio array to a ``(2, samples)`` channels-first tensor."""
     a = np.asarray(a, dtype=np.float32)
@@ -158,7 +157,6 @@ def _to_stereo_cs(a):
     if a.shape[0] == 1:
         a = np.repeat(a, 2, axis=0)
     return a[:2]
-
 
 def build_moisesdb_stems(track):
     """Collapse a MoisesDB track's category stems into the 4 Demucs sources.
@@ -179,7 +177,6 @@ def build_moisesdb_stems(track):
         t = min(a.shape[-1], length)
         buffers[dst][:, :t] += a[:, :t]
     return buffers
-
 
 def process_moisesdb_track(track, ir_dir, output_dir, tmp_root):
     """Binauralize one MoisesDB track into ``output_dir``.
@@ -203,7 +200,6 @@ def process_moisesdb_track(track, ir_dir, output_dir, tmp_root):
         process_song(dry, ir_dir, output_dir)
     finally:
         shutil.rmtree(dry, ignore_errors=True)
-
 
 def process_moisesdb(moisesdb_dir, ir_dir, out_root, test_frac=0.15, seed=0, limit=None):
     """Binauralize a whole MoisesDB into ``out_root/{train,test}/moisesdb_<id>/``.
@@ -279,7 +275,6 @@ def process_moisesdb(moisesdb_dir, ir_dir, out_root, test_frac=0.15, seed=0, lim
         shutil.rmtree(tmp_root, ignore_errors=True)
     print("MoisesDB binaural synthesis complete.")
 
-
 def main():
     """
     Parse command-line arguments and run the binaural synthesis pipeline.
@@ -311,7 +306,9 @@ def main():
 
     args = parser.parse_args()
 
-    # ── MoisesDB mode ────────────────────────────────────────────────────────
+    # ------------------------------------------------------------------------------
+    # MoisesDB mode
+    # ------------------------------------------------------------------------------
     if args.moisesdb_dir:
         if not os.path.isdir(args.hrir_dir):
             raise NotADirectoryError(
@@ -323,7 +320,9 @@ def main():
         )
         return
 
-    # ── MUSDB18-HQ mode (default) ─────────────────────────────────────────────
+    # ------------------------------------------------------------------------------
+    # MUSDB18-HQ mode (default)
+    # ------------------------------------------------------------------------------
     if not args.input_dir:
         parser.error("--input_dir is required for MUSDB mode "
                      "(or pass --moisesdb_dir to run in MoisesDB mode)")
@@ -383,4 +382,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

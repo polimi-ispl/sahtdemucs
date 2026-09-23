@@ -125,17 +125,23 @@ class HTDemucsSpatialLoss(nn.Module):
             est_s = estimates[:, s]   # (B, 2, T)
             tgt_s = targets[:, s]     # (B, 2, T)
 
-            # ── Time-domain L1 (original HTDemucs separation loss) ───────────
+            # -----------------------------------------------------------------
+            # Time-domain L1 (original HTDemucs separation loss)
+            # -----------------------------------------------------------------
             if self.lambda_td > 0:
                 loss_td = loss_td + F.l1_loss(est_s, tgt_s)
 
-            # ── Sub-band ITD MSE (time/phase cue) ────────────────────────────
+            # -----------------------------------------------------------------
+            # Sub-band ITD MSE (time/phase cue)
+            # -----------------------------------------------------------------
             if self.lambda_itd > 0:
                 itd_est = self._itd(est_s[:, 0], est_s[:, 1])   # (B, n_bands, Tf)
                 itd_gt  = self._itd(tgt_s[:, 0], tgt_s[:, 1])
                 loss_itd = loss_itd + F.mse_loss(itd_est, itd_gt)
 
-        # ── Sub-band ILD (level cue), all sources at once ────────────────────
+        # ---------------------------------------------------------------------
+        # Sub-band ILD (level cue), all sources at once
+        # ---------------------------------------------------------------------
         # The mask needs every source's band power, to tell a stem that is
         # silent in this crop from one that is merely quieter.
         if self.lambda_ild > 0:

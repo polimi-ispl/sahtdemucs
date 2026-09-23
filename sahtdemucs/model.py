@@ -10,12 +10,11 @@ of the original mix.  SA-HTDemucs freezes the HT-Demucs weights and
 attaches a lightweight :class:`~sahtdemucs.cue_module.SpatialCueModule` after
 each source output, so only the small spatial heads need to be trained.
 
-Each SpatialCueModule learns a per-source correction function f(ild_src) → Δ_ild
+Each SpatialCueModule learns a per-source correction function f(ild_src) -> Δ_ild
 trained directly with ILD MSE loss.
 
 Usage
 -----
-::
 
     from demucs.pretrained import get_model
     from sahtdemucs.model import SAHTDemucs
@@ -49,13 +48,12 @@ from .cue_module import build_spatial_module
 
 __all__ = ["SAHTDemucs"]
 
-
 class SAHTDemucs(nn.Module):
     """Attach :class:`~sahtdemucs.cue_module.SpatialCueModule` instances
     to a frozen, pre-trained HTDemucs model.
 
     The base model weights are frozen by default so that only the lightweight
-    spatial correction heads need to be trained.  This makes fine-tuning on a
+    spatial correction heads need to be trained. This makes fine-tuning on a
     relatively small spatially-annotated dataset practical.
 
     Args:
@@ -64,7 +62,7 @@ class SAHTDemucs(nn.Module):
         sources:       list of source names matching the base model's outputs
         spatial_arch:  which spatial cue architecture to use: ``"cnn1d"``
                        (default, temporal Conv1d) or ``"cnn2d"``
-                       (spectro-temporal Conv2d — jointly models frequency
+                       (spectro-temporal Conv2d - jointly models frequency
                        and time).  The string is forwarded to
                        :func:`~sahtdemucs.cue_module.build_spatial_module`.
         hidden:        hidden channel width of the correction CNN (default 64
@@ -72,7 +70,7 @@ class SAHTDemucs(nn.Module):
         n_fft:         STFT FFT size for sub-band ILD (default 2048)
         hop_length:    STFT hop size in samples (default 512)
         n_bands:       number of frequency sub-bands (default 32)
-        band_scale:    frequency band spacing — ``"linear"`` (default,
+        band_scale:    frequency band spacing - ``"linear"`` (default,
                        equal-width linear bands) or ``"mel"`` (Mel-scale
                        bands, improves ILD preservation at low frequencies)
         sample_rate:   audio sample rate in Hz, used only when
@@ -115,7 +113,7 @@ class SAHTDemucs(nn.Module):
             for p in self.base_model.parameters():
                 p.requires_grad_(False)
 
-        # One spatial module per source — architecture selected by spatial_arch
+        # One spatial module per source - architecture selected by spatial_arch
         self.spatial_modules: nn.ModuleList = nn.ModuleList(
             [
                 build_spatial_module(
@@ -134,9 +132,9 @@ class SAHTDemucs(nn.Module):
             ]
         )
 
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------------
     # Attribute forwarding
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------------
 
     def __getattr__(self, name: str):
         """Forward any attribute lookup not found on this wrapper to base_model.
@@ -153,9 +151,9 @@ class SAHTDemucs(nn.Module):
         except AttributeError:
             return getattr(self.base_model, name)
 
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------------
     # Parameter helpers
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------------
 
     def trainable_parameters(self):
         """Return only the SpatialCueModule parameters (base model excluded).
@@ -171,9 +169,9 @@ class SAHTDemucs(nn.Module):
         """Return the total number of trainable parameters."""
         return sum(p.numel() for p in self.trainable_parameters())
 
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------------
     # Forward
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------------
 
     def forward(
         self,
@@ -192,13 +190,13 @@ class SAHTDemucs(nn.Module):
         Returns:
             estimates:     `(B, S, 2, T)` ILD-corrected separated sources
             raw_estimates: `(B, S, 2, T)` raw HTDemucs output (no spatial correction)
-            deltas:        list of S tensors `(B, n_bands, T_frames)` — raw CNN outputs in [−1, +1]
+            deltas:        list of S tensors `(B, n_bands, T_frames)` - raw CNN outputs in [−1, +1]
         """
-        # ── Base model (always frozen, never needs grad) ──
+        # Base model (always frozen, never needs grad)
         with torch.no_grad():
             raw_estimates = self.base_model(mix)  # (B, S, 2, T)
 
-        # ── Per-source spatial correction ──
+        # Per-source spatial correction
         estimates: List[torch.Tensor] = []
         deltas:    List[torch.Tensor] = []
 
@@ -209,9 +207,9 @@ class SAHTDemucs(nn.Module):
 
         return torch.stack(estimates, dim=1), raw_estimates, deltas  # (B, S, 2, T), (B, S, 2, T), [...]
 
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------------
     # Full-track inference
-    # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------------------
 
     @torch.no_grad()
     def separate(
@@ -233,7 +231,7 @@ class SAHTDemucs(nn.Module):
             shifts:   number of random-shift passes averaged by ``apply_model``.
                       Demucs defaults this to 1, which draws a *random* offset of
                       up to 0.5 s and makes every call return slightly different
-                      estimates — enough to move SI-SDR by a couple of tenths of a
+                      estimates - enough to move SI-SDR by a couple of tenths of a
                       dB between runs.  Evaluation needs to be reproducible, so
                       the default here is ``0`` (no shift, deterministic); pass
                       ``>= 2`` to trade determinism for shift-averaged quality.
@@ -246,7 +244,9 @@ class SAHTDemucs(nn.Module):
         self.eval()
         device = wav.device
 
-        # ── Step 1: backbone separation via overlap-add ───────────────────
+        # ------------------------------------------------------------------------------
+        # Step 1: backbone separation via overlap-add
+        # ------------------------------------------------------------------------------
         # apply_model expects (batch, channels, time) and returns the same
         # shape with an extra source dimension: (batch, sources, channels, time).
         # We call it on self.base_model (HT-Demucs), not on self, because our
@@ -258,7 +258,9 @@ class SAHTDemucs(nn.Module):
             progress=progress,
         ).squeeze(0)                        # (S, 2, T)
 
-        # ── Step 2: spatial correction on the full signal ─────────────────
+        # ------------------------------------------------------------------------------
+        # Step 2: spatial correction on the full signal
+        # ------------------------------------------------------------------------------
         estimates = []
         for s in range(self.n_sources):
             corrected, _ = self.spatial_modules[s](raw[s].unsqueeze(0))  # (1, 2, T)

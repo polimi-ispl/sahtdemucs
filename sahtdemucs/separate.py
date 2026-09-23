@@ -4,8 +4,8 @@ separate.py - headless SA-HTDemucs inference and evaluation.
 
 Headless counterpart of ``notebook/TestSAHTDemucs.ipynb`` for a single run:
 loads a trained ``spatial_modules`` checkpoint on top of the frozen HTDemucs
-backbone, separates one or more tracks with overlap-add chunking, and — when
-ground-truth stems are available — reports SI-SDR and per-sub-band ILD MAE
+backbone, separates one or more tracks with overlap-add chunking, and - when
+ground-truth stems are available - reports SI-SDR and per-sub-band ILD MAE
 against them, optionally next to the raw HTDemucs baseline.
 
 The sub-band configuration (FFT size, hop, number of bands, band scale) is read
@@ -32,15 +32,14 @@ Separate the test split and evaluate against its stems, with the baseline::
         --out-dir /nas/home/macerbi/sahtdemucs/runs/20260531_155238/estimates \
         --evaluate --baseline --plot
 
-Separate a single file (no metrics — no ground truth)::
+Separate a single file (no metrics - no ground truth)::
 
-    python -m sahtdemucs.separate --ckpt run/spatial_modules_run.pt \
-        --input song.wav --out-dir estimates/
+    python -m sahtdemucs.separate --ckpt run/spatial_modules_run.pt --input song.wav --out-dir estimates/
 
 Re-score stems separated in an earlier session, without re-running the model::
 
-    python -m sahtdemucs.separate --from-estimates estimates/ \
-        --input /path/to/binauralMUSDB18HQ/test --out-dir estimates/ --evaluate
+    python -m sahtdemucs.separate --from-estimates estimates/ --input /path/to/binauralMUSDB18HQ/test \
+    --out-dir estimates/ --evaluate
 
 The script can also be run directly (``python sahtdemucs/separate.py ...``); it
 inserts the repository root into ``sys.path`` itself.
@@ -75,7 +74,7 @@ from sahtdemucs.train import SPATIAL_KEYS, pick_device, setup_logger  # noqa: E4
 SOURCES = ["drums", "bass", "other", "vocals"]
 COLORS  = ["#4c72b0", "#55a868", "#c44e52", "#8172b2"]
 
-# Defaults of the SpatialCueModule configuration — used only when neither the
+# Defaults of the SpatialCueModule configuration - used only when neither the
 # checkpoint's config.json nor a command-line flag provides a value.
 DEFAULT_SPATIAL = {
     "spatial_arch": "cnn2d", "hidden": 64, "n_fft": 4096, "hop_length": 512,
@@ -83,15 +82,15 @@ DEFAULT_SPATIAL = {
     "max_lag": 64, "use_gb": True,
 }
 
-
 class Track(NamedTuple):
     """One item to process: a mixture to separate plus where its stems live."""
     name: str
     mix_path: Optional[Path]     # None when scoring pre-computed estimates
     gt_dir: Optional[Path]       # directory holding the ground-truth stems
 
-
-# ── CLI ───────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# CLI
+# ------------------------------------------------------------------------------
 
 def parse_args(argv=None) -> argparse.Namespace:
     p = argparse.ArgumentParser(
@@ -135,7 +134,7 @@ def parse_args(argv=None) -> argparse.Namespace:
                         "run reproducible (demucs defaults to 1, which randomises "
                         "the estimates and moves SI-SDR run to run)")
 
-    # SpatialCueModule configuration — defaults come from the run's config.json
+    # SpatialCueModule configuration - defaults come from the run's config.json
     p.add_argument("--spatial-arch", choices=["cnn2d", "cnn1d"], default=None)
     p.add_argument("--hidden", type=int, default=None)
     p.add_argument("--n-fft", type=int, default=None)
@@ -150,15 +149,16 @@ def parse_args(argv=None) -> argparse.Namespace:
                    help='"auto" (GPU with most free memory), "cuda:N" or "cpu"')
     return p.parse_args(argv)
 
-
-# ── Track discovery ───────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# Track discovery
+# ------------------------------------------------------------------------------
 
 def discover_tracks(path: Path) -> List[Track]:
     """Resolve --input into a list of tracks.
 
     Accepts a single ``.wav`` file, a track directory containing ``mixture.wav``
     (ground-truth stems, if any, sit next to it), or a parent directory holding
-    one sub-directory per track — the MUSDB18-HQ ``test/`` layout.
+    one sub-directory per track - the MUSDB18-HQ ``test/`` layout.
     """
     if path.is_file():
         return [Track(path.stem, path, path.parent)]
@@ -176,15 +176,16 @@ def discover_tracks(path: Path) -> List[Track]:
     if tracks:
         return tracks
 
-    # Fall back to a flat directory of mixtures — no ground truth available.
+    # Fall back to a flat directory of mixtures - no ground truth available.
     wavs = sorted(path.glob("*.wav"), key=lambda p: p.name.lower())
     if not wavs:
         raise FileNotFoundError(
             f"No mixture.wav track directories and no .wav files under {path}")
     return [Track(w.stem, w, None) for w in wavs]
 
-
-# ── Model ─────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# Model
+# ------------------------------------------------------------------------------
 
 def resolve_spatial_config(args: argparse.Namespace) -> Dict:
     """Merge the SpatialCueModule config: run config.json < command-line flags."""
@@ -209,7 +210,6 @@ def resolve_spatial_config(args: argparse.Namespace) -> Dict:
     cfg.update({k: v for k, v in overrides.items() if v is not None})
     cfg["_source"] = source
     return cfg
-
 
 def build_model(args: argparse.Namespace, cfg: Dict, device: torch.device, log):
     """Instantiate SA-HTDemucs and load the spatial heads from ``--ckpt``.
@@ -246,16 +246,16 @@ def build_model(args: argparse.Namespace, cfg: Dict, device: torch.device, log):
     log.info(f"spatial cfg: {json.dumps(model_kwargs)}  (from {cfg['_source']})")
     return model, base.samplerate
 
-
 @torch.no_grad()
 def separate_baseline(model, wav: torch.Tensor, shifts: int = 0) -> torch.Tensor:
-    """Run the HTDemucs backbone only — no spatial correction. Returns (S, 2, T)."""
+    """Run the HTDemucs backbone only - no spatial correction. Returns (S, 2, T)."""
     from demucs.apply import apply_model
     return apply_model(model.base_model, wav.unsqueeze(0),
                        shifts=shifts, progress=False).squeeze(0)
 
-
-# ── Metrics ───────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# Metrics
+# ------------------------------------------------------------------------------
 
 def score_track(stems: Dict[int, torch.Tensor], track: Track, cfg: Dict,
                 sample_rate: int, with_itd: bool) -> Dict[str, Dict]:
@@ -289,9 +289,8 @@ def score_track(stems: Dict[int, torch.Tensor], track: Track, cfg: Dict,
         out[src] = res
     return out
 
-
 def band_centre_hz(cfg: Dict, sample_rate: int) -> np.ndarray:
-    """Centre frequency of each sub-band — the x-axis of the per-band MAE curve."""
+    """Centre frequency of each sub-band - the x-axis of the per-band MAE curve."""
     n_fft, n_bands = int(cfg["n_fft"]), int(cfg["n_bands"])
     if cfg["band_scale"] == "mel":
         assign = mel_bin_assignment(n_fft, n_bands, int(sample_rate))
@@ -302,7 +301,6 @@ def band_centre_hz(cfg: Dict, sample_rate: int) -> np.ndarray:
         ])
     return np.linspace(0, sample_rate / 2, n_bands, endpoint=False)
 
-
 def mean_bands(results: Dict[str, Dict]) -> Dict[str, np.ndarray]:
     """Per-source per-band ILD MAE, averaged over all scored tracks."""
     out = {}
@@ -312,8 +310,9 @@ def mean_bands(results: Dict[str, Dict]) -> Dict[str, np.ndarray]:
             out[src] = np.mean(np.asarray(curves, dtype=float), axis=0)
     return out
 
-
-# ── Reporting ─────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# Reporting
+# ------------------------------------------------------------------------------
 
 def write_ranking(results: Dict[str, Dict], path: Path, log) -> None:
     """Rank tracks by the source-mean scalar ILD MAE (best -> worst)."""
@@ -343,7 +342,6 @@ def write_ranking(results: Dict[str, Dict], path: Path, log) -> None:
                  + "".join(f"{r.get(s, float('nan')):>9.3f}" for s in [*SOURCES, "mean"]))
     log.info(f"best : {rows[0]['track']}  ({rows[0]['mean']:.3f} dB)")
     log.info(f"worst: {rows[-1]['track']}  ({rows[-1]['mean']:.3f} dB)")
-
 
 def report_si_sdr(results: Dict[str, Dict], baseline: Optional[Dict[str, Dict]], log) -> None:
     """Per-source SI-SDR, next to the backbone baseline when it was computed."""
@@ -375,7 +373,6 @@ def report_si_sdr(results: Dict[str, Dict], baseline: Optional[Dict[str, Dict]],
             line += f"{np.mean(all_bl):>+12.2f}{np.std(all_bl):>10.2f}"
         log.info(line)
 
-
 def write_band_curves(curves: Dict[str, Dict[str, np.ndarray]], band_hz: np.ndarray,
                       zip_path: Path) -> None:
     """Write the per-band ILD MAE curves as a ZIP of tab-separated .txt files."""
@@ -388,10 +385,9 @@ def write_band_curves(curves: Dict[str, Dict[str, np.ndarray]], band_hz: np.ndar
                     buf.write(f"{freq:.4f}\t{float(val):.6f}\n")
                 zf.writestr(f"ild_mae_per_band_{src}_{tag}.txt", buf.getvalue())
 
-
 def plot_band_curves(curves: Dict[str, Dict[str, np.ndarray]], band_hz: np.ndarray,
                      n_tracks: int, png_path: Path) -> None:
-    """Per-band ILD MAE, one panel per model — the notebook's summary figure."""
+    """Per-band ILD MAE, one panel per model - the notebook's summary figure."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -417,8 +413,9 @@ def plot_band_curves(curves: Dict[str, Dict[str, np.ndarray]], band_hz: np.ndarr
     plt.savefig(png_path, bbox_inches="tight")
     plt.close(fig)
 
-
-# ── Main ──────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# Main
+# ------------------------------------------------------------------------------
 
 def main(argv=None) -> int:
     args = parse_args(argv)
@@ -500,7 +497,7 @@ def main(argv=None) -> int:
         log.info("nothing scored - no ground-truth stems found next to the mixtures")
         return 0
 
-    # ── Metric artefacts ──────────────────────────────────────────────────────
+    # Metric artefacts
     metrics_path = args.out_dir / "metrics.json"
     metrics_path.write_text(json.dumps({
         "spatial_config": {k: cfg[k] for k in SPATIAL_KEYS},
@@ -528,7 +525,6 @@ def main(argv=None) -> int:
     log.info(f"metrics    : {metrics_path}")
     log.info(f"per-band   : {args.out_dir / 'ild_mae_per_band.zip'}")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

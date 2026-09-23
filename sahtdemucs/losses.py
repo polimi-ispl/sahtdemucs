@@ -1,5 +1,5 @@
 """
-losses.py — Loss functions for spatial-aware source separation.
+losses.py - Loss functions for spatial-aware source separation.
 
 Classes
 -------
@@ -13,7 +13,7 @@ SpatialLoss
 Term details
 ------------
 SI-SDR degradation penalty (dB, always ≥ 0)
-    Penalises the spatial correction only when it reduces SI-SDR below the
+    Penalizes the spatial correction only when it reduces SI-SDR below the
     frozen HTDemucs baseline by more than ``si_margin_db``.
 
     Given the raw HTDemucs output ``raw_s`` and the spatially corrected
@@ -25,7 +25,7 @@ SI-SDR degradation penalty (dB, always ≥ 0)
     ~~~~~~~~~~
     * Always non-negative (ReLU).
     * Zero (no gradient) when the correction does not hurt SI-SDR beyond
-      the margin — so the spatial head trains freely when it improves ILD
+      the margin - so the spatial head trains freely when it improves ILD
       without degrading separation.
     * In dB units: typical degradations are 0–3 dB, same order of magnitude
       as ILD corrections, so LAMBDA_SI and LAMBDA_ILD are directly comparable.
@@ -36,31 +36,31 @@ SI-SDR degradation penalty (dB, always ≥ 0)
     ~~~~~~~~~~~~~~~~~~~~~~
     The original formulation returned -SI-SNR directly (≈ -8 dB for good
     separation). This is negative throughout training and has units of dB,
-    while ILD MSE is in dB² at scale 10–100.  The resulting scale mismatch
+    while ILD MSE is in dB^2 at scale 10–100.  The resulting scale mismatch
     means LAMBDA_SI must be ~50x larger than LAMBDA_ILD just to balance
-    gradient magnitudes — and even then the sign is unconventional.
+    gradient magnitudes - and even then the sign is unconventional.
 
-Sub-band ILD MSE (dB²)
+Sub-band ILD MSE (dB^2)
     Penalises errors in the per-sub-band Interaural Level Difference.
     The STFT spectrum is divided into *n_bands* frequency bands (linear or
     Mel scale); the ILD of each band is computed from the mean power in that
     band.  MSE is taken over all (batch, band, frame) entries.
-    Typical values at the start of training: 10–100 dB².
+    Typical values at the start of training: 10–100 dB^2.
 
-Sub-band ITD MSE (samples²)
+Sub-band ITD MSE (samples^2)
     Penalises errors in the per-sub-band Interaural Time Difference, estimated
     with a band-limited, differentiable GCC-PHAT (soft-argmax) that shares the
     band layout with the ILD term, so both metrics have shape
     ``(B, n_bands, T_frames)``.  MSE is taken over all (batch, band, frame)
     entries.  Because the ITD is expressed in **samples** (range ±itd_max_lag),
-    this term is on a much larger numerical scale than the ILD (dB²): with
-    itd_max_lag=64 the per-entry error can reach ~10³ samples², so ``lambda_itd``
+    this term is on a much larger numerical scale than the ILD (dB^2): with
+    itd_max_lag=64 the per-entry error can reach ~10³ samples^2, so ``lambda_itd``
     typically needs to be one to two orders of magnitude smaller than
     ``lambda_ild`` to balance the gradient magnitudes.
 
     Disabled by default (``lambda_itd=0.0``).  Note that a magnitude-only spatial
     correction (e.g. the ILD-gain SpatialCueModule of SA-HTDemucs) cannot affect
-    the ITD, because PHAT whitening removes all magnitude information — so this
+    the ITD, because PHAT whitening removes all magnitude information - so this
     term only produces useful gradients for models that can alter interaural
     phase/time (e.g. the full HTDemucs backbone fine-tune).
 """
@@ -79,9 +79,9 @@ from .spatial import (
 
 __all__ = ["SpatialLoss"]
 
-# ──────────────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
 # Internal helper
-# ──────────────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
 
 def _si_sdr_db(
     estimate: torch.Tensor,
@@ -113,10 +113,9 @@ def _si_sdr_db(
         (proj ** 2).sum(-1) / ((noise ** 2).sum(-1) + eps) + eps
     )
 
-
-# ──────────────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
 # Combined spatial loss
-# ──────────────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
 class SpatialLoss(nn.Module):
     """Combine SI-SDR degradation penalty with sub-band ILD and ITD supervision.
 
@@ -132,15 +131,15 @@ class SpatialLoss(nn.Module):
         lambda_si:     weight for the SI-SDR degradation penalty (default 1.0)
         lambda_ild:    weight for the sub-band ILD MSE term (default 1.0)
         lambda_itd:    weight for the sub-band ITD MSE term (default 0.0, i.e.
-                       disabled).  The ITD is in samples², a much larger scale
-                       than the ILD (dB²), so this is usually ≪ ``lambda_ild``.
+                       disabled).  The ITD is in samples^2, a much larger scale
+                       than the ILD (dB^2), so this is usually ≪ ``lambda_ild``.
         si_margin_db:  tolerated SI-SDR degradation in dB relative to the raw
                        HTDemucs baseline; degradation below this margin is not
                        penalized (default 0.5 dB)
         n_fft:         STFT FFT size for sub-band ILD/ITD computation (default 2048)
         hop_length:    STFT hop size (default 512)
         n_bands:       number of frequency sub-bands (default 32)
-        band_scale:    frequency band spacing — ``"linear"`` (default) or
+        band_scale:    frequency band spacing - ``"linear"`` (default) or
                        ``"mel"``.  Must match the SpatialCueModule config.
         sample_rate:   audio sample rate in Hz, used only when
                        ``band_scale="mel"`` (default 44100)
@@ -230,7 +229,9 @@ class SpatialLoss(nn.Module):
             est_s = estimates[:, s]     # (B, 2, T)
             tgt_s = targets[:, s]       # (B, 2, T)
 
-            # ── SI-SDR degradation penalty (dB, ≥ 0) ─────────────────────────
+            # -----------------------------------------------------------------
+            # SI-SDR degradation penalty (dB, ≥ 0)
+            # -----------------------------------------------------------------
             if self.lambda_si > 0 and raw_estimates is not None:
                 raw_s   = raw_estimates[:, s]                    # (B, 2, T)
                 si_raw  = _si_sdr_db(raw_s,  tgt_s)             # (B*2,) dB
@@ -239,13 +240,17 @@ class SpatialLoss(nn.Module):
                     si_raw - si_corr - self.si_margin_db
                 ).mean()
 
-            # ── Sub-band ILD MSE (dB²) ────────────────────────────────────────
+            # -----------------------------------------------------------------
+            # Sub-band ILD MSE (dB^2)
+            # -----------------------------------------------------------------
             if self.lambda_ild > 0:
                 ild_est  = self._ild(est_s[:, 0], est_s[:, 1])   # (B, n_bands, T_frames)
                 ild_gt   = self._ild(tgt_s[:, 0], tgt_s[:, 1])
                 loss_ild = loss_ild + F.mse_loss(ild_est, ild_gt)
 
-            # ── Sub-band ITD MSE (samples²) ───────────────────────────────────
+            # -----------------------------------------------------------------
+            # Sub-band ITD MSE (samples^2)
+            # -----------------------------------------------------------------
             if self.lambda_itd > 0:
                 itd_est  = self._itd(est_s[:, 0], est_s[:, 1])   # (B, n_bands, T_frames)
                 itd_gt   = self._itd(tgt_s[:, 0], tgt_s[:, 1])

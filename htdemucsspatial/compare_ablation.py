@@ -25,7 +25,6 @@ from pathlib import Path
 
 METRICS = ["valid_total", "valid_td", "valid_ild", "valid_itd"]
 
-
 def load_run(run_dir: Path):
     """Return a summary dict for one run directory, or None if it has no history."""
     hist_path, cfg_path = run_dir / "history.csv", run_dir / "config.json"
@@ -52,7 +51,6 @@ def load_run(run_dir: Path):
         **{m: best[m] for m in METRICS},
         "_rows":       rows,
     }
-
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
@@ -110,7 +108,6 @@ def main() -> int:
         print(f"plot written to {args.plot}")
 
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

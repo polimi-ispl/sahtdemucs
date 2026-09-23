@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-train.py — headless SA-HTDemucs training (one run = one process).
+train.py - headless SA-HTDemucs training (one run = one process).
 
 Trains the frozen HTDemucs backbone + per-source ``SpatialCueModule`` heads with
 :class:`~sahtdemucs.losses.SpatialLoss`, an Adam + ``ReduceLROnPlateau`` recipe
-and a "best on validation ILD" checkpoint rule — no notebook state, no live
-plots, and every artefact of a run lives in its own directory, so several
+and a "best on validation ILD" checkpoint rule - no notebook state, no live
+plots, and every artifact of a run lives in its own directory, so several
 configurations can be launched in parallel and compared afterwards.
 
 Layout produced for a run::
@@ -13,7 +13,7 @@ Layout produced for a run::
     <out-root>/<run-name>/
         spatial_modules_<run-name>.pt   best checkpoint (lowest valid ILD),
                                         a bare ``spatial_modules`` state_dict
-        last.pt                         latest epoch incl. optimiser/scheduler
+        last.pt                         latest epoch incl. optimizer/scheduler
                                         state (for --resume), unless --no-save-last
         config.json                     full argv + environment + spatial config
         history_<run-name>.json         per-epoch curves, one list per metric
@@ -27,19 +27,19 @@ does the same headless, for a single run.
 
 Examples
 --------
-Single run::
+Single run:
 
     python -m sahtdemucs.train \
         --dataset-root /nas/home/macerbi/Dataset/binauralMUSDB18HQ \
         --out-root     /nas/home/macerbi/sahtdemucs/runs \
         --epochs 250
 
-Smoke test (a couple of minutes, exercises the whole path)::
+Smoke test (a couple of minutes, exercises the whole path):
 
     python -m sahtdemucs.train ... --epochs 1 \
         --limit-train-batches 4 --limit-valid-batches 2
 
-Overfitting sanity check on a single fixed segment::
+Overfitting sanity check on a single fixed segment:
 
     python -m sahtdemucs.train ... --overfit --epochs 300
 
@@ -86,15 +86,16 @@ HISTORY_FIELDS = [
     "valid_total", "valid_si", "valid_ild", "valid_itd", "lr", "seconds",
 ]
 
-# Keys copied into config.json["spatial_config"] — everything `separate.py`
+# Keys copied into config.json["spatial_config"] - everything `separate.py`
 # needs to rebuild the SpatialCueModule heads that match the checkpoint.
 SPATIAL_KEYS = [
     "spatial_arch", "hidden", "n_fft", "hop_length", "n_bands",
     "ild_scale", "band_scale", "sample_rate", "max_lag", "use_gb",
 ]
 
-
-# ── CLI ───────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# CLI
+# ------------------------------------------------------------------------------
 
 def parse_args(argv=None) -> argparse.Namespace:
     p = argparse.ArgumentParser(
@@ -171,8 +172,9 @@ def parse_args(argv=None) -> argparse.Namespace:
                         "indistinguishable from a hung one (0 = epoch end only)")
     return p.parse_args(argv)
 
-
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# Helpers
+# ------------------------------------------------------------------------------
 
 def setup_logger(log_path: Path | None, name: str = "sahtdemucs") -> logging.Logger:
     """Log to stdout and, when ``log_path`` is given, to that file as well."""
@@ -187,7 +189,6 @@ def setup_logger(log_path: Path | None, name: str = "sahtdemucs") -> logging.Log
         handler.setFormatter(fmt)
         log.addHandler(handler)
     return log
-
 
 def pick_device(spec: str) -> torch.device:
     """Resolve --device; "auto" returns the visible CUDA device with most free VRAM."""
@@ -205,13 +206,11 @@ def pick_device(spec: str) -> torch.device:
             best_free, best_idx = free, i
     return torch.device(f"cuda:{best_idx}")
 
-
 def seed_everything(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-
 
 def git_commit() -> str:
     try:
@@ -222,7 +221,6 @@ def git_commit() -> str:
     except Exception:
         return "unknown"
 
-
 def append_history(csv_path: Path, row: dict) -> None:
     """Append one epoch to history.csv, writing the header on first use."""
     new = not csv_path.exists()
@@ -231,7 +229,6 @@ def append_history(csv_path: Path, row: dict) -> None:
         if new:
             w.writeheader()
         w.writerow({k: row[k] for k in HISTORY_FIELDS})
-
 
 def cache_batches(loader: DataLoader, seed: int) -> list:
     """Materialise a loader once, so every epoch sees the exact same crops.
@@ -247,7 +244,6 @@ def cache_batches(loader: DataLoader, seed: int) -> list:
     random.setstate(py_rng)
     torch.set_rng_state(th_rng)
     return batches
-
 
 @torch.no_grad()
 def run_valid(model, batches, loss_fn, device, limit: int = 0):
@@ -266,8 +262,9 @@ def run_valid(model, batches, loss_fn, device, limit: int = 0):
     d = max(n, 1)
     return tot / d, si / d, ild / d, itd / d
 
-
-# ── Main ──────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# Main
+# ------------------------------------------------------------------------------
 
 def main(argv=None) -> int:
     args = parse_args(argv)
@@ -294,7 +291,9 @@ def main(argv=None) -> int:
     if args.overfit:
         log.info("*** OVERFIT MODE - single fixed segment ***")
 
-    # ── Model: frozen HTDemucs backbone + per-source spatial heads ────────────
+    # ------------------------------------------------------------------------------
+    # Model: frozen HTDemucs backbone + per-source spatial heads
+    # ------------------------------------------------------------------------------
     bag  = get_model("htdemucs")
     base = bag.models[0] if hasattr(bag, "models") else bag
 
@@ -328,7 +327,9 @@ def main(argv=None) -> int:
         "spatial_config": spatial_config,
     }, indent=2), encoding="utf-8")
 
-    # ── Loss — STFT settings must match the SpatialCueModule configuration ────
+    # ------------------------------------------------------------------------------
+    # Loss - STFT settings must match the SpatialCueModule configuration
+    # ------------------------------------------------------------------------------
     loss_fn = SpatialLoss(
         lambda_si=args.lambda_si, lambda_ild=args.lambda_ild, lambda_itd=args.lambda_itd,
         si_margin_db=args.si_margin_db, n_fft=args.n_fft, hop_length=args.hop_length,
@@ -336,7 +337,9 @@ def main(argv=None) -> int:
         itd_max_lag=args.itd_max_lag, itd_beta=args.itd_beta,
     )
 
-    # ── Data ──────────────────────────────────────────────────────────────────
+    # ------------------------------------------------------------------------------
+    # Data
+    # ------------------------------------------------------------------------------
     full_ds = MusdbSpatialDataset(
         args.dataset_root, split="train", sources=SOURCES,
         segment_len=seg_len, sample_rate=sample_rate,
@@ -380,7 +383,9 @@ def main(argv=None) -> int:
     if args.cache_valid:
         log.info(f"valid cache: {len(valid_batches)} batches ({n_valid_items} segments)")
 
-    # ── Optimiser / scheduler ─────────────────────────────────────────────────
+    # ------------------------------------------------------------------------------
+    # Optimiser / scheduler
+    # ------------------------------------------------------------------------------
     optimizer = torch.optim.Adam(model.trainable_parameters(), lr=args.lr)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode="min", factor=args.lr_factor,
@@ -407,7 +412,9 @@ def main(argv=None) -> int:
             history = json.loads(hist_json.read_text(encoding="utf-8"))
         log.info(f"resumed from {last_path} at epoch {start_epoch} (best valid ild={best_valid:.4f})")
 
-    # ── Training loop ─────────────────────────────────────────────────────────
+    # ------------------------------------------------------------------------------
+    # Training loop
+    # ------------------------------------------------------------------------------
     t_start = time.time()
     try:
         for epoch in range(start_epoch, args.epochs + 1):

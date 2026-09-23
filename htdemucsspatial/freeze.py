@@ -1,5 +1,5 @@
 """
-freeze.py — choose which HTDemucs layers to train during the spatial fine-tune.
+freeze.py - choose which HTDemucs layers to train during the spatial fine-tune.
 
 HTDemucs is a U-Net with a large cross-domain transformer at the bottleneck
 (~75% of the weights) plus 4-level frequency and time branches:
@@ -74,7 +74,6 @@ _SELECTOR = re.compile(
     r"(?:_(?P<range>all|first(?P<first>\d+)|last(?P<last>\d+)|(?P<index>\d+)))?$"
 )
 
-
 def _resolve_selector(model: nn.Module, token: str) -> Tuple[str, List[int], List[nn.Parameter]]:
     """Resolve one selector token into (group_label, indices, params)."""
     m = _SELECTOR.match(token)
@@ -110,7 +109,6 @@ def _resolve_selector(model: nn.Module, token: str) -> Tuple[str, List[int], Lis
     params = [p for i in idx for p in blocks[i].parameters()]
     return label, idx, params
 
-
 def parse_strategy(model: nn.Module, strategy: str) -> Dict[str, List[nn.Parameter]]:
     """Resolve ``strategy`` into ``{group_label: [params]}`` (no side effects).
 
@@ -129,7 +127,6 @@ def parse_strategy(model: nn.Module, strategy: str) -> Dict[str, List[nn.Paramet
         label, _, params = _resolve_selector(model, token)
         groups[label] = params
     return groups
-
 
 def apply_freeze_strategy(model: nn.Module, strategy: str) -> Dict[str, List[nn.Parameter]]:
     """Set ``requires_grad`` on ``model`` according to ``strategy``.

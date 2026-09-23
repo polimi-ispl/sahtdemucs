@@ -1,20 +1,20 @@
 """
-cue_module.py — Per-source spatial cue correction modules.
+cue_module.py - Per-source spatial cue correction modules.
 
 Two architectures are provided, both sharing the same STFT-domain gain
 application logic:
 
 SpatialCueModule (``arch="cnn1d"``)
     Temporal CNN: Conv1d layers operate along the time axis only.
-    Each frequency band is processed independently in time — the model
+    Each frequency band is processed independently in time - the model
     learns *when* to correct but not *which bands to couple together*.
 
 SpatialCueModule2D (``arch="cnn2d"``)
     Spectro-temporal CNN: Conv2d layers jointly consider frequency and
     time.  By treating the ILD map ``(n_bands, T_frames)`` as a 2-D
-    image the network can learn cross-band patterns — e.g. "apply a
+    image the network can learn cross-band patterns - e.g. "apply a
     larger correction at low frequencies when high frequencies show a
-    consistent ILD offset" — which the 1-D architecture cannot express.
+    consistent ILD offset" - which the 1-D architecture cannot express.
 
 Both modules
 ------------
@@ -51,9 +51,9 @@ from .spatial import mel_bin_assignment, compute_ild_bands, compute_ild_bands_me
 __all__ = ["SpatialCueModule", "SpatialCueModule2D", "build_spatial_module"]
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ------------------------------------------------------------------------------
 # Shared base class
-# ══════════════════════════════════════════════════════════════════════════════
+# ------------------------------------------------------------------------------
 
 class _BaseSpatialCueModule(nn.Module):
     """Common STFT-domain gain application shared by all architectures.
@@ -63,9 +63,9 @@ class _BaseSpatialCueModule(nn.Module):
     ``__init__``, and implement :meth:`_predict_delta`.
     """
 
-    # ------------------------------------------------------------------ #
+    # --------------------------------------------------------------------------
     # Internal helpers
-    # ------------------------------------------------------------------ #
+    # --------------------------------------------------------------------------
 
     def _apply_subband_gain(
         self,
@@ -110,7 +110,7 @@ class _BaseSpatialCueModule(nn.Module):
             )
 
         if self.band_scale == "mel":
-            # Each STFT bin gets the gain of its Mel band — consistent with
+            # Each STFT bin gets the gain of its Mel band - consistent with
             # the Mel analysis performed in forward().
             band_idx     = mel_bin_assignment(
                 self.n_fft, self.n_bands, self.sample_rate
@@ -129,17 +129,17 @@ class _BaseSpatialCueModule(nn.Module):
         return torch.istft(S * gain_per_bin, self.n_fft, self.hop_length,
                            window=window, length=length)
 
-    # ------------------------------------------------------------------ #
+    # --------------------------------------------------------------------------
     # Subclass contract
-    # ------------------------------------------------------------------ #
+    # --------------------------------------------------------------------------
 
     def _predict_delta(self, ild_tf: torch.Tensor) -> torch.Tensor:
         """Map ILD map ``(B, n_bands, T_frames)`` → Δ ∈ [−1, +1] same shape."""
         raise NotImplementedError
 
-    # ------------------------------------------------------------------ #
+    # --------------------------------------------------------------------------
     # Forward
-    # ------------------------------------------------------------------ #
+    # --------------------------------------------------------------------------
 
     def forward(
         self,
@@ -175,7 +175,7 @@ class _BaseSpatialCueModule(nn.Module):
         delta     = self._predict_delta(ild_tf)        # (B, n_bands, T_frames) ∈ [−1, +1]
         delta_ild = delta * self.ild_scale             # dB
 
-        # Symmetric correction — preserves total loudness
+        # Symmetric correction - preserves total loudness
         half = delta_ild / 2.0
         l_corrected = self._apply_subband_gain(l, half.neg(), T)
         r_corrected = self._apply_subband_gain(r, half,       T)
@@ -184,9 +184,9 @@ class _BaseSpatialCueModule(nn.Module):
         return corrected, delta
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ------------------------------------------------------------------------------
 # Architecture 1: temporal CNN (Conv1d)
-# ══════════════════════════════════════════════════════════════════════════════
+# ------------------------------------------------------------------------------
 
 class SpatialCueModule(_BaseSpatialCueModule):
     """Per-sub-band, per-frame ILD correction using a **temporal CNN** (Conv1d).
@@ -210,7 +210,7 @@ class SpatialCueModule(_BaseSpatialCueModule):
         n_bands:     number of frequency sub-bands (default 32)
         ild_scale:   maximum ILD correction magnitude in dB (default 6.0)
         kernel_size: Conv1d temporal kernel size (default 7, odd recommended)
-        band_scale:  frequency band spacing — ``"linear"`` (default, equal-width
+        band_scale:  frequency band spacing - ``"linear"`` (default, equal-width
                      linear bands) or ``"mel"`` (Mel-scale bands, finer
                      resolution at low frequencies)
         sample_rate: audio sample rate in Hz, used only when
@@ -253,10 +253,9 @@ class SpatialCueModule(_BaseSpatialCueModule):
         delta = self.cnn(ild_tf)
         return delta[..., :ild_tf.shape[-1]]
 
-
-# ══════════════════════════════════════════════════════════════════════════════
+# ------------------------------------------------------------------------------
 # Architecture 2: spectro-temporal CNN (Conv2d)
-# ══════════════════════════════════════════════════════════════════════════════
+# ------------------------------------------------------------------------------
 
 class SpatialCueModule2D(_BaseSpatialCueModule):
     """Per-sub-band, per-frame ILD correction using a **spectro-temporal CNN** (Conv2d).
@@ -266,13 +265,13 @@ class SpatialCueModule2D(_BaseSpatialCueModule):
         ILD map (B, n_bands, T_frames)
             → unsqueeze(1) → (B, 1, n_bands, T_frames)
 
-        Local branch — 3 Conv2d layers with GroupNorm and internal residual:
+        Local branch - 3 Conv2d layers with GroupNorm and internal residual:
             layer1: Conv2d(1→hidden, freq_k×time_k) → GroupNorm → ReLU   → h1
             layer2: Conv2d(hidden→hidden, freq_k×time_k) → GroupNorm → ReLU
             layer3: Conv2d(hidden→hidden, freq_k×time_k) → GroupNorm → ReLU + h1  → h3
             [receptive field: (2·freq_k−1) bands × (2·time_k−1) frames]
 
-        Global context branch — temporal mean per frequency band:
+        Global context branch - temporal mean per frequency band:
             mean over T → (B, 1, n_bands, 1)
             Conv2d(1→hidden, freq_k×1) → ReLU → broadcast over T
 
@@ -286,7 +285,7 @@ class SpatialCueModule2D(_BaseSpatialCueModule):
     local branch to focus on fine spectro-temporal variations.  The
     internal residual (layer1 → layer3) improves gradient flow without
     adding parameters.  GroupNorm stabilises training with small batches.
-    The output projection is zero-initialised so corrections start near
+    The output projection is zero-initialized so corrections start near
     zero at the beginning of training.
 
     Args:
@@ -297,7 +296,7 @@ class SpatialCueModule2D(_BaseSpatialCueModule):
         ild_scale:      maximum ILD correction magnitude in dB (default 6.0)
         freq_kernel:    Conv2d kernel size along the frequency axis (default 3)
         time_kernel:    Conv2d kernel size along the time axis (default 7)
-        band_scale:     frequency band spacing — ``"linear"`` (default,
+        band_scale:     frequency band spacing - ``"linear"`` (default,
                         equal-width linear bands) or ``"mel"`` (Mel-scale
                         bands, finer resolution at low frequencies)
         sample_rate:    audio sample rate in Hz, used only when
@@ -335,7 +334,7 @@ class SpatialCueModule2D(_BaseSpatialCueModule):
         tpad   = time_kernel // 2
         k      = (freq_kernel, time_kernel)
         p      = (fpad, tpad)
-        groups = min(8, hidden)   # GroupNorm groups — must divide hidden
+        groups = min(8, hidden)   # GroupNorm groups - must divide hidden
 
         # Local branch: 3 layers, internal residual skip from layer1 to layer3
         self.local1 = nn.Sequential(
@@ -360,7 +359,7 @@ class SpatialCueModule2D(_BaseSpatialCueModule):
             nn.ReLU(),
         )
 
-        # Output projection — zero-initialised for near-zero corrections at init
+        # Output projection - zero-initialised for near-zero corrections at init
         self.proj = nn.Conv2d(hidden, 1, kernel_size=1)
         nn.init.zeros_(self.proj.weight)
         nn.init.zeros_(self.proj.bias)
@@ -385,9 +384,9 @@ class SpatialCueModule2D(_BaseSpatialCueModule):
         return out.squeeze(1)[..., :ild_tf.shape[-1]]
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ------------------------------------------------------------------------------
 # Factory
-# ══════════════════════════════════════════════════════════════════════════════
+# ------------------------------------------------------------------------------
 
 _ARCH_REGISTRY = {
     "cnn1d": SpatialCueModule,
@@ -404,13 +403,12 @@ _ARCH_PARAMS = {
 }
 _KNOWN_PARAMS = set().union(*_ARCH_PARAMS.values())
 
-
 def build_spatial_module(arch: str = "cnn1d", **kwargs) -> _BaseSpatialCueModule:
     """Instantiate a spatial cue module by architecture name.
 
     Keyword arguments that belong to *another* registered architecture are
     dropped instead of raising, so a single configuration dict can be reused
-    across architectures — e.g. :class:`~sahtdemucs.model.SAHTDemucs` always
+    across architectures - e.g. :class:`~sahtdemucs.model.SAHTDemucs` always
     forwards ``use_gb``, which only ``cnn2d`` understands.  A keyword no
     architecture accepts is still an error, so typos are not swallowed.
 
