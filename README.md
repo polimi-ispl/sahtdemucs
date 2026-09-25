@@ -621,7 +621,7 @@ See `LICENSE` for details.
 
 ## Author
 
-\*\*Matteo Acerbi\*\*  
+Matteo Acerbi
 
 PhD Researcher, Image and Sound Processing Lab (ISPL)  
 
@@ -633,16 +633,10 @@ If you build on this work, please also cite the original paper:
 
 ```bibtex
 @incollection{acerbi2026preserving,
-
-&#x20; title={Preserving Spatial Information in Music Source Separation},
-
-&#x20; author={Acerbi, M and Pezzoli, M and Antonacci, F and Bianchi, L and others},
-
-&#x20; booktitle={International Workshop on Acoustic Signal Enhancement (IWAENC 2026)},
-
-&#x20; pages={1--5},
-
-&#x20; year={2026}
-
+    title={Preserving Spatial Information in Music Source Separation},
+    author={Acerbi, M and Pezzoli, M and Antonacci, F and Bianchi, L and others},
+    booktitle={International Workshop on Acoustic Signal Enhancement (IWAENC 2026)},
+    pages={1--5},
+    year={2026}
 }```
 
