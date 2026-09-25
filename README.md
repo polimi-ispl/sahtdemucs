@@ -1,6 +1,6 @@
 # SA-HTDemucs
 
-[!\[Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
 
 **Spatially-Aware HT-Demucs** (**SA-HTDemucs**) extends the pre-trained
 [**HT-Demucs**](https://github.com/facebookresearch/demucs) music source separator with explicit preservation of spatial
