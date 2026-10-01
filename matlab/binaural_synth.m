@@ -2,21 +2,35 @@ clear
 close all
 clc
 
+%% Setup
 % Separated sources (VDBO)
 sources = ["bass","drums","vocals","other"];
 
 % MUSDB18HQ folder path
-musdb18hq_path = 'D:\Polimi\PhD\Dataset\MUSDB18HQ\train';
+if ispc
+    datasetRoot = 'D:\Polimi\PhD\Dataset';
+else
+    datasetRoot = '/Volumes/Elements/Polimi/PhD/Dataset';
+end
+musdb18hq_path = fullfile(datasetRoot, 'MUSDB18HQ', 'train');
 
 % Audio file name
 song = 'A Classic Education - NightOwl';
 
 % HRIR path - SADIE II -> Subject_001 -> DFC -> 44K_16bit
-hrir_path = 'D:\Polimi\PhD\Dataset\SADIEII\Subject_001_Wav\DFC\44K_16bit';
+% hrir_path = fullfile(datasetRoot,'SADIEII','Subject_001_Wav','DFC', ...
+%     '44K_16bit');
+
+% HRIR path - ARI -> dtf_nh2 -> 44K_16bit
+hrir_path = fullfile(datasetRoot,'ARI_44k','dtf_nh2');
+
+% Take only hrirs with elevation=0°
 hrirs = dir(fullfile(hrir_path,'*ele_0*.wav'));
 hrirs = hrirs(~[hrirs.isdir]);
 
-% Loop over sources and convolved by impulse response at random azimuth
+%% Convolution loop
+
+% Loop over sources and convolve by impulse response at random azimuth
 for s=1:length(sources)
     % Select random azimuth angle
     idx     = randi(numel(hrirs));
