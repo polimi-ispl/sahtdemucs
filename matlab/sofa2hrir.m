@@ -45,7 +45,9 @@ end
 
 % SOFA files to convert (one output sub-folder per file, named after it)
 sofaDir   = fullfile(datasetRoot, 'ARI');
-sofaFiles = {'dtf_nh2.sofa'};
+% Use the "dtf b" variant: the plain "dtf" files are high-passed (~35 dB
+% down below 100 Hz w.r.t. mid-band), "dtf b" is flat down to ~100 Hz
+sofaFiles = {'dtf%20b_nh2.sofa'};
 
 % Output root: <outRoot>/<subject>/azi_{phi}_ele_0_DFC.wav
 outRoot   = fullfile(datasetRoot, 'ARI_44k');
@@ -60,6 +62,13 @@ elTarget  = 0;
 % Matching tolerance (deg): beyond it the nearest measured direction is
 % used and a warning is printed
 tolDeg    = 0.5;
+
+% Global level normalization: ONE gain per subject, applied to every
+% direction and both ears (preserves ILD and level-vs-azimuth), chosen so
+% that the frontal (0 deg) HRIR has this mean energy over the two ears.
+% SADIE II KU100 DFC at 0 deg has ~0.85, so 1.0 gives comparable levels.
+% Set to [] to keep the original SOFA level.
+refEnergy = 1.0;
 
 % Bits per sample of the output WAVs: 32 -> IEEE float, no clipping of
 % HRIR samples beyond +-1 (soundfile reads it transparently)
@@ -78,7 +87,7 @@ SOFAstart;
 for f = 1:numel(sofaFiles)
     sofaPath = fullfile(sofaDir, sofaFiles{f});
     [~, subject] = fileparts(sofaPath);
-    subject = strrep(subject, ' ', '_');        % 'dtf b_nh2' -> 'dtf_b_nh2'
+    subject = regexprep(subject, '( |%20)', '_');  % 'dtf%20b_nh2' -> 'dtf_b_nh2'
     outDir  = fullfile(outRoot, subject);
     if ~exist(outDir, 'dir')
         mkdir(outDir);
@@ -122,6 +131,18 @@ for f = 1:numel(sofaFiles)
     % Resampling factors (44100/48000 = 147/160)
     [p, q] = rat(fsOut / fsIn);
 
+    % Global gain from the frontal direction (same for all directions/ears)
+    gain = 1;
+    if ~isempty(refEnergy)
+        [~, k0] = min(abs(mod(az(onPlane) + 180, 360) - 180));
+        h0 = squeeze(IR(onPlane(k0), :, :)).';
+        if fsIn ~= fsOut
+            h0 = resample(h0, p, q);
+        end
+        gain = sqrt(refEnergy / mean(sum(h0.^2, 1)));
+        fprintf('global gain = %.2f (%+.1f dB)\n', gain, 20*log10(gain));
+    end
+
     fprintf('%8s %8s %8s %10s\n', 'phi', 'azSOFA', 'elSOFA', 'ILD (dB)');
     for a = azGrid
         % Nearest measured azimuth on the plane (circular distance)
@@ -137,6 +158,7 @@ for f = 1:numel(sofaFiles)
         if fsIn ~= fsOut
             h = resample(h, p, q);          % column-wise, delay-compensated FIR
         end
+        h = gain * h;
 
         % Sanity check: broadband ILD, positive = left louder (sources at
         % 10..90 deg must be > 0, at 270..350 deg < 0)

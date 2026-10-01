@@ -18,15 +18,15 @@ musdb18hq_path = fullfile(datasetRoot, 'MUSDB18HQ', 'train');
 song = 'A Classic Education - NightOwl';
 
 % HRIR path - SADIE II -> Subject_001 -> DFC -> 44K_16bit
-% hrir_path = fullfile(datasetRoot,'SADIEII','Subject_001_Wav','DFC', ...
-%     '44K_16bit');
+% hrir_path = fullfile(datasetRoot,'SADIEII','Subject_001_Wav','DFC', '44K_16bit');
 
 % HRIR path - ARI -> dtf_nh2 -> 44K_16bit
-hrir_path = fullfile(datasetRoot,'ARI_44k','dtf_nh2');
+hrir_path = fullfile(datasetRoot,'ARI_44k','dtf_b_nh2');
 
 % Take only hrirs with elevation=0°
 hrirs = dir(fullfile(hrir_path,'*ele_0*.wav'));
 hrirs = hrirs(~[hrirs.isdir]);
+hrirs = hrirs(~startsWith({hrirs.name}, '.'));
 
 %% Convolution loop
 
@@ -44,6 +44,9 @@ for s=1:length(sources)
 
     % Import related impulse response
     [hrir, fs] = audioread(fullfile(hrir.folder, hrir.name));
+
+    % Normalize hrir loudness
+    hrir = hrir / max(max(abs(hrir)));
 
     % Import current source .wav file
     [source, fs_rir] = audioread(fullfile(musdb18hq_path, song, ...
