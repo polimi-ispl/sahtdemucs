@@ -1,3 +1,111 @@
+#!/usr/bin/env python3
+"""
+binaural_synth.py - synthesize a binaural source-separation dataset from dry stems.
+
+Every stem of a track (``vocals``, ``bass``, ``drums``, ``other``) is down-mixed
+to mono and convolved with the left/right HRIR of one azimuth on the horizontal
+plane (elevation 0 deg); the four binaural stems are summed and peak-normalized
+into the mixture.  The four azimuths of a track are distinct, drawn without
+replacement from the frontal grid ``RANDOM_ANGLES`` = {0, 10, ..., 90} U
+{270, ..., 350} deg (0 = front, 90 = left, 270 = right), unless a metadata
+file fixes them.
+
+The reference HRIR set is SADIE II, Neumann KU100 dummy head (subject D1),
+diffuse-field compensated, 44.1 kHz - the set binauralMUSDB18HQ was built with.
+Any other set works once laid out the same way, e.g. the ARI HRTFs converted
+by ``matlab/sofa2hrir.m``.
+
+Layout produced under ``--output_dir``::
+
+    <output_dir>/
+        train/<track>/{vocals,bass,drums,other}.wav   binaural stems
+                     /mixture.wav                     peak-normalized sum of the stems
+                     /metadata.json                   {"vocals": az, "bass": az, ...}
+        test/<track>/...                              same, for the test split
+
+which is what ``MusdbSpatialDataset`` and ``sahtdemucs.separate`` expect.
+
+Modes
+-----
+MUSDB mode (default, ``--input_dir``)
+    ``<input_dir>/{train,test}/<track>/{vocals,bass,drums,other}.wav`` - the
+    MUSDB18-HQ layout, or any dataset grouped into the same four stems.  Both
+    ``train/`` and ``test/`` must exist (either may be empty).
+
+    * With ``-m <metadata.json>`` the azimuths are read from the file, so an
+      existing dataset version is reproduced exactly - or re-rendered with a
+      different HRIR set at the *same* positions.  Every track found under
+      ``--input_dir`` must have an entry, otherwise the run stops with a
+      ``KeyError``.
+    * Without ``-m`` every track gets a fresh random draw.  The ``random``
+      module is not seeded, so two runs give different datasets: the angles
+      actually used are only recorded in each track's ``metadata.json``.
+
+MoisesDB mode (``--moisesdb_dir``)
+    Collapses the MoisesDB taxonomy onto the four stems (missing sources become
+    silence), holds out ``--test_frac`` of the tracks into ``test/`` (split
+    seeded by ``--seed``), writes them as ``moisesdb_<id>`` next to the existing
+    tracks and skips the ones already synthesized, so the job is resumable.
+    ``-m`` is ignored and the azimuths are always random (``--seed`` fixes the
+    split only, not the angles).
+
+Metadata file format (``-m``), keyed by split, then by track directory name::
+
+    {
+      "train": {"<track>": {"vocals": 300, "bass": 10, "drums": 80, "other": 70}, ...},
+      "test":  {...}
+    }
+
+``data/binaural_musdb_metadata.json`` is the one of the published
+binauralMUSDB18HQ (100 train + 50 test tracks).
+
+Examples
+--------
+Reproduce binauralMUSDB18HQ::
+
+    python sahtdemucs/binaural_synth.py \
+        --input_dir  /path/to/MUSDB18HQ \
+        --output_dir /path/to/binauralMUSDB18HQ \
+        --hrir_dir   /path/to/SADIEII/Subject_001_Wav/DFC/44K_16bit \
+        -m data/binaural_musdb_metadata.json
+
+Same tracks and positions, different head (e.g. ARI subject NH2, converted with
+``matlab/sofa2hrir.m``) - only the HRIRs change w.r.t. the original dataset::
+
+    python sahtdemucs/binaural_synth.py \
+        --input_dir  /path/to/MUSDB18HQ \
+        --output_dir /path/to/binauralMUSDB18HQ_ARI_nh2 \
+        --hrir_dir   /path/to/ARI_44k/dtf_b_nh2 \
+        -m data/binaural_musdb_metadata.json
+
+Test-only set from another stem dataset (tracks under ``test/``, ``train/``
+left empty), random positions::
+
+    python sahtdemucs/binaural_synth.py \
+        --input_dir  /path/to/NewStems \
+        --output_dir /path/to/binauralNewStems \
+        --hrir_dir   /path/to/ARI_44k/dtf_b_nh2
+
+Extend a dataset with MoisesDB::
+
+    python sahtdemucs/binaural_synth.py \
+        --moisesdb_dir /path/to/moisesdb \
+        --output_dir   /path/to/binauralMUSMOISESDB \
+        --hrir_dir     /path/to/SADIEII/Subject_001_Wav/DFC/44K_16bit \
+        --test_frac 0.15 --seed 0
+
+Notes
+-----
+* HRIRs are read from ``<hrir_dir>/azi_{angle}_ele_0_DFC.wav`` (stereo: left,
+  right).  Their sample rate is *not* checked - only the stems' is - so a set
+  at another rate must be resampled to 44.1 kHz beforehand.
+* All stems must be at 44.1 kHz (``ValueError`` otherwise).
+* Only the mixture is peak-normalized; the stems keep the level set by the
+  HRIRs, so the mixture is a scaled - not exact - sum of the stems, and stem
+  samples beyond full scale are clipped when written as 16-bit WAV.
+* In MUSDB mode existing output tracks are overwritten.
+"""
+
 import os
 import json
 import random
@@ -8,11 +116,6 @@ import numpy as np
 import soundfile as sf
 import librosa
 from tqdm import tqdm
-
-# Important: HRIRs
-# For this dataset, we use the Head-Related Impulse Responses (HRIRs) associated
-# with the Neumann KU100 Binaural Head as documented on the [SADIE II website].
-# These measurements correspond to subject D1.
 
 # Constants
 SAMPLE_RATE = 44100
