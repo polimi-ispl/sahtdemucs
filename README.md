@@ -312,69 +312,64 @@ HT-Demucs baseline on the test split; `python -m sahtdemucs.separate` does the s
 `SpatialLoss` is an objective that supervises both **sub-band** spatial cue fidelity and separation quality for each of
 the $S$ sources
 
-$$
-\\mathcal{L} = \\frac{1}{S} \\sum_{s=1}^{S} \\left(
-\\lambda_{\\text{ILD}} \\cdot \\mathcal{L}_{\\text{ILD}}^{(s)}
+$$ \mathcal{L} = \frac{1}{S} \sum_{s=1}^{S} \left( \lambda_{\text{ILD}} \cdot \mathcal{L}_{\text{ILD}}^{(s)} + 
+\lambda_{\text{SI}} \cdot \mathcal{L}_{\text{SI-SDR}}^{(s)} + 
+\lambda_{\text{ITD}} \cdot \mathcal{L}_{\text{ITD}}^{(s)} \right).$$
 
-* \\lambda_{\\text{SI}} \\cdot \\mathcal{L}_{\\text{SI-SDR}}^{(s)}
-* \\lambda_{\\text{ITD}} \\cdot \\mathcal{L}_{\\text{ITD}}^{(s)}
-\\right).
-$$
-
-$\\mathcal{L}_{\\text{ILD}}^{(s)}$ is the MSE between the corrected source time-frequency ILD and the ground-truth one,
+$\mathcal{L}_{\text{ILD}}^{(s)}$ is the MSE between the corrected source time-frequency ILD and the ground-truth one,
 defined as
 
 $$
-\\mathcal{L}*{\\text{ILD}}^{(s)} =
-\\frac{1}{K \\cdot T_f} \\sum*{k=1}^{K} \\sum_{t=1}^{T_f}
-\\left(
-\\widehat{\\text{ILD}}*k^{(s)}(t) - \\text{ILD}*{k,\\text{gt}}^{(s)}(t)
-\\right)^2,
+\mathcal{L}_{\text{ILD}}^{(s)} =
+\frac{1}{K \cdot T_f} \sum_{k=1}^{K} \sum_{t=1}^{T_f}
+\left(
+\widehat{\text{ILD}}^{(s)}(k,t) - \text{ILD}_{\text{gt}}^{(s)}(k,t)
+\right)^2,
 $$
 
 where $K$ = `n_bands` and $T_f$ is the number of STFT frames.
 
-$\\mathcal{L}_{\\text{ITD}}^{(s)}$ has the same form on the per-sub-band, per-frame **ITD** (in samples), estimated with
+$\mathcal{L}_{\text{ITD}}^{(s)}$ has the same form on the per-sub-band, per-frame **ITD** (in samples), estimated with
 the band-limited, differentiable GCC-PHAT of `compute_itd_bands` / `compute_itd_bands_mel`, which shares its band
 layout with the ILD term:
 
 $$
-\\mathcal{L}*{\\text{ITD}}^{(s)} =
-\\frac{1}{K \\cdot T_f} \\sum*{k=1}^{K} \\sum_{t=1}^{T_f}
-\\left(
-\\widehat{\\text{ITD}}*k^{(s)}(t) - \\text{ITD}*{k,\\text{gt}}^{(s)}(t)
-\\right)^2 .
+\mathcal{L}_{\text{ITD}}^{(s)} =
+\frac{1}{K \cdot T_f} \sum_{k=1}^{K} \sum_{t=1}^{T_f}
+\left(
+\widehat{\text{ITD}}^{(s)}(k,t) - \text{ITD}_{\text{gt}}^{(s)}(k,t)
+\right)^2 .
 $$
 
-It is **disabled by default** ($\\lambda_{\\text{ITD}}=0$): an ILD-gain head cannot change interaural phase, so the term
+It is **disabled by default** ($\lambda_{\text{ITD}}=0$): an ILD-gain head cannot change interaural phase, so the term
 yields no useful gradient for SA-HTDemucs (see the note on ITD above) - it is wired in for the full-backbone fine-tune
 in `htdemucsspatial/`.  Being in samples², it sits on a far larger numerical scale than the ILD's dB², so a non-zero
-$\\lambda_{\\text{ITD}}$ is typically one to two orders of magnitude below $\\lambda_{\\text{ILD}}$.
+$\lambda_{\text{ITD}}$ is typically one to two orders of magnitude below $\lambda_{\text{ILD}}$.
 
-$\\mathcal{L}*{\\text{SI-SDR}}^{(s)}$ is not a plain SI-SDR loss but a one-sided **degradation penalty**: it penalises
-the spatial correction only when it lowers the SI-SDR of the corrected source $\\hat{s}$ below that of the frozen HT-Demucs
-output $\\bar{s}$ by more than a tolerated margin $m*{dB}$ = `si_margin_db` (in dB). With $\\text{SI-SDR}(\\cdot)$ evaluated
+$\mathcal{L}_{\text{SI-SDR}}^{(s)}$ is not a plain SI-SDR loss but a one-sided **degradation penalty**: it penalizes
+the spatial correction only when it lowers the SI-SDR of the corrected source $\hat{s}$ below that of the frozen HT-Demucs
+output $\\bar{s}$ by more than a tolerated margin $m_{dB}$ = `si_margin_db` (in dB). With $\text{SI-SDR}(\cdot)$ evaluated
 against the ground-truth source $s_{gt}$,
 
 $$
-\\mathcal{L}*{\\text{SI-SDR}}^{(s)} =
-\\text{ReLU}\\left(
-\\text{SI-SDR}(\\bar{s}, s*{gt}) - \\text{SI-SDR}(\\hat{s}, s_{gt}) - m_{dB}
-\\right),
+\mathcal{L}_{\text{SI-SDR}}^{(s)} =
+\text{ReLU}\left(
+\text{SI-SDR}(\bar{s}, s_{gt}) - \text{SI-SDR}(\hat{s}, s_{gt}) - m_{dB}
+\right),
 $$
 
 where
 
 $$
-\\text{SI-SDR}(\\hat{s}, s_{gt}) = 10 \\cdot \\log_{10} \\left( \\frac{\\left| \\dfrac{\\langle \\hat{s},
-s_{gt} \\rangle}{|s_{gt}|^2} \\cdot s_{gt} \\right|^2} {\\left| \\hat{s} - \\dfrac{\\langle \\hat{s}, s_{gt} \\rangle}
-{|s_{gt}|^2} \\cdot s_{gt}\\right|^2} \\right) \\quad \\text{\[dB]}
+\text{SI-SDR}(\hat{s}, s_{gt}) = 10 \cdot \log_{10} \left( \frac{\left| \dfrac{\langle \hat{s},
+s_{gt} \rangle}{|s_{gt}|^2} \cdot s_{gt} \right|^2} {\left| \hat{s} - \dfrac{\langle \hat{s}, s_{gt} \rangle}
+{|s_{gt}|^2} \cdot s_{gt}\right|^2} \right) \quad \text{[dB]}
 $$
 
 is the **Scale-invariant Signal-To-Distortion Ratio**.
 
-The $\\mathcal{L}*{\\text{SI-SDR}}^{(s)}$ term is always non-negative and is zero (no gradient) as long as the spatial head does not hurt separation beyond the
-margin, letting it improve ILD freely. Setting $\\lambda*{\\text{SI}}=0$ recovers a purely spatial loss (and lets
+The $\mathcal{L}_{\text{SI-SDR}}^{(s)}$ term is always non-negative and is zero (no gradient) as long as the spatial head does not hurt separation beyond the
+margin, letting it improve ILD freely. Setting $\lambda_{\text{SI}}=0$ recovers a purely spatial loss (and lets
 `raw_estimates` be omitted in the forward call).
 
 The forward pass takes the raw HT-Demucs output and returns the total loss together with its three (already weighted)
@@ -389,19 +384,19 @@ total.backward()
 
 ### Loss hyperparameters
 
-|Symbol|Parameter|Default|Description|
-|:-:|-|:-:|-|
-|$\\lambda_{\\text{SI}}$|`lambda_si`|`1.0`|Weight of the SI-SDR degradation penalty|
-|$\\lambda_{\\text{ILD}}$|`lambda_ild`|`1.0`|Weight of the sub-band ILD penalty|
-|$\\lambda_{\\text{ITD}}$|`lambda_itd`|`0.0`|Weight of the sub-band ITD penalty (disabled by default)|
-|$m_{dB}$|`si_margin_db`|`0.5`|Tolerated SI-SDR degradation (dB) before it is penalised|
-|$K$|`n_bands`|`32`|Number of frequency sub-bands|
-|-|`n_fft`|`2048`|STFT FFT size|
-|-|`hop_length`|`512`|STFT hop size|
-|-|`band_scale`|`linear`|Sub-band spacing - `linear` (equal-width in Hz) or `mel` (equal-width in mel)|
-|-|`sample_rate`|`44100`|Sample rate, used only when `band_scale="mel"`|
-|-|`itd_max_lag`|`64`|GCC-PHAT search range in samples (±1.45 ms @ 44.1 kHz)|
-|-|`itd_beta`|`20.0`|Soft-argmax temperature of the ITD estimator|
+|         Symbol         |Parameter|Default|Description|
+|:----------------------:|-|:-:|-|
+| $\lambda_{\text{SI}}$  |`lambda_si`|`1.0`|Weight of the SI-SDR degradation penalty|
+| $\lambda_{\text{ILD}}$ |`lambda_ild`|`1.0`|Weight of the sub-band ILD penalty|
+| $\lambda_{\text{ITD}}$ |`lambda_itd`|`0.0`|Weight of the sub-band ITD penalty (disabled by default)|
+|        $m_{dB}$        |`si_margin_db`|`0.5`|Tolerated SI-SDR degradation (dB) before it is penalised|
+|          $K$           |`n_bands`|`32`|Number of frequency sub-bands|
+|           -            |`n_fft`|`2048`|STFT FFT size|
+|           -            |`hop_length`|`512`|STFT hop size|
+|           -            |`band_scale`|`linear`|Sub-band spacing - `linear` (equal-width in Hz) or `mel` (equal-width in mel)|
+|           -            |`sample_rate`|`44100`|Sample rate, used only when `band_scale="mel"`|
+|           -            |`itd_max_lag`|`64`|GCC-PHAT search range in samples (±1.45 ms @ 44.1 kHz)|
+|           -            |`itd_beta`|`20.0`|Soft-argmax temperature of the ITD estimator|
 
 `band_scale`, `n_fft`, `hop_length` and `n_bands` must match the `SpatialCueModule` configuration, otherwise the loss
 supervises a band layout different from the one the head can act on.
