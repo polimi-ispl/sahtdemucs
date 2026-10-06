@@ -12,3 +12,4 @@ reaper
 matlab/figures
 runs
 *.asv
+.DS_Store
