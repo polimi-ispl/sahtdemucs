@@ -34,7 +34,7 @@ addpath(fullfile(scriptDir, 'helpers'))
 %% Parameters
 datapath    = fullfile(scriptDir, '..', 'docs', 'audio');
 nSongs      = 3;
-sources     = {'bass', 'drums', 'other', 'vocals'};
+sources     = {'vocals', 'drums', 'bass', 'other'};
 fs          = 44100;
 nfft        = 2048;
 wLen        = 2048;

@@ -250,6 +250,24 @@ python sahtdemucs/binaural_synth.py \\
 This mode requires the optional `moisesdb` package.  Both the flat (`<root>/<track_id>/data.json`) and the nested
 (`<root>/<provider>/<track_id>/data.json`) release layouts are detected automatically.
 
+### Test set from Cambridge-MT
+
+`matlab/cambridge2musdb.m` turns the raw [Cambridge-MT](https://www.cambridge-mt.com/ms/mtk/) multitrack library
+(one ZIP per song) into the MUSDB18-HQ layout, so that the same script can binauralize it as a test-only set.  Per
+song it picks the full multitrack (`_Full`, or all its `_Full_N` parts), else the pre-mixed `_Stems`, else the ~30 s
+excerpt; it drops the songs already in MUSDB18-HQ (found automatically by title against the `musdb18hq` folder
+names), assigns every track to `vocals`/`bass`/`drums`/`other` from its file name, drops the songs where any of the
+four stems gets no track (`requireAllStems`), resamples to 44.1 kHz and writes
+16-bit stereo stems plus their exact sum as `mixture.wav` under `<outRoot>/test/` (`train/` is left empty).  Two CSVs
+log the per-song and per-track decisions; `dryRun = true` writes them without extracting any audio.  Then:
+
+```bash
+python sahtdemucs/binaural_synth.py \\
+    --input_dir="path/to/cambridge-mt-vdbo" \\
+    --output_dir="path/to/binauralcambridge-mt" \\
+    --hrir_dir="path/to/SADIE_II/.../DFC/44K_16bit"
+```
+
 \---
 
 ## Quick Start
@@ -445,7 +463,8 @@ sahtdemucs/
 │   └── compare_ablation.py   ← table + curves over all runs of a sweep
 ├── cpp/sahtdemucs_cli/       ← C++/LibTorch CLI running the exported TorchScript model with the
 │                                plugin's chunking strategy (see its own README)
-├── matlab/                   ← perceptual evaluation: PEASS, goniometer, stereo metrics
+├── matlab/                   ← perceptual evaluation: PEASS, goniometer, stereo metrics;
+│                                sofa2hrir.m, cambridge2musdb.m (dataset preparation)
 ├── data/
 │   └── binaural_musdb_metadata.json   ← per-track stem azimuths (reproducible dataset)
 ├── notebook/
